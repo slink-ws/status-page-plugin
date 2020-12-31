@@ -1,0 +1,3 @@
+<div class="mod-header">
+    $i18n.getText('incident-glance-panel.label')
+</div>

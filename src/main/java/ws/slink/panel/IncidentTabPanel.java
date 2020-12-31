@@ -5,7 +5,6 @@ import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
 import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
-import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import ws.slink.condition.IncidentExistsCondition;
 
 import java.util.Collections;
@@ -16,14 +15,7 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
     @Override
     public boolean showPanel(ShowPanelRequest showPanelRequest) {
-        // TODO: add conditional logic to show or hide the panel
-        //       (just check if incident exists for current issue)
-
-        // showPanelRequest.issue();
-        // showPanelRequest.remoteUser();
-        // showPanelRequest.isAnonymous();
-//        return new IncidentExistsCondition().shouldDisplay(showPanelRequest.remoteUser(), );
-        return true;
+        return new IncidentExistsCondition().shouldDisplay(showPanelRequest.remoteUser(), showPanelRequest.issue());
     }
 
     @Override
