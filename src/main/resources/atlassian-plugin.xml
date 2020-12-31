@@ -31,24 +31,6 @@
     <context>status-page-plugin</context> 
   </web-resource>  
 
-  <web-item name="IncidentButton" i18n-name-key="incident-button.name" key="incident-button" section="jira.issue.tools" weight="10">
-    <description key="incident-button.description">Incident Button Plugin</description>
-    <conditions type="AND"> 
-      <condition class="ws.slink.condition.IncidentsEnabledCondition"> 
-        <!--        <param name="param0" value="value0"/> --> 
-      </condition> 
-    </conditions>
-<!--    <styleClass>icon aui-icon aui-icon-small aui-iconfont-feedback</styleClass>-->
-    <icon width="16" height="16">
-      <link id="incident-button-icon">/download/resources/ws.slink.status-page-plugin:status-page-plugin-resources/statuspage.png</link>
-    <!-- OK: http://localhost:2990/jira/download/batch/ws.slink.status-page-plugin:status-page-plugin-resources/statuspage.png -->
-    <!--      <link linkId="incident-button-icon">https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/statuspage-32.png</link>-->
-    </icon>
-    <tooltip key="incident-button.tooltip"/>
-    <label key="incident-button.label"/>
-    <link linkId="incident-button-link">http://statuspage.io</link> 
-  </web-item>  
-
   <issue-tabpanel key="incident-tab-panel" name="Incident Tab Panel" i18n-name-key="incident-tab-panel.name" class="ws.slink.panel.IncidentTabPanel">
     <description key="incident-tab-panel.description">Incident Tab Panel Plugin</description>
     <label key="incident-tab-panel.label"/>  
@@ -69,5 +51,38 @@
     <context-provider class="ws.slink.context.GlancePanelContextProvider"/>
     <resource name="view" type="velocity" location="templates/incident-glance-panel.vm"/>
   </web-panel>
+
+  <webwork1 key="incident-create-action" name="Create Incident" class="java.lang.Object">
+    <actions>
+      <action name="ws.slink.action.CreateIncident" alias="CreateIncident">
+        <view name="input">/templates/incident-create.vm</view>
+      </action>
+    </actions>
+  </webwork1>
+
+  <web-item name="IncidentButton" i18n-name-key="incident-button.name" key="incident-button" section="jira.issue.tools" weight="10">
+    <description key="incident-button.description">Incident Button Plugin</description>
+    <conditions type="AND">
+      <condition class="ws.slink.condition.IncidentsEnabledCondition">
+        <!--        <param name="param0" value="value0"/> -->
+      </condition>
+    </conditions>
+    <!--    <styleClass>icon aui-icon aui-icon-small aui-iconfont-feedback</styleClass>-->
+    <!--    <icon width="16" height="16">-->
+    <!--      <link id="incident-button-icon">/download/resources/ws.slink.status-page-plugin:status-page-plugin-resources/statuspage.png</link>-->
+    <!-- OK: http://localhost:2990/jira/download/batch/ws.slink.status-page-plugin:status-page-plugin-resources/statuspage.png -->
+    <!--      <link linkId="incident-button-icon">https://cdn4.iconfinder.com/data/icons/logos-brands-5/24/statuspage-32.png</link>-->
+    <!--    </icon>-->
+    <tooltip key="incident-button.tooltip"/>
+    <label key="incident-button.label"/>
+    <link linkId="incident-create">/CreateIncident!default.jspa?id=${issue.id}</link>
+    <!--    <styleClass>aui-list-item-link issueaction-link-issue opsbar-operations</styleClass>-->
+    <styleClass>trigger-dialog</styleClass>
+  </web-item>
+
+  <web-resource name="Resources" key="resources">
+    <resource name="incidentCreate.js" type="download" location="/js/incident-create.js"/>
+    <context>jira.view.issue</context>
+  </web-resource>
 
 </atlassian-plugin>

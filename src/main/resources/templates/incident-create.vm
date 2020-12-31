@@ -1,0 +1,42 @@
+<h2 class="dialog-title">$i18n.getText('incident-create-dialog.title')</h2>
+
+<form class="aui" action="CreateIncident.jspa" method="post">
+
+    <input type="hidden" name="atl_token" value="${atl_token}" />
+    <input type="hidden" name="id" value="$action.id" />
+
+    <div class="content-body">
+
+        #if ($action.hasAnyErrors())
+            <div class="form-message error">
+                #foreach ($error in $action.getErrorMessages())
+                    <p>$textutils.htmlEncode(${error})</p>
+                #end
+                #foreach ($error in $action.errors)
+                    <p>$textutils.htmlEncode(${error})</p>
+                #end
+            </div>
+        #end
+
+        <div>
+            <br><br><br>
+            Here should go form elements for incident creation
+            <br><br><br>
+        </div>
+
+##        <div class="field-group">
+##            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
+##            &nbsp;<textarea name="watcherUserNames" class="textarea long-field"></textarea>
+##            <div class="description">$i18n.getText('tutorial.fields.users.desc'))</div>
+##        </div>
+    </div>
+
+    <div class="buttons-container content-footer">
+        <div class="buttons">
+            ##  https://aui.atlassian.com/aui/7.9/docs/buttons.html
+            <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-create-dialog.button-cancel')</a>
+            <input class="aui-button button" type="submit" value="$i18n.getText('incident-create-dialog.button-create')" />
+        </div>
+    </div>
+
+</form>

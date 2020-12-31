@@ -1,6 +1,5 @@
 package ws.slink.api;
 
-public interface MyPluginComponent
-{
+public interface StatuspagePluginComponent {
     String getName();
 }
