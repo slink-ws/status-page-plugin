@@ -21,6 +21,9 @@ public class ConfigService {
     public static final String CONFIG_PREFIX         = "ws.slink.status-page-plugin";
     public static final String CONFIG_ADMIN_PROJECTS = "admin.projects";
     public static final String CONFIG_ADMIN_ROLES    = "admin.roles";
+    public static final String CONFIG_MGMT_ROLES     = "config.mgmt.roles";
+    public static final String CONFIG_VIEW_ROLES     = "config.view.roles";
+    public static final String CONFIG_API_KEY        = "config.api.key";
 
     private PluginSettings pluginSettings;
 
@@ -31,17 +34,36 @@ public class ConfigService {
             this.pluginSettings = pluginSettings;
     }
 
-    public Collection<String> getProjects() { // returns list of projectKey
+    public Collection<String> getAdminProjects() { // returns list of projectKey
         return getListParam(CONFIG_ADMIN_PROJECTS);
     }
-    public Collection<String> getRoles() { // returns list of roleId
+    public Collection<String> getAdminRoles() { // returns list of roleId
         return getListParam(CONFIG_ADMIN_ROLES);
     }
-    public void setProjects(String projects) {
+    public void setAdminProjects(String projects) {
         pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_ADMIN_PROJECTS, projects);
     }
-    public void setRoles(String roles) {
+    public void setAdminRoles(String roles) {
         pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_ADMIN_ROLES, roles);
+    }
+
+    public Collection<String> getConfigMgmtRoles(String projectKey) {
+        return getListParam(CONFIG_MGMT_ROLES + "." + projectKey);
+    }
+    public void setConfigMgmtRoles(String projectKey, String roles) {
+        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_MGMT_ROLES + "." + projectKey, roles);
+    }
+    public Collection<String> getConfigViewRoles(String projectKey) {
+        return getListParam(CONFIG_VIEW_ROLES + "." + projectKey);
+    }
+    public void setConfigViewRoles(String projectKey, String roles) {
+        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_VIEW_ROLES + "." + projectKey, roles);
+    }
+    public String getConfigApiKey(String projectKey) {
+        return getParam(CONFIG_API_KEY + "." + projectKey);
+    }
+    public void setConfigApiKey(String projectKey, String value) {
+        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_API_KEY + "." + projectKey, value);
     }
 
     private List<String> getListParam(String param) {
@@ -51,7 +73,13 @@ public class ConfigService {
         else
             return Arrays.stream(value.split(",")).map(s -> s.trim()).collect(Collectors.toList());
     }
-
+    private String getParam(String param) {
+        String value = (String) pluginSettings.get(CONFIG_PREFIX + "." + param);
+        if (StringUtils.isBlank(value))
+            return value;
+        else
+            return "";
+    }
 
 /*
     // --- administration

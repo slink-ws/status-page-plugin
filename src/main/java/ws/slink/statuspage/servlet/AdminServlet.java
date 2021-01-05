@@ -53,9 +53,9 @@ public class AdminServlet extends HttpServlet {
             } else {
                 response.setContentType("text/html;charset=utf-8");
 
-                Collection<String> selectedProjectsParam = ConfigService.instance().getProjects();
+                Collection<String> selectedProjectsParam = ConfigService.instance().getAdminProjects();
 //                System.out.println("selected projects: " + selectedProjectsParam);
-                Collection<String> selectedRolesParam    = ConfigService.instance().getRoles();
+                Collection<String> selectedRolesParam    = ConfigService.instance().getAdminRoles();
 //                System.out.println("selected roles   : " + selectedRolesParam);
 
 

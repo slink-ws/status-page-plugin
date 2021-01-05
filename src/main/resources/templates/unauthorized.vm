@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>$i18n.getText("sp.config.label")</title>
+    <meta name="decorator"            content="admin"/>
+    <meta name="projectKey"           content="$projectKey"/>
+    <meta name="projectId"            content="$projectId"/>
+    <meta name="admin.active.tab"     content="cp-item-cfg"/>
+    <meta name="admin.active.section" content="atl.jira.proj.config"/>
+    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+</head>
+<body>
+    <h1>$i18n.getText("sp.config.warning")</h1>
+</body>
+</html>

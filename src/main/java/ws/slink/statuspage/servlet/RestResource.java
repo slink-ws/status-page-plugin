@@ -1,8 +1,5 @@
 package ws.slink.statuspage.servlet;
 
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
@@ -10,8 +7,8 @@ import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import org.apache.commons.lang.StringUtils;
 import ws.slink.statuspage.service.ConfigService;
+import ws.slink.statuspage.tools.JiraTools;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -64,6 +61,50 @@ public class RestResource {
             return projects + " : " + roles;
         }
         public AdminParams log(String prefix) {
+            System.out.println(prefix + this);
+            return this;
+        }
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static final class ConfigParams {
+        @XmlElement private String project;
+        @XmlElement private String apikey;
+        @XmlElement private String mgmt_roles;
+        @XmlElement private String view_roles;
+        public String getProject() {
+            return project;
+        }
+        public ConfigParams setProject(String value) {
+            this.project = value;
+            return this;
+        }
+        public String getApikey() {
+            return apikey;
+        }
+        public ConfigParams setApikey(String value) {
+            this.apikey = value;
+            return this;
+        }
+        public String getMgmtRoles() {
+            return mgmt_roles;
+        }
+        public ConfigParams getMgmtRoles(String value) {
+            this.mgmt_roles = value;
+            return this;
+        }
+        public String getViewRoles() {
+            return view_roles;
+        }
+        public ConfigParams getViewRoles(String value) {
+            this.view_roles = value;
+            return this;
+        }
+        public String toString() {
+            return project + " : " + apikey + " : " + mgmt_roles + " : " + view_roles;
+        }
+        public ConfigParams log(String prefix) {
             System.out.println(prefix + this);
             return this;
         }
@@ -280,8 +321,25 @@ public class RestResource {
         }
         transactionTemplate.execute((TransactionCallback) () -> {
 //            config.log("~~~ received configuration: ");
-            ConfigService.instance().setProjects(config.getProjects());
-            ConfigService.instance().setRoles(config.getRoles());
+            ConfigService.instance().setAdminProjects(config.getProjects());
+            ConfigService.instance().setAdminRoles(config.getRoles());
+            return null;
+        });
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/config")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putConfigParams(final ConfigParams config, @Context HttpServletRequest request) {
+        if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        transactionTemplate.execute((TransactionCallback) () -> {
+//            config.log("~~~ received plugin config: ");
+            ConfigService.instance().setConfigMgmtRoles(config.getProject(), config.getMgmtRoles());
+            ConfigService.instance().setConfigViewRoles(config.getProject(), config.getViewRoles());
+            ConfigService.instance().setConfigApiKey   (config.getProject(), config.getApikey());
             return null;
         });
         return Response.noContent().build();

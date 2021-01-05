@@ -5,17 +5,18 @@ import com.atlassian.jira.plugin.issuetabpanel.AbstractIssueTabPanel3;
 import com.atlassian.jira.plugin.issuetabpanel.GetActionsRequest;
 import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
-import ws.slink.statuspage.condition.IncidentExistsCheck;
+import ws.slink.statuspage.tools.JiraTools;
 
 import java.util.Collections;
 import java.util.List;
 
 public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
-
     @Override
     public boolean showPanel(ShowPanelRequest showPanelRequest) {
-        return new IncidentExistsCheck().check(showPanelRequest.remoteUser(), showPanelRequest.issue());
+        return JiraTools.isIncidentManager(showPanelRequest.issue().getProjectObject().getKey(), showPanelRequest.remoteUser())
+            && JiraTools.isIncidentExists(showPanelRequest.issue())
+        ;
     }
 
     @Override

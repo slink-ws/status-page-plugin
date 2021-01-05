@@ -37,8 +37,8 @@
     <label key="incident-tab-panel.label"/>  
     <order>1000</order>  
     <resource type="velocity" name="view" location="templates/incident-tab-panel.vm"/>  
-    <supports-ajax-load>true</supports-ajax-load> 
-  </issue-tabpanel>  
+    <supports-ajax-load>true</supports-ajax-load>
+  </issue-tabpanel>
   <web-panel name="Incident Glance Panel"
              i18n-name-key="incident-glance-panel.name"
              key="incident-glance-panel"
@@ -47,6 +47,7 @@
     <description key="incident-glance-panel.description">Incident Glance Panel Plugin</description>
     <conditions type="AND">
       <condition class="ws.slink.statuspage.condition.IncidentAssignedCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentViewerCondition"/>
     </conditions>
     <context-provider class="ws.slink.statuspage.context.GlancePanelContextProvider"/>
     <resource name="view" type="velocity" location="templates/incident-glance-panel.vm"/>
@@ -61,9 +62,10 @@
   <web-item name="IncidentButton" i18n-name-key="incident-button.name" key="incident-button" section="jira.issue.tools" weight="10">
     <description key="incident-button.description">Incident Button Plugin</description>
     <conditions type="AND">
-      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition">
+      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
         <!--        <param name="param0" value="value0"/> -->
-      </condition>
     </conditions>
     <!--    <styleClass>icon aui-icon aui-icon-small aui-iconfont-feedback</styleClass>-->
     <!--    <icon width="16" height="16">-->
@@ -95,6 +97,37 @@
     <url-pattern>/ws-slink-statuspage/admin</url-pattern>
   </servlet>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~ config ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <web-resource key="status-page-plugin-config" name="statuspage-plugin config web resource">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource type="download" name="status-page-config.js" location="/js/status-page-config.js"/>
+    <resource type="download" name="status-page-config.css" location="/css/status-page-config.css"/>
+    <context>status-page-plugin</context>
+  </web-resource>
+  <servlet key="config-servlet" class="ws.slink.statuspage.servlet.ConfigServlet">
+    <resource type="i18n" name="i18n" location="status-page-plugin"/>
+    <url-pattern>
+      <!--  /customer-priority/config-->
+      /project-config/*/ws-slink-statuspage
+    </url-pattern>
+  </servlet>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~ config menu ~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <web-section key="sp-item-cfg-section" location="atl.jira.proj.config" weight="1000">
+    <conditions type="AND" >
+      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition"/>
+      <condition class="ws.slink.statuspage.condition.PluginManagerCondition"/>
+    </conditions>
+  </web-section>
+  <web-item key="sp-item-cfg" section="atl.jira.proj.config/sp-item-cfg-section">
+    <description key="sp.config.menu.item.description" />
+    <label key="sp.config.menu.item.label" />
+    <link linkId="sp.config.menu.item.link">
+      /plugins/servlet/project-config/$helper.project.key/ws-slink-statuspage
+    </link>
+  </web-item>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~ common ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <rest key="rest" path="/ws-slink-statuspage" version="1.0">

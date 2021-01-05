@@ -6,11 +6,12 @@ import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
 import ws.slink.statuspage.tools.JiraTools;
 
-public class IncidentAssignedCondition extends AbstractWebCondition {
+public class NoIncidentAssignedCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentExists((Issue) jiraHelper.getContextParams().get("issue"));
+        return !JiraTools.isIncidentExists((Issue) jiraHelper.getContextParams().get("issue"));
+
     }
 
 }
