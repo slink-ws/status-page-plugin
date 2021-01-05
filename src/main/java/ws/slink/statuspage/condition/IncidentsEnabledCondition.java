@@ -1,4 +1,4 @@
-package ws.slink.condition;
+package ws.slink.statuspage.condition;
 
 import com.atlassian.jira.plugin.webfragment.conditions.AbstractWebCondition;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;

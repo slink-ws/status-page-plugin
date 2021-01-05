@@ -10,8 +10,9 @@
     <version>${project.version}</version>  
     <vendor name="${project.organization.name}" url="${project.organization.url}"/>  
     <param name="plugin-icon">images/pluginIcon.png</param>  
-    <param name="plugin-logo">images/pluginLogo.png</param> 
-  </plugin-info>  
+    <param name="plugin-logo">images/pluginLogo.png</param>
+    <param name="configure.url">/plugins/servlet/ws-slink-statuspage/admin</param>
+  </plugin-info>
 
   <!-- add our i18n resource -->
   <resource type="i18n" name="i18n" location="status-page-plugin"/>  
@@ -31,14 +32,13 @@
     <context>status-page-plugin</context> 
   </web-resource>  
 
-  <issue-tabpanel key="incident-tab-panel" name="Incident Tab Panel" i18n-name-key="incident-tab-panel.name" class="ws.slink.panel.IncidentTabPanel">
+  <issue-tabpanel key="incident-tab-panel" name="Incident Tab Panel" i18n-name-key="incident-tab-panel.name" class="ws.slink.statuspage.panel.IncidentTabPanel">
     <description key="incident-tab-panel.description">Incident Tab Panel Plugin</description>
     <label key="incident-tab-panel.label"/>  
     <order>1000</order>  
     <resource type="velocity" name="view" location="templates/incident-tab-panel.vm"/>  
     <supports-ajax-load>true</supports-ajax-load> 
   </issue-tabpanel>  
-
   <web-panel name="Incident Glance Panel"
              i18n-name-key="incident-glance-panel.name"
              key="incident-glance-panel"
@@ -46,24 +46,22 @@
              weight="1">
     <description key="incident-glance-panel.description">Incident Glance Panel Plugin</description>
     <conditions type="AND">
-      <condition class="ws.slink.condition.IncidentAssignedCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentAssignedCondition"/>
     </conditions>
-    <context-provider class="ws.slink.context.GlancePanelContextProvider"/>
+    <context-provider class="ws.slink.statuspage.context.GlancePanelContextProvider"/>
     <resource name="view" type="velocity" location="templates/incident-glance-panel.vm"/>
   </web-panel>
-
   <webwork1 key="incident-create-action" name="Create Incident" class="java.lang.Object">
     <actions>
-      <action name="ws.slink.action.CreateIncident" alias="CreateIncident">
+      <action name="ws.slink.statuspage.action.CreateIncident" alias="CreateIncident">
         <view name="input">/templates/incident-create.vm</view>
       </action>
     </actions>
   </webwork1>
-
   <web-item name="IncidentButton" i18n-name-key="incident-button.name" key="incident-button" section="jira.issue.tools" weight="10">
     <description key="incident-button.description">Incident Button Plugin</description>
     <conditions type="AND">
-      <condition class="ws.slink.condition.IncidentsEnabledCondition">
+      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition">
         <!--        <param name="param0" value="value0"/> -->
       </condition>
     </conditions>
@@ -79,10 +77,29 @@
     <!--    <styleClass>aui-list-item-link issueaction-link-issue opsbar-operations</styleClass>-->
     <styleClass>trigger-dialog</styleClass>
   </web-item>
-
   <web-resource name="Resources" key="resources">
     <resource name="incidentCreate.js" type="download" location="/js/incident-create.js"/>
     <context>jira.view.issue</context>
   </web-resource>
+
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~ admin ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <web-resource key="status-page-plugin-admin-resources" name="statuspage-plugin admin web resources">
+    <dependency>com.atlassian.auiplugin:ajs</dependency>
+    <resource type="download" name="status-page-admin.css" location="/css/status-page-admin.css"/>
+    <resource type="download" name="status-page-admin.js" location="/js/status-page-admin.js"/>
+    <context>atl.admin</context>
+  </web-resource>
+  <servlet key="admin-servlet" class="ws.slink.statuspage.servlet.AdminServlet">
+    <resource type="i18n" name="i18n" location="status-page-plugin"/>
+    <url-pattern>/ws-slink-statuspage/admin</url-pattern>
+  </servlet>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~ common ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+  <rest key="rest" path="/ws-slink-statuspage" version="1.0">
+    <description>provides REST resources for the admin/config UI</description>
+  </rest>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
 </atlassian-plugin>

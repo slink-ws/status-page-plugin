@@ -1,9 +1,9 @@
-package ws.slink.impl;
+package ws.slink.statuspage.impl;
 
 import com.atlassian.plugin.spring.scanner.annotation.export.ExportAsService;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.ApplicationProperties;
-import ws.slink.api.StatuspagePluginComponent;
+import ws.slink.statuspage.api.StatuspagePluginComponent;
 
 import javax.inject.Inject;
 import javax.inject.Named;

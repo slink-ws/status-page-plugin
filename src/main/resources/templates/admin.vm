@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>$i18n.getText("sp.admin.label")</title>
+    <meta name="decorator" content="atl.admin" />
+##    $webResourceManager.requireResource("com.atlassian.auiplugin:aui-select2")
+    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-admin-resources")
+</head>
+<body>
+    <h1>$i18n.getText("sp.admin.label")</h1>
+
+    <form id="admin" class="aui">
+##        $math.min($availableProjects.size(), 10)
+        <h3 class="h3-css">$i18n.getText('sp.admin.enable-plugin-for-projects')</h3>
+        <div style="width: 100%; overflow: hidden;">
+
+            <div style="width: 250px; float: left">
+                <div class="label-css">
+                    $i18n.getText('sp.admin.available-projects')
+                </div>
+                <select id="available-projects" class="select select-css" size="10" multiple>
+                    #foreach($project in $availableProjects)
+                        <option value="$project.getKey()">$project.getName()</option>
+                    #end
+                </select>
+            </div>
+
+            <div style="width: 70px; float: left; text-align: center; align-content: center;">
+                <div style="margin-top: 70px;">
+                    <input style="width: 45px;" type="button" onclick="admin_add_projects()" value=">" />
+                    <input style="width: 45px;" type="button" onclick="admin_add_all_projects()" value=">>" />
+                    <input style="width: 45px;" type="button" onclick="admin_remove_projects()" value="<" />
+                    <input style="width: 45px;" type="button" onclick="admin_remove_all_projects()" value="<<" />
+                </div>
+            </div>
+
+            <div style="width: 250px; float: left;">
+                <div class="label-css">
+                    $i18n.getText('sp.admin.selected-projects')
+                </div>
+                <select id="selected-projects" class="select select-css" size="10" multiple>
+                    #foreach($project in $selectedProjects)
+                        <option value="$project.getKey()">$project.getName()</option>
+                    #end
+                </select>
+            </div>
+        </div>
+
+        <h3 class="h3-css">$i18n.getText('sp.admin.enable-plugin-for-roles')</h3>
+        <div style="width: 100%; overflow: hidden;">
+
+            <div style="width: 250px; float: left">
+                <div class="label-css">
+                    $i18n.getText('sp.admin.available-roles')
+                </div>
+                <select id="available-roles" class="select select-css" size="10" multiple>
+                    #foreach($role in $availableRoles)
+                        <option value="$role.getId()">$role.getName()</option>
+                    #end
+                </select>
+            </div>
+
+            <div style="width: 70px; float: left; text-align: center; align-content: center;">
+                <div style="margin-top: 70px;">
+                    <input style="width: 45px;" type="button" onclick="admin_add_roles()" value=">" />
+                    <input style="width: 45px;" type="button" onclick="admin_add_all_roles()" value=">>" />
+                    <input style="width: 45px;" type="button" onclick="admin_remove_roles()" value="<" />
+                    <input style="width: 45px;" type="button" onclick="admin_remove_all_roles()" value="<<" />
+                </div>
+            </div>
+
+            <div style="width: 250px; float: left;">
+                <div class="label-css">
+                    $i18n.getText('sp.admin.selected-roles')
+                </div>
+                <select id="selected-roles" class="select select-css" size="10" multiple>
+                    #foreach($role in $selectedRoles)
+                        <option value="$role.getId()">$role.getName()</option>
+                    #end
+                </select>
+            </div>
+        </div>
+
+        <div style="width: 100%; overflow: hidden; padding-top: 1em;">
+            <div style="width: 250px; float: left">&nbsp;</div>
+            <div style="width: 70px; float: left; text-align: center; align-content: center;">
+                <input onclick="admin_update_config();" class="aui-button button" type="button" value="$i18n.getText('sp.admin.save.label')" />
+            </div>
+            <div style="width: 250px; float: left;">&nbsp;</div>
+        </div>
+
+    </form>
+
+</body>
+</html>

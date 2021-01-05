@@ -1,4 +1,4 @@
-package ws.slink.action;
+package ws.slink.statuspage.action;
 
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
 
@@ -26,6 +26,7 @@ public class CreateIncident extends AbstractIssueSelectAction {
 //                addErrorMessage(beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user", username));
 //            }
 //        }
+        // TODO: validate incident form here
     }
 
     @Override
@@ -34,6 +35,7 @@ public class CreateIncident extends AbstractIssueSelectAction {
 //        {
 //            watcherManager.startWatching(UserUtils.getUser(validUsername), getIssueObject());
 //        }
+        // TODO: create incident here
         return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
     }
 

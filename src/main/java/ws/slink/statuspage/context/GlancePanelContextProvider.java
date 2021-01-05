@@ -1,4 +1,4 @@
-package ws.slink.context;
+package ws.slink.statuspage.context;
 
 import com.atlassian.jira.plugin.webfragment.contextproviders.AbstractJiraContextProvider;
 import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
