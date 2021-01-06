@@ -45,33 +45,49 @@ public class JiraTools {
 
     }
 
+    public static boolean isIncidentManager(Project project, ApplicationUser applicationUser) {
+        return ConfigService.instance().getConfigMgmtRoles(project.getKey()).stream().map(Long::valueOf).anyMatch(r ->
+            userHasRoleInProject(
+                project,
+                applicationUser,
+                getProjectRoleById(r)
+            )
+        );
+    }
+    public static boolean isIncidentViewer(Project project, ApplicationUser applicationUser) {
+        return ConfigService.instance().getConfigViewRoles(project.getKey()).stream().map(Long::valueOf).anyMatch(r ->
+            userHasRoleInProject(
+                project,
+                applicationUser,
+                getProjectRoleById(r)
+            )
+        );
+    }
     public static boolean isIncidentManager(String projectKey, ApplicationUser applicationUser) {
-//        boolean result =
-//                 TODO: add support for "*" to allow views for all ?
-//                Arrays.asList(ConfigService.instance().getViewers(projectKey).trim().split(" "))
-//                        .stream()
-//                        .anyMatch(s -> ((s.contains("*")
-//                                && applicationUser.getEmailAddress().toLowerCase().contains(s.replaceAll("\\*", "").toLowerCase()))
-//                                || applicationUser.getEmailAddress().equalsIgnoreCase(s))
-//                        );
-//        return result;
-        return false;
+        return isIncidentManager(getProjectByKey(projectKey), applicationUser);
     }
     public static boolean isIncidentViewer(String projectKey, ApplicationUser applicationUser) {
-//        boolean result =
-//            // TODO: add support for "*" to allow views for all ?
-//            Arrays.asList(ConfigService.instance().getViewers(projectKey).trim().split(" "))
-//                .stream()
-//                .anyMatch(s -> ((s.contains("*")
-//                    && applicationUser.getEmailAddress().toLowerCase().contains(s.replaceAll("\\*", "").toLowerCase()))
-//                    || applicationUser.getEmailAddress().equalsIgnoreCase(s))
-//                );
-//        return result;
-        return false;
+        return isIncidentViewer(getProjectByKey(projectKey), applicationUser);
+    }
+    public static boolean isIncidentManager(Long projectId, ApplicationUser applicationUser) {
+        return isIncidentManager(getProjectById(projectId), applicationUser);
+    }
+    public static boolean isIncidentViewer(Long projectId, ApplicationUser applicationUser) {
+        return isIncidentViewer(getProjectById(projectId), applicationUser);
     }
 
     public static boolean isIncidentExists(Issue issue) {
         return true;
+    }
+
+    public static boolean isIncidentsEnabled(Project project) {
+        return ConfigService.instance().getAdminProjects().contains(project.getKey());
+    }
+    public static boolean isIncidentsEnabled(Long projectId) {
+        return isIncidentsEnabled(getProjectById(projectId));
+    }
+    public static boolean isIncidentsEnabled(String projectKey) {
+        return isIncidentsEnabled(getProjectByKey(projectKey));
     }
 
     public static boolean userHasRolesInProjects(Collection<Project> projects, Collection<ProjectRole> roles, ApplicationUser user) {
@@ -92,13 +108,21 @@ public class JiraTools {
             ProjectRole projectRole = ComponentAccessor.getComponent(ProjectRoleManager.class).getProjectRole(roleId);
             return projectRole;
         } catch (Exception e) {
-             System.err.println("ERROR CONVERTING ROLE ID TO PROJECT ROLE: " + e.getMessage());
+//             System.err.println("ERROR CONVERTING ROLE ID TO PROJECT ROLE: " + e.getMessage());
             return null;
         }
     }
     public static Project getProjectByKey(String projectKey) {
         try {
             return ComponentAccessor.getProjectManager().getProjectByCurrentKey(projectKey);
+        } catch (Exception e) {
+            // System.err.println("ERROR CONVERTING PROJECT KEY TO PROJECT: " + e.getMessage());
+            return null;
+        }
+    }
+    public static Project getProjectById(Long projectId) {
+        try {
+            return ComponentAccessor.getProjectManager().getProjectObj(projectId);
         } catch (Exception e) {
             // System.err.println("ERROR CONVERTING PROJECT KEY TO PROJECT: " + e.getMessage());
             return null;

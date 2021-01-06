@@ -2,7 +2,6 @@ package ws.slink.statuspage.servlet;
 
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
@@ -12,7 +11,9 @@ import ws.slink.statuspage.tools.JiraTools;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -27,15 +28,12 @@ public class RestResource {
 
     @ComponentImport private final UserManager userManager;
     @ComponentImport private final TransactionTemplate transactionTemplate;
-    @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
 
     @Inject
-    public RestResource(UserManager userManager, PluginSettingsFactory pluginSettingsFactory,
+    public RestResource(UserManager userManager,
                         TransactionTemplate transactionTemplate) {
         this.userManager = userManager;
-        this.pluginSettingsFactory = pluginSettingsFactory;
         this.transactionTemplate = transactionTemplate;
-        ConfigService.instance().setPluginSettings(pluginSettingsFactory.createGlobalSettings());
     }
 
     @XmlRootElement
@@ -110,191 +108,7 @@ public class RestResource {
         }
     }
 
-//    @XmlRootElement
-//    @XmlAccessorType(XmlAccessType.FIELD)
-//    public static final class ConfigParams {
-//        @XmlElement private String list1;
-//        @XmlElement private String list2;
-//        @XmlElement private String list3;
-//        @XmlElement private String list4;
-//        @XmlElement private String style1;
-//        @XmlElement private String style2;
-//        @XmlElement private String style3;
-//        @XmlElement private String style4;
-//
-//        @XmlElement private String text1;
-//        @XmlElement private String text2;
-//        @XmlElement private String text3;
-//        @XmlElement private String text4;
-//
-//        @XmlElement private String color1;
-//        @XmlElement private String color2;
-//        @XmlElement private String color3;
-//        @XmlElement private String color4;
-//
-//        @XmlElement private String viewers;
-//
-//        public String getList1() {
-//            return list1;
-//        }
-//        public ConfigParams setList1(String value) {
-//            this.list1 = value;
-//            return this;
-//        }
-//        public String getList2() {
-//            return list2;
-//        }
-//        public ConfigParams setList2(String value) {
-//            this.list2 = value;
-//            return this;
-//        }
-//        public String getList3() {
-//            return list3;
-//        }
-//        public ConfigParams setList3(String value) {
-//            this.list3 = value;
-//            return this;
-//        }
-//        public String getList4() {
-//            return list4;
-//        }
-//        public ConfigParams setList4(String value) {
-//            this.list4 = value;
-//            return this;
-//        }
-//
-//        public String getStyle1() {
-//            return style1;
-//        }
-//        public ConfigParams setStyle1(String value) {
-//            this.style1 = value;
-//            return this;
-//        }
-//        public String getStyle2() {
-//            return style2;
-//        }
-//        public ConfigParams setStyle2(String value) {
-//            this.style2 = value;
-//            return this;
-//        }
-//        public String getStyle3() {
-//            return style3;
-//        }
-//        public ConfigParams setStyle3(String value) {
-//            this.style3 = value;
-//            return this;
-//        }
-//        public String getStyle4() {
-//            return style4;
-//        }
-//        public ConfigParams setStyle4(String value) {
-//            this.style4 = value;
-//            return this;
-//        }
-//
-//        public String getText1() {
-//            return text1;
-//        }
-//        public ConfigParams setText1(String value) {
-//            this.text1 = value;
-//            return this;
-//        }
-//        public String getText2() {
-//            return text2;
-//        }
-//        public ConfigParams setText2(String value) {
-//            this.text2 = value;
-//            return this;
-//        }
-//        public String getText3() {
-//            return text3;
-//        }
-//        public ConfigParams setText3(String value) {
-//            this.text3 = value;
-//            return this;
-//        }
-//        public String getText4() {
-//            return text4;
-//        }
-//        public ConfigParams setText4(String value) {
-//            this.text4 = value;
-//            return this;
-//        }
-//
-//        public String getColor1() {
-//            return color1;
-//        }
-//        public ConfigParams setColor1(String value) {
-//            this.color1 = value;
-//            return this;
-//        }
-//        public String getColor2() {
-//            return color2;
-//        }
-//        public ConfigParams setColor2(String value) {
-//            this.color2 = value;
-//            return this;
-//        }
-//        public String getColor3() {
-//            return color3;
-//        }
-//        public ConfigParams setColor3(String value) {
-//            this.color3 = value;
-//            return this;
-//        }
-//        public String getColor4() {
-//            return color4;
-//        }
-//        public ConfigParams setColor4(String value) {
-//            this.color4 = value;
-//            return this;
-//        }
-//
-//        public String getViewers() {
-//            return viewers;
-//        }
-//        public ConfigParams setViewers(String value) {
-//            this.viewers = value;
-//            return this;
-//        }
-//
-//        public String toString() {
-//            return new StringBuilder()
-//                .append("#1 ").append(list1).append(" : ").append(style1).append(" : ").append(text1).append(" : ").append(color1).append("\n")
-//                .append("#2 ").append(list2).append(" : ").append(style2).append(" : ").append(text2).append(" : ").append(color2).append("\n")
-//                .append("#3 ").append(list3).append(" : ").append(style3).append(" : ").append(text3).append(" : ").append(color3).append("\n")
-//                .append("#4 ").append(list4).append(" : ").append(style4).append(" : ").append(text4).append(" : ").append(color4).append("\n")
-//                .append("#V ").append(viewers).append("\n")
-//                .toString()
-//            ;
-//        }
-//        public ConfigParams log(String prefix) {
-//            System.out.println(prefix + this);
-//            return this;
-//        }
-//    }
-//
-//    @XmlRootElement
-//    @XmlAccessorType(XmlAccessType.FIELD)
-//    public static final class ColorParams {
-//        @XmlElement private String color;
-//        public String getColor() {
-//            return color;
-//        }
-//        public ColorParams setColor(String color) {
-//            this.color = color;
-//            return this;
-//        }
-//        public String toString() {
-//            return "color: " + color;
-//        }
-//        public ColorParams log(String prefix) {
-//            System.out.println(prefix + this);
-//            return this;
-//        }
-//    }
-
-    /*
+/*
     @GET
     @Path("/admin")
     @Produces(MediaType.APPLICATION_JSON)
@@ -309,7 +123,7 @@ public class RestResource {
 //            .log("~~~ prepared configuration: ")
         )).build();
     }
-    */
+*/
 
     @PUT
     @Path("/admin")

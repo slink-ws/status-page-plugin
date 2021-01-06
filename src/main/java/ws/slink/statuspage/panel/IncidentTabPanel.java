@@ -14,7 +14,8 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
     @Override
     public boolean showPanel(ShowPanelRequest showPanelRequest) {
-        return JiraTools.isIncidentManager(showPanelRequest.issue().getProjectObject().getKey(), showPanelRequest.remoteUser())
+        return JiraTools.isIncidentsEnabled(showPanelRequest.issue().getProjectId())
+            && JiraTools.isIncidentManager(showPanelRequest.issue().getProjectId(), showPanelRequest.remoteUser())
             && JiraTools.isIncidentExists(showPanelRequest.issue())
         ;
     }

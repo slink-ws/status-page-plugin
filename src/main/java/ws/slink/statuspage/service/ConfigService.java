@@ -67,11 +67,16 @@ public class ConfigService {
     }
 
     private List<String> getListParam(String param) {
-        String value = (String) pluginSettings.get(CONFIG_PREFIX + "." + param);
-        if (StringUtils.isBlank(value))
+        try {
+            Object value = pluginSettings.get(CONFIG_PREFIX + "." + param);
+            if (null == value || StringUtils.isBlank(value.toString())) {
+                return Collections.EMPTY_LIST;
+            } else {
+                return Arrays.stream(value.toString().split(",")).map(s -> s.trim()).collect(Collectors.toList());
+            }
+        } catch (Exception e) {
             return Collections.EMPTY_LIST;
-        else
-            return Arrays.stream(value.split(",")).map(s -> s.trim()).collect(Collectors.toList());
+        }
     }
     private String getParam(String param) {
         String value = (String) pluginSettings.get(CONFIG_PREFIX + "." + param);

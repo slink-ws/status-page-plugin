@@ -7,7 +7,6 @@ import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.auth.LoginUriProvider;
-import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
 import ws.slink.statuspage.service.ConfigService;
@@ -30,15 +29,12 @@ public class ConfigServlet extends HttpServlet {
     @ComponentImport private final UserManager userManager;
     @ComponentImport private final TemplateRenderer renderer;
     @ComponentImport private final LoginUriProvider loginUriProvider;
-    @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
 
     @Inject
-    public ConfigServlet(UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer renderer, PluginSettingsFactory pluginSettingsFactory) {
+    public ConfigServlet(UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer renderer) {
         this.userManager = userManager;
         this.loginUriProvider = loginUriProvider;
         this.renderer = renderer;
-        this.pluginSettingsFactory = pluginSettingsFactory;
-        ConfigService.instance().setPluginSettings(pluginSettingsFactory.createGlobalSettings());
     }
 
     @Override
@@ -52,17 +48,15 @@ public class ConfigServlet extends HttpServlet {
                 contextParams.put("projectId", project.getId());
             }
 
-            Collection<String> selectedMgmtRolesParam = ConfigService.instance().getConfigMgmtRoles(project.getKey());
-            Collection<String> selectedViewRolesParam = ConfigService.instance().getConfigViewRoles(project.getKey());
+            Collection<String> selectedMgmtRolesParam  = ConfigService.instance().getConfigMgmtRoles(project.getKey());
+            Collection<String> selectedViewRolesParam  = ConfigService.instance().getConfigViewRoles(project.getKey());
 
-            ProjectRoleManager projectRoleManager    = ComponentManager.getComponentInstanceOfType(ProjectRoleManager.class);
-            Collection<ProjectRole> allProjectRoles  = projectRoleManager.getProjectRoles();
-
-            Collection<ProjectRole> selectedMgmtRoles    = allProjectRoles.stream().filter(p ->  selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
-            Collection<ProjectRole> availableMgmtRoles   = allProjectRoles.stream().filter(p -> !selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
-
-            Collection<ProjectRole> selectedViewRoles    = allProjectRoles.stream().filter(p ->  selectedViewRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
-            Collection<ProjectRole> availableViewRoles   = allProjectRoles.stream().filter(p -> !selectedViewRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
+            ProjectRoleManager projectRoleManager      = ComponentManager.getComponentInstanceOfType(ProjectRoleManager.class);
+            Collection<ProjectRole> allProjectRoles    = projectRoleManager.getProjectRoles();
+            Collection<ProjectRole> selectedMgmtRoles  = allProjectRoles.stream().filter(p ->  selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
+            Collection<ProjectRole> availableMgmtRoles = allProjectRoles.stream().filter(p -> !selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
+            Collection<ProjectRole> selectedViewRoles  = allProjectRoles.stream().filter(p ->  selectedViewRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
+            Collection<ProjectRole> availableViewRoles = allProjectRoles.stream().filter(p -> !selectedViewRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
 
             contextParams.put("availableMgmtRoles", availableMgmtRoles);
             contextParams.put("selectedMgmtRoles" , selectedMgmtRoles);
