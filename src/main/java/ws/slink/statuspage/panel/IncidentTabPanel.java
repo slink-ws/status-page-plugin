@@ -22,6 +22,6 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
     @Override
     public List<IssueAction> getActions(GetActionsRequest getActionsRequest) {
-        return Collections.singletonList(new GenericMessageAction("This is a message brought to you by the My Issue Tab Panel"));
+        return Collections.singletonList(new GenericMessageAction("incident tab details"));
     }
 }

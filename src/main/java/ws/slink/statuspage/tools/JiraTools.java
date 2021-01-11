@@ -77,7 +77,7 @@ public class JiraTools {
     }
 
     public static boolean isIncidentExists(Issue issue) {
-        return true;
+        return false;
     }
 
     public static boolean isIncidentsEnabled(Project project) {
