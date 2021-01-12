@@ -17,21 +17,18 @@ public class StatuspagePluginComponentImpl implements StatuspagePluginComponent 
         @ComponentImport private final ApplicationProperties applicationProperties;
         @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
 
-        @Inject
-        public StatuspagePluginComponentImpl(final ApplicationProperties applicationProperties, final PluginSettingsFactory pluginSettingsFactory)
-    {
+    @Inject
+    public StatuspagePluginComponentImpl(final ApplicationProperties applicationProperties, final PluginSettingsFactory pluginSettingsFactory) {
+        System.out.println("---- created component");
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
         ConfigService.instance().setPluginSettings(pluginSettingsFactory.createGlobalSettings());
     }
 
-    public String getName()
-    {
-        if(null != applicationProperties)
-        {
+    public String getName() {
+        if(null != applicationProperties) {
             return "statuspageComponent:" + applicationProperties.getDisplayName();
         }
-        
         return "statuspageComponent";
     }
 }

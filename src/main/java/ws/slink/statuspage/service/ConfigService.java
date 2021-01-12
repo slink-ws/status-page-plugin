@@ -27,7 +27,9 @@ public class ConfigService {
 
     private PluginSettings pluginSettings;
 
-    private ConfigService(){}
+    private ConfigService() {
+        System.out.println("---- created config service");
+    }
 
     public void setPluginSettings(PluginSettings pluginSettings) {
         if (null == this.pluginSettings)

@@ -63,6 +63,8 @@
 
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~ incident buttons ~~~~~~~~~~~~~~~~~~~~ -->
+  <!-- https://developer.atlassian.com/server/jira/platform/issue-view-ui-locations/ -->
+  <!-- https://developer.atlassian.com/server/jira/platform/web-section/ -->
   <web-section key="sp-incident-button-section" name="Incident" location="opsbar-operations" weight="1000">
     <label key="sp-incident-button-section.label" />
     <conditions type="AND" >

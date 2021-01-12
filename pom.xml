@@ -60,6 +60,12 @@
             <scope>provided</scope>
         </dependency> <!-- javax.inject -->
 
+<!--        <dependency>-->
+<!--            <groupId>ws.slink</groupId>-->
+<!--            <artifactId>atlassian-status-page-java-api</artifactId>-->
+<!--            <version>0.0.2-SNAPSHOT</version>-->
+<!--        </dependency> &lt;!&ndash; atlassian-status-page-java-api &ndash;&gt;-->
+
         <!-- WIRED TEST RUNNER DEPENDENCIES -->
         <dependency>
             <groupId>com.atlassian.plugins</groupId>

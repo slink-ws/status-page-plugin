@@ -7,6 +7,7 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import ws.slink.statuspage.service.ConfigService;
+import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
 
 import javax.inject.Inject;
@@ -108,6 +109,52 @@ public class RestResource {
         }
     }
 
+    @PUT
+    @Path("/admin")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putAdminParams(final AdminParams config, @Context HttpServletRequest request) {
+        UserKey userKey = userManager.getRemoteUser().getUserKey();
+        if (userKey == null || !userManager.isSystemAdmin(userKey)) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        transactionTemplate.execute((TransactionCallback) () -> {
+//            config.log("~~~ received configuration: ");
+            ConfigService.instance().setAdminProjects(config.getProjects());
+            ConfigService.instance().setAdminRoles(config.getRoles());
+            StatuspageService.instance().clear();
+            ConfigService.instance().getAdminProjects().stream().forEach(p ->
+                StatuspageService.instance().init(ConfigService.instance().getConfigApiKey(p), p)
+            );
+            return null;
+        });
+
+        return Response.noContent().build();
+    }
+
+    @PUT
+    @Path("/config")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response putConfigParams(final ConfigParams config, @Context HttpServletRequest request) {
+        if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        transactionTemplate.execute((TransactionCallback) () -> {
+//            config.log("~~~ received plugin config: ");
+            ConfigService.instance().setConfigMgmtRoles(config.getProject(), config.getMgmtRoles());
+            ConfigService.instance().setConfigViewRoles(config.getProject(), config.getViewRoles());
+            ConfigService.instance().setConfigApiKey   (config.getProject(), config.getApikey());
+            StatuspageService.instance().clear();
+            ConfigService.instance().getAdminProjects().stream().forEach(p ->
+                StatuspageService.instance().init(ConfigService.instance().getConfigApiKey(p), p)
+            );
+            return null;
+        });
+        return Response.noContent().build();
+    }
+}
+
+
+
 /*
     @GET
     @Path("/admin")
@@ -125,39 +172,6 @@ public class RestResource {
     }
 */
 
-    @PUT
-    @Path("/admin")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response putAdminParams(final AdminParams config, @Context HttpServletRequest request) {
-        UserKey userKey = userManager.getRemoteUser().getUserKey();
-        if (userKey == null || !userManager.isSystemAdmin(userKey)) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        transactionTemplate.execute((TransactionCallback) () -> {
-//            config.log("~~~ received configuration: ");
-            ConfigService.instance().setAdminProjects(config.getProjects());
-            ConfigService.instance().setAdminRoles(config.getRoles());
-            return null;
-        });
-        return Response.noContent().build();
-    }
-
-    @PUT
-    @Path("/config")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response putConfigParams(final ConfigParams config, @Context HttpServletRequest request) {
-        if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        transactionTemplate.execute((TransactionCallback) () -> {
-//            config.log("~~~ received plugin config: ");
-            ConfigService.instance().setConfigMgmtRoles(config.getProject(), config.getMgmtRoles());
-            ConfigService.instance().setConfigViewRoles(config.getProject(), config.getViewRoles());
-            ConfigService.instance().setConfigApiKey   (config.getProject(), config.getApikey());
-            return null;
-        });
-        return Response.noContent().build();
-    }
 
     /*
     @GET
@@ -280,5 +294,3 @@ public class RestResource {
     }
 
      */
-}
-
