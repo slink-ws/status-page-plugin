@@ -1,20 +1,26 @@
 package ws.slink.statuspage.servlet;
 
+import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
+import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
+import ws.slink.statuspage.StatusPage;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
+import ws.slink.statuspage.type.IncidentStatus;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -22,6 +28,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Scanned
 @Path("/")
@@ -123,7 +131,7 @@ public class RestResource {
             ConfigService.instance().setAdminRoles(config.getRoles());
             StatuspageService.instance().clear();
             ConfigService.instance().getAdminProjects().stream().forEach(p ->
-                StatuspageService.instance().init(ConfigService.instance().getConfigApiKey(p), p)
+                StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
             );
             return null;
         });
@@ -145,152 +153,236 @@ public class RestResource {
             ConfigService.instance().setConfigApiKey   (config.getProject(), config.getApikey());
             StatuspageService.instance().clear();
             ConfigService.instance().getAdminProjects().stream().forEach(p ->
-                StatuspageService.instance().init(ConfigService.instance().getConfigApiKey(p), p)
+                StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
             );
             return null;
         });
         return Response.noContent().build();
     }
-}
 
-
-
-/*
     @GET
-    @Path("/admin")
+    @Path("/api/pages")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAdminParams(@Context HttpServletRequest request) {
-        UserKey userKey = userManager.getRemoteUser().getUserKey();
-        if (userKey == null || !userManager.isSystemAdmin(userKey)) {
+    public Response pages(
+        @QueryParam("issueKey") String issueKey,
+        @Context HttpServletRequest request) {
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.noContent().build();
+
+        if (!JiraTools.isIncidentManager(
+                project.get().getKey(),
+                ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
+            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        return Response.ok(transactionTemplate.execute((TransactionCallback) () -> new AdminParams()
-            .setProjects(ConfigService.instance().getProjects())
-            .setRoles(ConfigService.instance().getRoles())
-//            .log("~~~ prepared configuration: ")
-        )).build();
+
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
+
+        return Response.ok(new Gson().toJson(statusPage.get().pages())).build();
     }
-*/
 
-
-    /*
     @GET
-    @Path("/config/{projectKey}")
+    @Path("/api/components")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getConfigParams(@PathParam("projectKey") String projectKey, @Context HttpServletRequest request) {
-        if (!JiraTools.isPluginManager(userManager.getRemoteUser()))
+    public Response components(
+        @QueryParam("issueKey") String issueKey,
+        @QueryParam("pageId") String pageId,
+        @Context HttpServletRequest request) {
+
+        if (StringUtils.isBlank(pageId))
+            return Response.noContent().build();
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.noContent().build();
+
+        if (!JiraTools.isIncidentManager(
+                project.get().getKey(),
+                ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
+            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
-        else
-            return Response.ok(transactionTemplate.execute((TransactionCallback) () ->
-                new ConfigParams()
-                .setViewers(ConfigService.instance().getViewers(projectKey))
-                .setList1(ConfigService.instance().getList(projectKey, 1))
-                    .setStyle1(ConfigService.instance().getStyle(projectKey, 1))
-                        .setText1(ConfigService.instance().getText(projectKey, 1))
-                            .setColor1(ConfigService.instance().getColor(projectKey, 1))
-                .setList2(ConfigService.instance().getList(projectKey, 2))
-                    .setStyle2(ConfigService.instance().getStyle(projectKey, 2))
-                        .setText2(ConfigService.instance().getText(projectKey, 2))
-                            .setColor2(ConfigService.instance().getColor(projectKey, 2))
-                .setList3(ConfigService.instance().getList(projectKey, 3))
-                    .setStyle3(ConfigService.instance().getStyle(projectKey, 3))
-                        .setText3(ConfigService.instance().getText(projectKey, 3))
-                            .setColor3(ConfigService.instance().getColor(projectKey, 3))
-                .setList4(ConfigService.instance().getList(projectKey, 4))
-                    .setStyle4(ConfigService.instance().getStyle(projectKey, 4))
-                        .setText4(ConfigService.instance().getText(projectKey, 4))
-                            .setColor4(ConfigService.instance().getColor(projectKey, 4))
-//                .log("~~~ prepared configuration: \n")
+        }
+
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
+
+        return Response.ok(new Gson().toJson(statusPage.get().components(pageId))).build();
+    }
+
+    @GET
+    @Path("/api/groups")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response groups(
+        @QueryParam("issueKey") String issueKey,
+        @QueryParam("pageId") String pageId,
+        @Context HttpServletRequest request) {
+
+        if (StringUtils.isBlank(pageId))
+            return Response.noContent().build();
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.noContent().build();
+
+        if (!JiraTools.isIncidentManager(
+                project.get().getKey(),
+                ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
+            System.out.println("--- UNAUTHORIZED");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
+
+        return Response.ok(new Gson().toJson(statusPage.get().groups(pageId))).build();
+    }
+
+    @GET
+    @Path("/api/groupComponents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response groupComponents(
+        @QueryParam("issueKey") String issueKey,
+        @QueryParam("pageId") String pageId,
+        @QueryParam("groupId") String groupId,
+        @Context HttpServletRequest request) {
+
+        if (StringUtils.isBlank(pageId))
+            return Response.noContent().build();
+
+        if (StringUtils.isBlank(groupId))
+            return Response.noContent().build();
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.noContent().build();
+
+        if (!JiraTools.isIncidentManager(
+                project.get().getKey(),
+                ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
+            System.out.println("--- UNAUTHORIZED");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
+
+        return Response.ok(new Gson().toJson(statusPage.get().groupComponents(pageId, groupId))).build();
+    }
+
+    @GET
+    @Path("/api/nonGroupComponents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response nonGroupComponents(
+        @QueryParam("issueKey") String issueKey,
+        @QueryParam("pageId") String pageId,
+        @Context HttpServletRequest request) {
+
+        if (StringUtils.isBlank(pageId))
+            return Response.noContent().build();
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.noContent().build();
+
+        if (!JiraTools.isIncidentManager(
+                project.get().getKey(),
+                ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
+            System.out.println("--- UNAUTHORIZED");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
+
+        return Response.ok(new Gson().toJson(statusPage.get().nonGroupComponents(pageId))).build();
+    }
+
+    @GET
+    @Path("/api/incidents")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response incidents(
+        @QueryParam("issueKey") String issueKey,
+        @QueryParam("pageId") String pageId,
+        @DefaultValue("false") @QueryParam("activeOnly") boolean activeOnly,
+        @Context HttpServletRequest request) {
+
+        if (StringUtils.isBlank(pageId))
+            return Response.noContent().build();
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.noContent().build();
+
+        if (!JiraTools.isIncidentManager(
+                project.get().getKey(),
+                ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
+            System.out.println("--- UNAUTHORIZED");
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
+
+        if (activeOnly) {
+            return Response.ok(new Gson().toJson(
+                statusPage.get().incidents(pageId)
+                    .stream()
+                    .filter(
+                        i -> i.status() != IncidentStatus.RESOLVED
+                          && i.status() != IncidentStatus.COMPLETED
+                    ).collect(Collectors.toList())
             )).build();
+        } else {
+            return Response.ok(new Gson().toJson(statusPage.get().incidents(pageId))).build();
+        }
     }
 
-    @PUT
-    @Path("/config/{projectKey}")
+    @POST
+    @Path("/api/incident/link")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response putConfigParams(final ConfigParams config, @PathParam("projectKey") String projectKey, @Context HttpServletRequest request) {
-        if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
+    public Response linkIncident(
+            @QueryParam("issueKey") String issueKey,
+            @QueryParam("pageId") String pageId,
+            @QueryParam("incidentId") String incidentId,
+            @Context HttpServletRequest request) {
+
+        if (StringUtils.isBlank(issueKey))
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        if (StringUtils.isBlank(pageId))
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        if (StringUtils.isBlank(incidentId))
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        if (!project.isPresent())
+            return Response.status(Response.Status.BAD_REQUEST).build();
+
+        if (!JiraTools.isIncidentManager(
+            project.get().getKey(),
+            ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        transactionTemplate.execute((TransactionCallback) () -> {
-//            config.log("~~~ received configuration: \n");
-            ConfigService.instance().setList(projectKey,1, config.getList1());
-            ConfigService.instance().setList(projectKey,2, config.getList2());
-            ConfigService.instance().setList(projectKey,3, config.getList3());
-            ConfigService.instance().setList(projectKey,4, config.getList4());
 
-            ConfigService.instance().setStyle(projectKey,1, config.getStyle1());
-            ConfigService.instance().setStyle(projectKey,2, config.getStyle2());
-            ConfigService.instance().setStyle(projectKey,3, config.getStyle3());
-            ConfigService.instance().setStyle(projectKey,4, config.getStyle4());
+        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
+        if (!statusPage.isPresent())
+            return Response.noContent().build();
 
-            ConfigService.instance().setText(projectKey,1, config.getText1());
-            ConfigService.instance().setText(projectKey,2, config.getText2());
-            ConfigService.instance().setText(projectKey,3, config.getText3());
-            ConfigService.instance().setText(projectKey,4, config.getText4());
+        Optional<Issue> issue = JiraTools.getIssueByKey(issueKey);
+//        issue.get().getCustomFieldValue(CustomField)
 
-            ConfigService.instance().setColor(projectKey,1, config.getColor1());
-            ConfigService.instance().setColor(projectKey,2, config.getColor2());
-            ConfigService.instance().setColor(projectKey,3, config.getColor3());
-            ConfigService.instance().setColor(projectKey,4, config.getColor4());
-
-            ConfigService.instance().setViewers(projectKey, config.getViewers());
-
-            return null;
-        });
+//        return Response.ok(new Gson().toJson(statusPage.get().nonGroupComponents(pageId))).build();
         return Response.noContent().build();
     }
 
-    @GET
-    @Path("/color/{issueId}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getIssueColor(@PathParam("issueId") String issueId, @Context HttpServletRequest request) {
-//        System.out.print("color request for '" + issueId + "': ");
-        try {
-            ApplicationUser user = JiraTools.getLoggedInUser();
-            Issue issue = ComponentAccessor.getIssueManager().getIssueByCurrentKey(issueId); //((Issue) new JiraHelper().getContextParams().get("issue"));
-            if (null == user || null == issue) {
-                // System.out.println("none (1)");
-                return emptyResponse();
-            }
-
-//            System.out.println("~~~~~~ PROJECT: " + issue.getProjectObject().getKey()
-//                             + "; CONFIGURED PROJECTS: " + ConfigService.instance().projectsList()
-//                             + "; VIEWER '" + user.getName() + "': " + JiraTools.isViewer(issue.getProjectObject().getKey(), user)
-//            );
-
-            if (JiraTools.isViewer(issue.getProjectObject().getKey(), user) && ConfigService.instance().projectsList().contains(issue.getProjectObject().getKey())){
-                String reporterEmail = issue.getReporter().getEmailAddress();
-                String color = ConfigService.instance().getColor(issue.getProjectObject().getKey(), CustomerLevelService.getLevel(issue.getProjectObject().getKey(), reporterEmail));
-                if (StringUtils.isNotBlank(color)) {
-                    // System.out.println(color);
-                    return createColorResponse(color);
-                }
-                else {
-                    // System.out.println("none (2)");
-                    return emptyResponse();
-                }
-            } else {
-                // System.out.println("none (3)");
-                return emptyResponse();
-            }
-        } catch (Exception e) {
-            // System.out.println("error: " + e.getClass().getName() + " : " + e.getMessage());
-            return Response.serverError().build();
-        }
-    }
-
-    private Response createColorResponse(String color) {
-        return Response.ok(transactionTemplate.execute((TransactionCallback) () ->
-            new ColorParams()
-                .setColor(color
-                )
-//                .log("REST COLOR REQUEST: ~~~ prepared color: \n")
-            )
-        ).build();
-    }
-
-    private Response emptyResponse() {
-        return Response.noContent().build();
-    }
-
-     */
+}

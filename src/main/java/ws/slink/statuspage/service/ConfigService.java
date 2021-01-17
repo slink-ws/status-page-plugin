@@ -62,10 +62,13 @@ public class ConfigService {
         pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_VIEW_ROLES + "." + projectKey, roles);
     }
     public String getConfigApiKey(String projectKey) {
-        return getParam(CONFIG_API_KEY + "." + projectKey);
+        String value = getParam(CONFIG_API_KEY + "." + projectKey);
+        return value;
     }
     public void setConfigApiKey(String projectKey, String value) {
-        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_API_KEY + "." + projectKey, value);
+        String key = CONFIG_PREFIX + "." + CONFIG_API_KEY + "." + projectKey;
+        System.out.println("--- SET " + key + " : " + value);
+        pluginSettings.put(key, value);
     }
 
     private List<String> getListParam(String param) {
@@ -81,11 +84,13 @@ public class ConfigService {
         }
     }
     private String getParam(String param) {
-        String value = (String) pluginSettings.get(CONFIG_PREFIX + "." + param);
+        String key = CONFIG_PREFIX + "." + param;
+        String value = (String) pluginSettings.get(key);
+        System.out.println("--- GET " + key + " : " + value);
         if (StringUtils.isBlank(value))
-            return value;
-        else
             return "";
+        else
+            return value;
     }
 
 /*

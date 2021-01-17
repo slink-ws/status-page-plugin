@@ -9,12 +9,10 @@ import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.sal.api.user.UserProfile;
+import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.service.ConfigService;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JiraTools {
@@ -131,6 +129,19 @@ public class JiraTools {
     public static ApplicationUser getLoggedInUser() {
         JiraAuthenticationContext jiraAuthenticationContext = ComponentAccessor.getJiraAuthenticationContext();
         return jiraAuthenticationContext.getLoggedInUser();
+    }
+    public static Optional<Project> getProjectForIssue(String issueKey) {
+        if (StringUtils.isBlank(issueKey))
+            return Optional.empty();
+        Issue issue = ComponentAccessor.getIssueManager().getIssueByCurrentKey(issueKey);
+        if (null == issue)
+            return Optional.empty();
+        return Optional.ofNullable(JiraTools.getProjectById(issue.getProjectId()));
+    }
+    public static Optional<Issue> getIssueByKey(String issueKey) {
+        if (StringUtils.isBlank(issueKey))
+            return Optional.empty();
+        return Optional.ofNullable(ComponentAccessor.getIssueManager().getIssueByCurrentKey(issueKey));
     }
 
 }

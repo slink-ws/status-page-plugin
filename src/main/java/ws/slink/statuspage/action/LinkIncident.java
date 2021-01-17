@@ -1,10 +1,14 @@
 package ws.slink.statuspage.action;
 
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
 
 // https://developer.atlassian.com/server/jira/platform/creating-an-ajax-dialog/
 
 public class LinkIncident extends AbstractIssueSelectAction {
+
+//    private String     page = "";
+//    private String incident = "";
 
     @Override
     public String doDefault() throws Exception {
@@ -13,7 +17,15 @@ public class LinkIncident extends AbstractIssueSelectAction {
 
     @Override
     protected void doValidation() {
-//        for (String username : watcherUserNames)
+//        ApplicationUser user = this.getLoggedInUser();
+
+//        System.out.println("---     page: " + page);
+//        System.out.println("--- incident: " + incident);
+
+
+        // TODO: validate incident form here
+
+        //        for (String username : watcherUserNames)
 //        {
 //            username = username.trim();
 //
@@ -23,10 +35,9 @@ public class LinkIncident extends AbstractIssueSelectAction {
 //            }
 //            else
 //            {
-//                addErrorMessage(beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user", username));
+//                addErrorMessage(/*beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user")*/"error");
 //            }
 //        }
-        // TODO: validate incident form here
     }
 
     @Override
@@ -35,7 +46,10 @@ public class LinkIncident extends AbstractIssueSelectAction {
 //        {
 //            watcherManager.startWatching(UserUtils.getUser(validUsername), getIssueObject());
 //        }
-        // TODO: create incident here
+        // TODO: link incident here
+        // ...
+        // ...
+
         return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
     }
 

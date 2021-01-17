@@ -12,8 +12,21 @@
     <name>status-page-plugin</name>
     <description>This is the ws.slink:status-page-plugin plugin for Atlassian JIRA.</description>
     <packaging>atlassian-plugin</packaging>
-    <dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- https://github.com/FasterXML/jackson-bom -->
+<!--            <dependency>-->
+<!--                <groupId>com.fasterxml.jackson</groupId>-->
+<!--                <artifactId>jackson-bom</artifactId>-->
+<!--                <version>2.12.0</version>-->
+<!--                <scope>import</scope>-->
+<!--                <type>pom</type>-->
+<!--            </dependency>-->
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
         <dependency>
             <groupId>com.atlassian.templaterenderer</groupId>
             <artifactId>atlassian-template-renderer-api</artifactId>
@@ -26,7 +39,6 @@
             <version>2.1</version>
             <scope>provided</scope>
         </dependency> <!-- jaxb-api -->
-
         <dependency>
             <groupId>com.atlassian.jira</groupId>
             <artifactId>jira-api</artifactId>
@@ -59,12 +71,12 @@
             <version>1</version>
             <scope>provided</scope>
         </dependency> <!-- javax.inject -->
-
-<!--        <dependency>-->
-<!--            <groupId>ws.slink</groupId>-->
-<!--            <artifactId>atlassian-status-page-java-api</artifactId>-->
-<!--            <version>0.0.2-SNAPSHOT</version>-->
-<!--        </dependency> &lt;!&ndash; atlassian-status-page-java-api &ndash;&gt;-->
+        <dependency>
+            <groupId>ws.slink</groupId>
+            <artifactId>atlassian-status-page-java-api-http-native</artifactId>
+            <version>0.0.2-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency> <!-- atlassian-status-page-java-api -->
 
         <!-- WIRED TEST RUNNER DEPENDENCIES -->
         <dependency>
@@ -79,11 +91,6 @@
             <version>1.1.1</version>
             <scope>provided</scope>
         </dependency> <!-- jsr311-api -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.2.2-atlassian-1</version>
-        </dependency> <!-- gson -->
 
         <!-- Uncomment to use TestKit in your project. Details at https://bitbucket.org/atlassian/jira-testkit -->
         <!-- You can read more about TestKit at https://developer.atlassian.com/display/JIRADEV/Plugin+Tutorial+-+Smarter+integration+testing+with+TestKit -->
@@ -146,6 +153,7 @@
                         <!-- Ensure plugin is spring powered -->
                         <Spring-Context>*</Spring-Context>
                     </instructions>
+                    <extractDependencies>false</extractDependencies>
                 </configuration>
             </plugin>
             <plugin>

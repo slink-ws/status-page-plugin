@@ -6,6 +6,7 @@ import com.atlassian.sal.api.ApplicationProperties;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
 import ws.slink.statuspage.api.StatuspagePluginComponent;
 import ws.slink.statuspage.service.ConfigService;
+import ws.slink.statuspage.service.StatuspageService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,6 +24,10 @@ public class StatuspagePluginComponentImpl implements StatuspagePluginComponent 
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
         ConfigService.instance().setPluginSettings(pluginSettingsFactory.createGlobalSettings());
+        StatuspageService.instance().clear();
+        ConfigService.instance().getAdminProjects().stream().forEach(p ->
+            StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
+        );
     }
 
     public String getName() {
