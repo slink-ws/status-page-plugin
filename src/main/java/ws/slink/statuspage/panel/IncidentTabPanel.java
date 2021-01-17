@@ -22,6 +22,7 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
     @Override
     public List<IssueAction> getActions(GetActionsRequest getActionsRequest) {
+        // https://stackoverflow.com/questions/30429303/how-do-i-render-a-velocity-template-inside-a-issue-tab-panel
         return Collections.singletonList(new GenericMessageAction("incident tab details"));
     }
 }

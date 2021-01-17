@@ -1,5 +1,7 @@
 package ws.slink.statuspage.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.time.LocalDateTime;
 
 public class IssueIncident {
@@ -11,6 +13,7 @@ public class IssueIncident {
     private LocalDateTime createdAt;
     private LocalDateTime linkedAt;
 
+    @Expose(serialize = false, deserialize = false)
     private Incident incident;
 
     public void sync() {

@@ -16,9 +16,7 @@
         <div style="width: 100%; overflow: hidden;">
 
             <div style="width: 250px; float: left">
-                <div class="label-css">
-                    $i18n.getText('sp.admin.available-projects')
-                </div>
+                <label for="available-projects">$i18n.getText('sp.admin.available-projects')</label>
                 <select id="available-projects" class="select select-css" size="10" multiple>
                     #foreach($project in $availableProjects)
                         <option value="$project.getKey()">$project.getName()</option>
@@ -36,9 +34,7 @@
             </div>
 
             <div style="width: 250px; float: left;">
-                <div class="label-css">
-                    $i18n.getText('sp.admin.selected-projects')
-                </div>
+                <label for="selected-projects">$i18n.getText('sp.admin.selected-projects')</label>
                 <select id="selected-projects" class="select select-css" size="10" multiple>
                     #foreach($project in $selectedProjects)
                         <option value="$project.getKey()">$project.getName()</option>
@@ -51,9 +47,7 @@
         <div style="width: 100%; overflow: hidden;">
 
             <div style="width: 250px; float: left">
-                <div class="label-css">
-                    $i18n.getText('sp.admin.available-roles')
-                </div>
+                <label for="available-roles">$i18n.getText('sp.admin.available-roles')</label>
                 <select id="available-roles" class="select select-css" size="10" multiple>
                     #foreach($role in $availableRoles)
                         <option value="$role.getId()">$role.getName()</option>
@@ -71,9 +65,7 @@
             </div>
 
             <div style="width: 250px; float: left;">
-                <div class="label-css">
-                    $i18n.getText('sp.admin.selected-roles')
-                </div>
+                <label for="selected-roles">$i18n.getText('sp.admin.selected-roles')</label>
                 <select id="selected-roles" class="select select-css" size="10" multiple>
                     #foreach($role in $selectedRoles)
                         <option value="$role.getId()">$role.getName()</option>
@@ -81,6 +73,12 @@
                 </select>
             </div>
         </div>
+
+        <div style="width: 100%; overflow: hidden; padding-top: 1em;">
+            <label for="custom-field-id">$i18n.getText('sp.admin.custom-field-id')</label>
+            <input id="custom-field-id" type="text" size="40" value="$customFieldId" />
+        </div>
+
 
         <div style="width: 100%; overflow: hidden; padding-top: 1em;">
             <div style="width: 250px; float: left">&nbsp;</div>

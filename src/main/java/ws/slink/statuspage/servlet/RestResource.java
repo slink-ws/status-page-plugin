@@ -1,8 +1,6 @@
 package ws.slink.statuspage.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -14,6 +12,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.StatusPage;
 import ws.slink.statuspage.service.ConfigService;
+import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
 import ws.slink.statuspage.type.IncidentStatus;
@@ -29,6 +28,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Scanned
@@ -50,6 +51,7 @@ public class RestResource {
     public static final class AdminParams {
         @XmlElement private String projects;
         @XmlElement private String roles;
+        @XmlElement private String custom_field;
         public String getProjects() {
             return projects;
         }
@@ -64,8 +66,15 @@ public class RestResource {
             this.roles = roles;
             return this;
         }
+        public String getCustomFieldId() {
+            return custom_field;
+        }
+        public AdminParams setCustomFieldId(String value) {
+            this.custom_field = value;
+            return this;
+        }
         public String toString() {
-            return projects + " : " + roles;
+            return projects + " : " + roles + " : " + custom_field;
         }
         public AdminParams log(String prefix) {
             System.out.println(prefix + this);
@@ -125,18 +134,119 @@ public class RestResource {
         if (userKey == null || !userManager.isSystemAdmin(userKey)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
+
+        AtomicBoolean saveResult = new AtomicBoolean(true);
+        AtomicReference<String> message    = new AtomicReference<>("");
+
         transactionTemplate.execute((TransactionCallback) () -> {
 //            config.log("~~~ received configuration: ");
-            ConfigService.instance().setAdminProjects(config.getProjects());
-            ConfigService.instance().setAdminRoles(config.getRoles());
-            StatuspageService.instance().clear();
-            ConfigService.instance().getAdminProjects().stream().forEach(p ->
-                StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
-            );
+
+            if (CustomFieldService.instance().isExists(config.getCustomFieldId())) {
+                if (CustomFieldService.instance().isCorrectType(config.getCustomFieldId(), CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY)) {
+                    System.out.println("custom field exists; just save");
+                } else {
+                    saveResult.set(false);
+                    message.set("incorrect type-key for custom field '" + config.getCustomFieldId() + "': " +
+                        CustomFieldService.instance().get(config.getCustomFieldId()).getCustomFieldType().getKey());
+                }
+            } else {
+                System.out.println("custom field does not exist; create custom field & save");
+                if (!CustomFieldService.instance().create(
+                    config.getCustomFieldId(),
+                    CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY,
+                    CustomFieldService.INCIDENT_CUSTOM_FIELD_DESCRIPTION
+                )) {
+                    saveResult.set(false);
+                    message.set("could not create custom field '" + config.getCustomFieldId() + "'");
+                };
+            }
+
+            if (saveResult.get()) {
+                ConfigService.instance().setAdminProjects(config.getProjects());
+                ConfigService.instance().setAdminRoles(config.getRoles());
+                ConfigService.instance().setAdminCustomFieldId(config.getCustomFieldId());
+                StatuspageService.instance().clear();
+                ConfigService.instance().getAdminProjects().stream().forEach(p ->
+                    StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
+                );
+            }
+
+/*
+            System.out.println("--- available custom fields ----------------------");
+            ComponentAccessor.getComponent(CustomFieldManager.class)
+                .getCustomFieldObjects()
+                .stream()
+                .map(CustomField::getName)
+                .forEach(System.out::println)
+            ;
+            System.out.println("--------------------------------------------------");
+            Optional<CustomField> existingIncidentCustomField =
+                ComponentAccessor
+                    .getComponent(CustomFieldManager.class)
+                    .getCustomFieldObjectsByName(ConfigService.instance().getAdminCustomFieldId())
+                    .stream()
+                    .filter(cf -> cf.getFieldName().equals(ConfigService.instance().getAdminCustomFieldId()))
+                    .findAny();
+            if (existingIncidentCustomField.isPresent()) {
+                System.out.println(
+                    "found custom field with name " +
+                    ConfigService.instance().getAdminCustomFieldId() +
+                    " of type '" +
+                    existingIncidentCustomField.get().getCustomFieldType().getName() +
+                    "'"
+                );
+                System.out.println("type key         :" + existingIncidentCustomField.get().getCustomFieldType().getKey());
+                System.out.println("type cit         :" +
+                    existingIncidentCustomField.get().getCustomFieldType().getConfigurationItemTypes());
+                System.out.println("type name        :" + existingIncidentCustomField.get().getCustomFieldType().getName());
+                System.out.println("type description :" + existingIncidentCustomField.get().getCustomFieldType().getDescription());
+                System.out.println("type descriptor  :" + existingIncidentCustomField.get().getCustomFieldType().getDescriptor());
+            } else {
+                System.out.println("not found custom field with name " + ConfigService.instance().getAdminCustomFieldId());
+            }
+            System.out.println("--------------------------------------------------");
+*/
+//            status-page-incident
+
+//            CustomFieldType cft =  ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType("status-page-incident");
+//                .getCustomFieldType("ws.slink.statuspage.customfield:incidentcustomfield");
+//            System.out.println("custom field type: " + cft);
+
+//            ComponentAccessor.getComponent(CustomFieldManager.class)
+//                .createCustomField("incident", "statuspage incident assigned to the issue", IncidentCustomField.class, null, null, null)
+
+//            CustomFieldUtils.
+
+//            FieldConfigScheme newConfigScheme = new FieldConfigScheme.Builder()
+//                .setName("incident")
+//                .setDescription("statuspage incident assigned to the issue")
+//                .setFieldId(ConfigService.instance().getAdminCustomFieldId())
+//                .toFieldConfigScheme()
+//            ;
+//
+//            System.out.println("   id:" + newConfigScheme.getId());
+//            System.out.println(" name:" + newConfigScheme.getName());
+//            System.out.println("descr:" + newConfigScheme.getDescription());
+//            System.out.println("  cfg:" + newConfigScheme.getOneAndOnlyConfig());
+
+//            System.out.println(new Gson().toJson(newConfigScheme));
+
+
+//            ComponentAccessor.getComponent(FieldConfigSchemeManager.class)
+//                .getConfigSchemesForField(newConfigScheme.getField())
+//                .stream()
+//                .map(cs -> cs.getName())
+//                .forEach(System.out::println)
+//            ;
+//                    .createFieldConfigScheme(newConfigScheme, contexts, issueTypes, field);
             return null;
         });
 
-        return Response.noContent().build();
+        if (saveResult.get()) {
+            return Response.noContent().build();
+        } else {
+            return Response.status(400).entity(message.get()).build();
+        }
     }
 
     @PUT
@@ -346,6 +456,7 @@ public class RestResource {
         }
     }
 
+    /*
     @POST
     @Path("/api/incident/link")
     @Consumes(MediaType.APPLICATION_JSON)
@@ -379,10 +490,16 @@ public class RestResource {
             return Response.noContent().build();
 
         Optional<Issue> issue = JiraTools.getIssueByKey(issueKey);
+
+        System.out.println("--- link incident:      issue - " + issue);
+        System.out.println("--- link incident:     pageId - " + pageId);
+        System.out.println("--- link incident: incidentId - " + incidentId);
+
 //        issue.get().getCustomFieldValue(CustomField)
 
 //        return Response.ok(new Gson().toJson(statusPage.get().nonGroupComponents(pageId))).build();
         return Response.noContent().build();
     }
+    */
 
 }

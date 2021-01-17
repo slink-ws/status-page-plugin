@@ -2,7 +2,9 @@ package ws.slink.statuspage.service;
 
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.StatusPage;
+import ws.slink.statuspage.model.Incident;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,5 +44,4 @@ public class StatuspageService {
     public Optional<StatusPage> get(String projectKey) {
         return Optional.ofNullable(statusPages.get(projectKey));
     }
-
 }
