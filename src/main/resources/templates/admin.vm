@@ -75,8 +75,8 @@
         </div>
 
         <div style="width: 100%; overflow: hidden; padding-top: 1em;">
-            <label for="custom-field-id">$i18n.getText('sp.admin.custom-field-id')</label>
-            <input id="custom-field-id" type="text" size="40" value="$customFieldId" />
+            <label for="custom-field-name">$i18n.getText('sp.admin.custom-field-name')</label>
+            <input id="custom-field-name" type="text" size="40" value="$customFieldName" />
         </div>
 
 

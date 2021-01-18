@@ -18,15 +18,15 @@ public class ConfigService {
         return PluginConfigServiceSingleton.INSTANCE;
     }
 
-    public static final String CONFIG_PREFIX                = "ws.slink.status-page-plugin";
-    public static final String CONFIG_ADMIN_PROJECTS        = "admin.projects";
-    public static final String CONFIG_ADMIN_ROLES           = "admin.roles";
-    public static final String CONFIG_ADMIN_CUSTOM_FIELD_ID = "admin.custom_field_id";
-    public static final String CONFIG_MGMT_ROLES            = "config.mgmt.roles";
-    public static final String CONFIG_VIEW_ROLES            = "config.view.roles";
-    public static final String CONFIG_API_KEY               = "config.api.key";
+    public static final String CONFIG_PREFIX                  = "ws.slink.status-page-plugin";
+    public static final String CONFIG_ADMIN_PROJECTS          = "admin.projects";
+    public static final String CONFIG_ADMIN_ROLES             = "admin.roles";
+    public static final String CONFIG_ADMIN_CUSTOM_FIELD_NAME = "admin.custom_field_name";
+    public static final String CONFIG_MGMT_ROLES              = "config.mgmt.roles";
+    public static final String CONFIG_VIEW_ROLES              = "config.view.roles";
+    public static final String CONFIG_API_KEY                 = "config.api.key";
 
-    private static final String DEFAULT_CUSTOM_FIELD_ID     = "status-page-incident";
+    private static final String DEFAULT_CUSTOM_FIELD_ID       = "status-page-incident";
 
     private PluginSettings pluginSettings;
 
@@ -51,15 +51,15 @@ public class ConfigService {
     public void setAdminRoles(String roles) {
         pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_ADMIN_ROLES, roles);
     }
-    public String getAdminCustomFieldId() {
-        String result = getParam(CONFIG_ADMIN_CUSTOM_FIELD_ID);
+    public String getAdminCustomFieldName() {
+        String result = getParam(CONFIG_ADMIN_CUSTOM_FIELD_NAME);
         if (StringUtils.isBlank(result))
             return DEFAULT_CUSTOM_FIELD_ID;
         else
             return result;
     }
-    public void setAdminCustomFieldId(String value) {
-        String key = CONFIG_PREFIX + "." + CONFIG_ADMIN_CUSTOM_FIELD_ID;
+    public void setAdminCustomFieldName(String value) {
+        String key = CONFIG_PREFIX + "." + CONFIG_ADMIN_CUSTOM_FIELD_NAME;
         System.out.println("--- SET " + key + " : " + value);
         pluginSettings.put(key, value);
     }

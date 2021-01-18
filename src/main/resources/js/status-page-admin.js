@@ -65,9 +65,9 @@ function admin_remove_all_roles() {
 
 function admin_update_config() {
 
-    let projects = get_select_values_string("selected-projects");
-    let roles    = get_select_values_string("selected-roles");
-    let field_id = AJS.$("#custom-field-id")[0].value;
+    let projects   = get_select_values_string("selected-projects");
+    let roles      = get_select_values_string("selected-roles");
+    let field_name = AJS.$("#custom-field-name")[0].value;
 
     // console.log("~~~ SAVING CONFIGURATION:");
     // console.log("       projects: " + projects);
@@ -78,7 +78,7 @@ function admin_update_config() {
         url: AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/admin",
         type: "PUT",
         contentType: "application/json",
-        data: '{ "projects": "' + projects + '", "roles": "' +  roles + '", "custom_field": "' + field_id + '"}',
+        data: '{ "projects": "' + projects + '", "roles": "' +  roles + '", "custom_field": "' + field_name + '"}',
         processData: false
     }).done(function () {
         JIRA.Messages.showSuccessMsg("configuration saved")

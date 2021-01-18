@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -138,12 +138,20 @@ public class RestResource {
         AtomicBoolean saveResult = new AtomicBoolean(true);
         AtomicReference<String> message    = new AtomicReference<>("");
 
-        transactionTemplate.execute((TransactionCallback) () -> {
+        transactionTemplate.execute(/*(TransactionCallback)*/ () -> {
 //            config.log("~~~ received configuration: ");
 
-            if (CustomFieldService.instance().isExists(config.getCustomFieldId())) {
-                if (CustomFieldService.instance().isCorrectType(config.getCustomFieldId(), CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY)) {
-                    System.out.println("custom field exists; just save");
+            if (CustomFieldService.instance().exists(config.getCustomFieldId())) {
+                if (CustomFieldService.instance().correct(config.getCustomFieldId(), CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY)) {
+                    System.out.println("custom field exists; update custom field & save");
+                    if (!CustomFieldService.instance().update(
+                        config.getCustomFieldId(),
+                        getConfiguredProjects(config.getProjects())
+                    )) {
+                        saveResult.set(false);
+                        message.set("could not create custom field '" + config.getCustomFieldId() + "'");
+                    };
+
                 } else {
                     saveResult.set(false);
                     message.set("incorrect type-key for custom field '" + config.getCustomFieldId() + "': " +
@@ -154,7 +162,8 @@ public class RestResource {
                 if (!CustomFieldService.instance().create(
                     config.getCustomFieldId(),
                     CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY,
-                    CustomFieldService.INCIDENT_CUSTOM_FIELD_DESCRIPTION
+                    CustomFieldService.INCIDENT_CUSTOM_FIELD_DESCRIPTION,
+                    getConfiguredProjects(config.getProjects())
                 )) {
                     saveResult.set(false);
                     message.set("could not create custom field '" + config.getCustomFieldId() + "'");
@@ -164,81 +173,13 @@ public class RestResource {
             if (saveResult.get()) {
                 ConfigService.instance().setAdminProjects(config.getProjects());
                 ConfigService.instance().setAdminRoles(config.getRoles());
-                ConfigService.instance().setAdminCustomFieldId(config.getCustomFieldId());
+                ConfigService.instance().setAdminCustomFieldName(config.getCustomFieldId());
                 StatuspageService.instance().clear();
                 ConfigService.instance().getAdminProjects().stream().forEach(p ->
                     StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
                 );
             }
 
-/*
-            System.out.println("--- available custom fields ----------------------");
-            ComponentAccessor.getComponent(CustomFieldManager.class)
-                .getCustomFieldObjects()
-                .stream()
-                .map(CustomField::getName)
-                .forEach(System.out::println)
-            ;
-            System.out.println("--------------------------------------------------");
-            Optional<CustomField> existingIncidentCustomField =
-                ComponentAccessor
-                    .getComponent(CustomFieldManager.class)
-                    .getCustomFieldObjectsByName(ConfigService.instance().getAdminCustomFieldId())
-                    .stream()
-                    .filter(cf -> cf.getFieldName().equals(ConfigService.instance().getAdminCustomFieldId()))
-                    .findAny();
-            if (existingIncidentCustomField.isPresent()) {
-                System.out.println(
-                    "found custom field with name " +
-                    ConfigService.instance().getAdminCustomFieldId() +
-                    " of type '" +
-                    existingIncidentCustomField.get().getCustomFieldType().getName() +
-                    "'"
-                );
-                System.out.println("type key         :" + existingIncidentCustomField.get().getCustomFieldType().getKey());
-                System.out.println("type cit         :" +
-                    existingIncidentCustomField.get().getCustomFieldType().getConfigurationItemTypes());
-                System.out.println("type name        :" + existingIncidentCustomField.get().getCustomFieldType().getName());
-                System.out.println("type description :" + existingIncidentCustomField.get().getCustomFieldType().getDescription());
-                System.out.println("type descriptor  :" + existingIncidentCustomField.get().getCustomFieldType().getDescriptor());
-            } else {
-                System.out.println("not found custom field with name " + ConfigService.instance().getAdminCustomFieldId());
-            }
-            System.out.println("--------------------------------------------------");
-*/
-//            status-page-incident
-
-//            CustomFieldType cft =  ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType("status-page-incident");
-//                .getCustomFieldType("ws.slink.statuspage.customfield:incidentcustomfield");
-//            System.out.println("custom field type: " + cft);
-
-//            ComponentAccessor.getComponent(CustomFieldManager.class)
-//                .createCustomField("incident", "statuspage incident assigned to the issue", IncidentCustomField.class, null, null, null)
-
-//            CustomFieldUtils.
-
-//            FieldConfigScheme newConfigScheme = new FieldConfigScheme.Builder()
-//                .setName("incident")
-//                .setDescription("statuspage incident assigned to the issue")
-//                .setFieldId(ConfigService.instance().getAdminCustomFieldId())
-//                .toFieldConfigScheme()
-//            ;
-//
-//            System.out.println("   id:" + newConfigScheme.getId());
-//            System.out.println(" name:" + newConfigScheme.getName());
-//            System.out.println("descr:" + newConfigScheme.getDescription());
-//            System.out.println("  cfg:" + newConfigScheme.getOneAndOnlyConfig());
-
-//            System.out.println(new Gson().toJson(newConfigScheme));
-
-
-//            ComponentAccessor.getComponent(FieldConfigSchemeManager.class)
-//                .getConfigSchemesForField(newConfigScheme.getField())
-//                .stream()
-//                .map(cs -> cs.getName())
-//                .forEach(System.out::println)
-//            ;
-//                    .createFieldConfigScheme(newConfigScheme, contexts, issueTypes, field);
             return null;
         });
 
@@ -456,6 +397,99 @@ public class RestResource {
         }
     }
 
+    private List<Project> getConfiguredProjects(String sourceStr) {
+        return Arrays.asList(sourceStr.split(","))
+            .stream()
+            .map(String::trim)
+            .distinct()
+            .map(JiraTools::getProjectByKey)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList())
+        ;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+/*
+            System.out.println("--- available custom fields ----------------------");
+            ComponentAccessor.getComponent(CustomFieldManager.class)
+                .getCustomFieldObjects()
+                .stream()
+                .map(CustomField::getName)
+                .forEach(System.out::println)
+            ;
+            System.out.println("--------------------------------------------------");
+            Optional<CustomField> existingIncidentCustomField =
+                ComponentAccessor
+                    .getComponent(CustomFieldManager.class)
+                    .getCustomFieldObjectsByName(ConfigService.instance().getAdminCustomFieldId())
+                    .stream()
+                    .filter(cf -> cf.getFieldName().equals(ConfigService.instance().getAdminCustomFieldId()))
+                    .findAny();
+            if (existingIncidentCustomField.isPresent()) {
+                System.out.println(
+                    "found custom field with name " +
+                    ConfigService.instance().getAdminCustomFieldId() +
+                    " of type '" +
+                    existingIncidentCustomField.get().getCustomFieldType().getName() +
+                    "'"
+                );
+                System.out.println("type key         :" + existingIncidentCustomField.get().getCustomFieldType().getKey());
+                System.out.println("type cit         :" +
+                    existingIncidentCustomField.get().getCustomFieldType().getConfigurationItemTypes());
+                System.out.println("type name        :" + existingIncidentCustomField.get().getCustomFieldType().getName());
+                System.out.println("type description :" + existingIncidentCustomField.get().getCustomFieldType().getDescription());
+                System.out.println("type descriptor  :" + existingIncidentCustomField.get().getCustomFieldType().getDescriptor());
+            } else {
+                System.out.println("not found custom field with name " + ConfigService.instance().getAdminCustomFieldId());
+            }
+            System.out.println("--------------------------------------------------");
+*/
+//            status-page-incident
+
+//            CustomFieldType cft =  ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType("status-page-incident");
+//                .getCustomFieldType("ws.slink.statuspage.customfield:incidentcustomfield");
+//            System.out.println("custom field type: " + cft);
+
+//            ComponentAccessor.getComponent(CustomFieldManager.class)
+//                .createCustomField("incident", "statuspage incident assigned to the issue", IncidentCustomField.class, null, null, null)
+
+//            CustomFieldUtils.
+
+//            FieldConfigScheme newConfigScheme = new FieldConfigScheme.Builder()
+//                .setName("incident")
+//                .setDescription("statuspage incident assigned to the issue")
+//                .setFieldId(ConfigService.instance().getAdminCustomFieldId())
+//                .toFieldConfigScheme()
+//            ;
+//
+//            System.out.println("   id:" + newConfigScheme.getId());
+//            System.out.println(" name:" + newConfigScheme.getName());
+//            System.out.println("descr:" + newConfigScheme.getDescription());
+//            System.out.println("  cfg:" + newConfigScheme.getOneAndOnlyConfig());
+
+//            System.out.println(new Gson().toJson(newConfigScheme));
+
+
+//            ComponentAccessor.getComponent(FieldConfigSchemeManager.class)
+//                .getConfigSchemesForField(newConfigScheme.getField())
+//                .stream()
+//                .map(cs -> cs.getName())
+//                .forEach(System.out::println)
+//            ;
+//                    .createFieldConfigScheme(newConfigScheme, contexts, issueTypes, field);
+
+
+
     /*
     @POST
     @Path("/api/incident/link")
@@ -502,4 +536,3 @@ public class RestResource {
     }
     */
 
-}
