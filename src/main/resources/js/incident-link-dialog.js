@@ -17,7 +17,7 @@ let $incidentLinkDialog = {
 
     loadIncidents : function(pageId, element) {
         console.log("incidentLinkDialog.loadIncidents for " + pageId);
-        const incidents = $statuspage.incidents(pageId, false);
+        const incidents = $statuspage.incidents(pageId, true);
         console.log(incidents);
         let options_str = "";
         incidents.forEach( function(page) {
