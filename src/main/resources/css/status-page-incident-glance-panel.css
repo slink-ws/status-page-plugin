@@ -1,0 +1,36 @@
+.incident-glance-list-item {
+    margin-top: 5px;
+}
+
+.incident-glance-common {
+    padding: 3px;
+    border-radius: 4px;
+}
+
+.incident-impact-none {
+    background-color: palegreen;
+}
+.incident-impact-minor {
+    background-color: rgb(254, 185, 9);
+}
+.incident-impact-major {
+    background-color: rgb(252, 119, 8);
+    color: white;
+}
+.incident-impact-critical {
+    background-color: rgb(211, 31, 13);
+    color: white;
+}
+
+.incident-status-investigating {
+    color: rgb(211, 31, 13);
+}
+.incident-status-identified {
+    color: rgb(252, 119, 8);
+}
+.incident-status-monitoring {
+    color: rgb(254, 185, 9);
+}
+.incident-status-resolved {
+    color: palegreen;
+}

@@ -16,6 +16,7 @@ import ws.slink.statuspage.customfield.IncidentCustomField;
 import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
+import ws.slink.statuspage.tools.JiraTools;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -75,60 +76,20 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
 //                addErrorMessage(/*beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user")*/"error");
 //            }
 //        }
-
-
-
     }
 
     @Override
     public String doExecute() throws Exception {
-//        for (String validUsername : validUsernames)
-//        {
-//            watcherManager.startWatching(UserUtils.getUser(validUsername), getIssueObject());
-//        }
-        // TODO: link incident here
-        // ...
-        // ...
-
-
-        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
         Issue issue = getIssueObject();
-        Object cf = issue.getCustomFieldValue(customField);
-        if (null == cf) {
-            IssueIncident issueIncident = new IssueIncident()
-                .projectKey(issue.getProjectObject().getKey())
-                .incidentId(incident)
-                .pageId(page)
-                .linkedBy("...")
-                .linkedAt(LocalDateTime.now(ZoneId.of("UTC")))
-            ;
-            String value = issueIncident.toJsonString();
-
-            IssueInputParameters issueInputParameters = new IssueInputParametersImpl();
-            issueInputParameters.addCustomFieldValue(customField.getId(), value);
-
-            IssueService.UpdateValidationResult updateValidationResult =
-                ComponentManager.getComponentInstanceOfType(IssueService.class)
-                    .validateUpdate(getLoggedInUser(), issue.getId(), issueInputParameters);
-
-            if (updateValidationResult.isValid()) {
-                IssueService.IssueResult updateResult =
-                    ComponentManager.getComponentInstanceOfType(IssueService.class)
-                        .update(getLoggedInUser(), updateValidationResult);
-                if (!updateResult.isValid()) {
-                    System.out.println(" ---> unsuccessful update");
-                } else {
-                    System.out.println(" ---> successful update");
-                }
-            } else {
-                System.out.println(" ---> updateValidationResult is invalid");
-            }
-        } else {
-//            IncidentCustomField icf = (IncidentCustomField) cf;
-            System.out.println(" ---> custom field value is not null");
-        }
-
-
+        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
+        IssueIncident issueIncident = new IssueIncident()
+            .projectKey(issue.getProjectObject().getKey())
+            .incidentId(incident)
+            .pageId(page)
+            .linkedBy("...")
+            .linkedAt(LocalDateTime.now(ZoneId.of("UTC")))
+        ;
+        JiraTools.setCustomFieldValue(issue, customField, issueIncident, true);
         return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
     }
 

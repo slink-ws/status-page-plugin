@@ -1,8 +1,14 @@
 package ws.slink.statuspage.tools;
 
+import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.component.pico.ComponentManager;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueInputParameters;
+import com.atlassian.jira.issue.IssueInputParametersImpl;
+import com.atlassian.jira.issue.ModifiedValue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.util.DefaultIssueChangeHolder;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.roles.ProjectRole;
@@ -150,6 +156,46 @@ public class JiraTools {
         if (StringUtils.isBlank(issueKey))
             return Optional.empty();
         return Optional.ofNullable(ComponentAccessor.getIssueManager().getIssueByCurrentKey(issueKey));
+    }
+
+    public static boolean setCustomFieldValue(Issue issue, CustomField customField, Object value, boolean override) {
+        customField.updateValue(null, issue, new ModifiedValue(issue.getCustomFieldValue(customField), value), new DefaultIssueChangeHolder());
+        return true;
+/*
+        Object cf = issue.getCustomFieldValue(customField);
+        if (null != cf) {
+            if (!override) {
+                System.out.println(" ---> custom field value is not null");
+                return false;
+            } else {
+                customField.updateValue(null, issue, new ModifiedValue(issue.getCustomFieldValue(customField), value), new DefaultIssueChangeHolder());
+                return true;
+            }
+        } else {
+            IssueInputParameters issueInputParameters = new IssueInputParametersImpl();
+            issueInputParameters.addCustomFieldValue(customField.getId(), value);
+            IssueService.UpdateValidationResult updateValidationResult =
+                    ComponentManager.getComponentInstanceOfType(IssueService.class)
+                            .validateUpdate(getLoggedInUser(), issue.getId(), issueInputParameters);
+            if (updateValidationResult.isValid()) {
+                IssueService.IssueResult updateResult =
+                        ComponentManager.getComponentInstanceOfType(IssueService.class)
+                                .update(getLoggedInUser(), updateValidationResult);
+                if (!updateResult.isValid()) {
+                    System.out.println(" ---> unsuccessful update");
+                    return false;
+                } else {
+                    System.out.println(" ---> successful update");
+                    System.out.println("---> new CustomField value: " + issue.getCustomFieldValue(customField));
+                    return true;
+                }
+            } else {
+                System.out.println(" ---> updateValidationResult is invalid");
+                return false;
+            }
+        }
+
+ */
     }
 
     public static Gson getGsonObject() {
