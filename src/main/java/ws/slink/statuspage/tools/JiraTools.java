@@ -2,6 +2,7 @@ package ws.slink.statuspage.tools;
 
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.roles.ProjectRole;
@@ -9,8 +10,13 @@ import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.sal.api.user.UserProfile;
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
+import ws.slink.statuspage.json.CustomExclusionStrategy;
 import ws.slink.statuspage.service.ConfigService;
+import ws.slink.statuspage.service.CustomFieldService;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,7 +81,9 @@ public class JiraTools {
     }
 
     public static boolean isIncidentExists(Issue issue) {
-        return false;
+        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
+        Object cf = issue.getCustomFieldValue(customField);
+        return cf != null;
     }
 
     public static boolean isIncidentsEnabled(Project project) {
@@ -142,6 +150,15 @@ public class JiraTools {
         if (StringUtils.isBlank(issueKey))
             return Optional.empty();
         return Optional.ofNullable(ComponentAccessor.getIssueManager().getIssueByCurrentKey(issueKey));
+    }
+
+    public static Gson getGsonObject() {
+        ExclusionStrategy strategy = new CustomExclusionStrategy();
+        return new GsonBuilder()
+            .addSerializationExclusionStrategy(strategy)
+            .addDeserializationExclusionStrategy(strategy)
+            .create()
+        ;
     }
 
 }

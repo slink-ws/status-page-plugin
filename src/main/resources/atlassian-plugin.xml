@@ -72,11 +72,6 @@
   <!-- https://developer.atlassian.com/server/jira/platform/web-section/ -->
   <web-section key="sp-incident-button-section" name="Incident" location="opsbar-operations" weight="1000">
     <label key="sp-incident-button-section.label" />
-    <conditions type="AND" >
-      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
-      <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
-      <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
-    </conditions>
   </web-section>
   <web-item name="IncidentCreateButton" i18n-name-key="incident-create-button.name" key="incident-create-button" section="sp-incident-button-section" weight="1">
     <description key="incident-create-button.description">Incident Button Plugin</description>
@@ -84,6 +79,11 @@
     <label key="incident-create-button.label"/>
     <link linkId="incident-create">/CreateIncident!default.jspa?id=${issue.id}</link>
     <styleClass>trigger-dialog</styleClass>
+    <conditions type="AND" >
+      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
+    </conditions>
   </web-item>
   <web-item name="IncidentLinkButton" i18n-name-key="incident-link-button.name" key="incident-link-button" section="sp-incident-button-section" weight="2">
     <description key="incident-link-button.description">Incident Button Plugin</description>
@@ -91,8 +91,30 @@
     <label key="incident-link-button.label"/>
     <link linkId="incident-link">/LinkIncident!default.jspa?id=${issue.id}</link>
     <styleClass>trigger-dialog</styleClass>
+    <conditions type="AND" >
+      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
+    </conditions>
+  </web-item>
+  <web-item name="IncidentUnlinkButton" i18n-name-key="incident-unlink-button.name" key="incident-unlink-button" section="sp-incident-button-section" weight="3">
+    <description key="incident-unlink-button.description">Incident Button Plugin</description>
+    <tooltip key="incident-unlink-button.tooltip"/>
+    <label key="incident-unlink-button.label"/>
+    <link linkId="incident-unlink">/UnlinkIncident!default.jspa?id=${issue.id}</link>
+    <styleClass>trigger-dialog</styleClass>
+    <conditions type="AND" >
+      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.IncidentAssignedCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
+    </conditions>
   </web-item>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+<!--  <web-resource name="General Resources" key="general-resources">-->
+<!--    <context>atl.general</context>-->
+<!--    <resource name="incident-custom-field-view.js" type="download" location="/js/incident-custom-field-view.js"></resource>-->
+<!--  </web-resource>-->
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~ incident actions ~~~~~~~~~~~~~~~~~~~~ -->
   <webwork1 key="incident-create-action" name="Create Incident" class="java.lang.Object">
@@ -109,9 +131,17 @@
       </action>
     </actions>
   </webwork1>
-  <web-resource name="Resources" key="resources">
+  <webwork1 key="incident-unlink-action" name="Unlink Incident" class="java.lang.Object">
+    <actions>
+      <action name="ws.slink.statuspage.action.UnlinkIncident" alias="UnlinkIncident">
+        <view name="input">/templates/dialogs/incident-unlink.vm</view>
+      </action>
+    </actions>
+  </webwork1>
+  <web-resource name="Issue View Resources" key="issue-view-resources">
     <resource name="incidentCreate.js" type="download" location="/js/incident-create.js"/>
     <resource name="incidentLink.js" type="download" location="/js/incident-link.js"/>
+    <resource name="incidentUmlink.js" type="download" location="/js/incident-unlink.js"/>
     <context>jira.view.issue</context>
   </web-resource>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

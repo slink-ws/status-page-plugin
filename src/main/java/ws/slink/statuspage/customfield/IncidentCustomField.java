@@ -6,16 +6,11 @@ import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
 import com.atlassian.jira.issue.customfields.persistence.CustomFieldValuePersister;
 import com.atlassian.jira.issue.customfields.persistence.PersistenceFieldType;
 import com.atlassian.jira.issue.customfields.view.CustomFieldParams;
-import com.atlassian.jira.issue.fields.TextFieldCharacterLengthValidator;
 import com.atlassian.jira.issue.fields.config.FieldConfig;
-import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.JiraImport;
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import ws.slink.statuspage.json.CustomExclusionStrategy;
 import ws.slink.statuspage.model.IssueIncident;
+import ws.slink.statuspage.tools.JiraTools;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -52,12 +47,12 @@ public class IncidentCustomField extends AbstractSingleFieldType<IssueIncident> 
         if (singularObject == null)
             return null;
         else
-            return getGsonObject().toJson(singularObject);
+            return singularObject.toJsonString();
     }
 
     @Override
     public IssueIncident getSingularObjectFromString(String s) throws FieldValidationException {
-        return getGsonObject().fromJson(s, IssueIncident.class);
+        return JiraTools.getGsonObject().fromJson(s, IssueIncident.class);
     }
 
     @Override
@@ -65,12 +60,4 @@ public class IncidentCustomField extends AbstractSingleFieldType<IssueIncident> 
         return false;
     }
 
-    private Gson getGsonObject() {
-        ExclusionStrategy strategy = new CustomExclusionStrategy();
-        return new GsonBuilder()
-            .addSerializationExclusionStrategy(strategy)
-            .addDeserializationExclusionStrategy(strategy)
-            .create()
-        ;
-    }
 }

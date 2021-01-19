@@ -1,0 +1,18 @@
+<h2 class="dialog-title">$i18n.getText('incident-unlink-dialog.title')</h2>
+
+<form class="aui" action="UnlinkIncident.jspa" method="post">
+
+    <input type="hidden" name="atl_token" value="${atl_token}" />
+    <input type="hidden" name="id" value="$action.id" />
+
+    <div class="content-body">
+        <h4>$i18n.getText('incident-unlink-dialog.unlink-question')</h4>
+    </div>
+    <div class="buttons-container content-footer">
+        <div class="buttons">
+            ##  https://aui.atlassian.com/aui/7.9/docs/buttons.html
+            <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-unlink-dialog.button-cancel')</a>
+            <input class="aui-button button" type="submit" value="$i18n.getText('incident-unlink-dialog.button-unlink')" />
+        </div>
+    </div>
+</form>
