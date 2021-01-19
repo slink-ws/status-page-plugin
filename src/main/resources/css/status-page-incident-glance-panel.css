@@ -34,3 +34,19 @@
 .incident-status-resolved {
     color: palegreen;
 }
+
+.component-status-degraded_performance {
+    color: rgb(254, 185, 9);
+}
+.component-status-partial_outage {
+    color: rgb(252, 119, 8);
+}
+.component-status-major_outage {
+    color: rgb(211, 31, 13);
+}
+.component-status-operational {
+    color: rgb(45, 198, 83);
+}
+.component-status-under_maintenance {
+    color: rgb(43, 132, 210);
+}

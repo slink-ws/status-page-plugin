@@ -44,38 +44,12 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
     @Override
     protected void doValidation() {
 //        ApplicationUser user = this.getLoggedInUser();
-
-        System.out.println("---      page: " + page);
-        System.out.println("---  incident: " + incident);
-
-        // TODO: validate incident form here
 //        addErrorMessage("error");
-
         CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
         if (null == customField) {
             addErrorMessage("statuspage incident custom field not configured");
         } else {
         }
-
-//        CustomFieldManager customFieldManager = ComponentManager.getComponentInstanceOfType(CustomFieldManager.class);
-//        List<CustomField> customFields = customFieldManager.getCustomFieldObjects();
-//        customFields.stream().map(CustomField::getName).forEach(System.out::println);
-
-
-
-        //        for (String username : watcherUserNames)
-//        {
-//            username = username.trim();
-//
-//            if (UserUtils.userExists(username))
-//            {
-//                validUsernames.add(username);
-//            }
-//            else
-//            {
-//                addErrorMessage(/*beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user")*/"error");
-//            }
-//        }
     }
 
     @Override

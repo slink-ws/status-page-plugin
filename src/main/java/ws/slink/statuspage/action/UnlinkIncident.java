@@ -24,7 +24,6 @@ public class UnlinkIncident extends AbstractIssueSelectAction {
     public String doExecute() throws Exception {
         Issue issue = getIssueObject();
         CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
-        //JiraTools.updateCustomFieldValue(issue, customField, null);
         JiraTools.setCustomFieldValue(issue, customField, null, true);
         return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
     }
