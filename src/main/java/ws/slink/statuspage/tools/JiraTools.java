@@ -92,6 +92,21 @@ public class JiraTools {
         return cf != null;
     }
 
+    public static boolean isIncidentsGlobalConfigReady() {
+        return ConfigService.instance().getAdminProjects().size() > 0
+            && ConfigService.instance().getAdminRoles().size()    > 0
+            && StringUtils.isNotBlank(ConfigService.instance().getAdminCustomFieldName())
+            && CustomFieldService.instance().exists(ConfigService.instance().getAdminCustomFieldName())
+            && CustomFieldService.instance().correct(ConfigService.instance().getAdminCustomFieldName(), CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY)
+        ;
+    }
+
+    public static boolean isIncidentsProjectConfigReady(Project project) {
+        return ConfigService.instance().getConfigMgmtRoles(project.getKey()).size() > 0
+            && StringUtils.isNotBlank(ConfigService.instance().getConfigApiKey(project.getKey()))
+        ;
+    }
+
     public static boolean isIncidentsEnabled(Project project) {
         return ConfigService.instance().getAdminProjects().contains(project.getKey());
     }

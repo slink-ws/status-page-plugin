@@ -5,14 +5,11 @@ import com.atlassian.jira.plugin.webfragment.model.JiraHelper;
 import com.atlassian.jira.user.ApplicationUser;
 import ws.slink.statuspage.tools.JiraTools;
 
-public class IncidentsEnabledCondition extends AbstractWebCondition {
+public class ProjectConfigDoneCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentsGlobalConfigReady()
-            && JiraTools.isIncidentsProjectConfigReady(jiraHelper.getProject())
-            && JiraTools.isIncidentsEnabled(jiraHelper.getProject())
-        ;
+        return JiraTools.isIncidentsProjectConfigReady(jiraHelper.getProject());
     }
 
 }

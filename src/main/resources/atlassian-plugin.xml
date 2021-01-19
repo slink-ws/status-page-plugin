@@ -86,6 +86,9 @@
   <!-- https://developer.atlassian.com/server/jira/platform/web-section/ -->
   <web-section key="sp-incident-button-section" name="Incident" location="opsbar-operations" weight="1000">
     <label key="sp-incident-button-section.label" />
+    <condition class="ws.slink.statuspage.condition.GlobalConfigDoneCondition"  />
+    <condition class="ws.slink.statuspage.condition.ProjectConfigDoneCondition" />
+    <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition"  />
   </web-section>
   <web-item name="IncidentCreateButton" i18n-name-key="incident-create-button.name" key="incident-create-button" section="sp-incident-button-section" weight="1">
     <description key="incident-create-button.description">Incident Button Plugin</description>
