@@ -16,15 +16,5 @@
             <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
             <dd><span class="incident-glance-common incident-impact-$incident.impact().value()">$incident.impact().value()</span></dd>
         </dl>
-        <dl class="incident-glance-list-item">
-            <dt>$i18n.getText('incident-glance-panel.incident-components'):</dt>
-            <dd>
-                    #foreach($i in $incident.components())
-                        <div class="incident-glance-common component-status-$i.status().value()" title="$i.status().name()">
-                            $i.name()
-                        </div>
-                    #end
-            </dd>
-        </dl>
     </ul>
 </div>

@@ -7,43 +7,43 @@ let $statuspage = {
     pages : function() {
         let url = this.baseUrl() + "pages?issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        console.log("----------- pages")
-        console.log(result);
+        // console.log("----------- pages")
+        // console.log(result);
         return result;
     },
     groups : function(pageId) {
         let url = this.baseUrl() + "groups?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        console.log("----------- groups")
-        console.log(result);
+        // console.log("----------- groups")
+        // console.log(result);
         return result;
     },
     groupComponents : function(pageId, groupId) {
         let url = this.baseUrl() + "groupComponents?pageId=" + pageId + "&groupId=" + groupId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        console.log("----------- group components")
-        console.log(result);
+        // console.log("----------- group components")
+        // console.log(result);
         return result;
     },
     nonGroupComponents : function(pageId) {
         let url = this.baseUrl() + "nonGroupComponents?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        console.log("----------- non-group components")
-        console.log(result);
+        // console.log("----------- non-group components")
+        // console.log(result);
         return result;
     },
     components : function(pageId) {
         let url = this.baseUrl() + "components?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        console.log("----------- components")
-        console.log(result);
+        // console.log("----------- components")
+        // console.log(result);
         return result;
     },
     incidents : function(pageId, activeOnly) {
         let url = this.baseUrl() + "incidents?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey() + "&activeOnly=" + activeOnly;
         const result = this.serviceCall(url);
-        console.log("----------- incidents")
-        console.log(result);
+        // console.log("----------- incidents")
+        // console.log(result);
         return result;
     },
 

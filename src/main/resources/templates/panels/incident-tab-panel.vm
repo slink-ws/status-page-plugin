@@ -1,3 +1,28 @@
 <div class="mod-header">
     <h3>$i18n.getText('incident-tab-panel.label')</h3>
 </div>
+<div class="mod-header">
+    $testVariable
+</div>
+<div>
+    <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
+    <span title="Operational" class="component-status-operational          aui-icon aui-icon-small aui-iconfont-check-circle">OPERATIONAL</span>
+    <span title="Degraded Performance" class="component-status-degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">DEGRADED</span>
+    <span title="Partial Outage" class="component-status-partial_outage       aui-icon aui-icon-small aui-iconfont-failed-build">PARTIAL OUTAGE</span>
+    <span title="Major Outage" class="component-status-major_outage         aui-icon aui-icon-small aui-iconfont-remove">MAJOR OUTAGE</span>
+    <span title="Under Maintenance" class="component-status-under_maintenance    aui-icon aui-icon-small aui-iconfont-info-circle">MAINTENANCE</span>
+    <span title="Remove Component" class="button-common aui-icon aui-icon-small aui-iconfont-trash">REMOVE</span>
+    <span title="Add Component" class="button-common aui-icon aui-icon-small aui-iconfont-add-circle">ADD v1</span>
+    <span title="Add Component" class="button-common aui-icon aui-icon-small aui-iconfont-add">ADD v2</span>
+    <span class="button-common aui-icon aui-icon-small aui-icon-wait">LOADING</span><br>
+</div>
+</body>
+<script>
+    #include("/js/statuspage.js")
+    #include("/js/incident-tab-panel.js")
+    ## $('#sp-link-page').change(function(){
+    ##     let pageId = $(this).val();
+    ##         $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident');
+    ## })
+    ## $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident');
+</script>

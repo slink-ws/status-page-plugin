@@ -36,6 +36,7 @@
         <div class="field-group">
             <label for="sp-link-incident">$i18n.getText('incident-link-dialog.incident-select.label')&nbsp;</label>
             <select class="select" name="incident" id="sp-link-incident" required="true" placeholder="select incident" />
+            <span id="incidents-loading-wheel" style="vertical-align: middle;" class="button-common aui-icon aui-icon-small aui-icon-wait">...</span><br>
         </div>
 
 ##        <div class="field-group">
@@ -57,9 +58,9 @@
     #include("/js/incident-link-dialog.js")
     $('#sp-link-page').change(function(){
         let pageId = $(this).val();
-        $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident');
+        $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident', 'incidents-loading-wheel');
     })
-    $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident');
+    $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident', 'incidents-loading-wheel');
 </script>
 </body>
 </html>

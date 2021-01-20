@@ -62,6 +62,7 @@ public class ConfigServlet extends HttpServlet {
             contextParams.put("selectedMgmtRoles" , selectedMgmtRoles);
             contextParams.put("availableViewRoles", availableViewRoles);
             contextParams.put("selectedViewRoles" , selectedViewRoles);
+            contextParams.put("apiKey", ConfigService.instance().getConfigApiKey(project.getKey()));
 
             if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
                 response.setContentType("text/html;charset=utf-8");

@@ -50,3 +50,6 @@
 .component-status-under_maintenance {
     color: rgb(43, 132, 210);
 }
+.button-common {
+    color: grey;
+}

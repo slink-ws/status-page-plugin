@@ -15,7 +15,7 @@
     <form id="config" class="aui">
         <input type="hidden" id="project" name="project" value="$projectKey" />
         <label for="apikey">$i18n.getText("sp.config.label.apikey")</label>
-        <input type="text" id="apikey" name="apikey" />
+        <input type="text" id="apikey" name="apikey" value="$apiKey" size="40" />
 
         <h3 class="h3-css">$i18n.getText('sp.config.plugin.management.roles.label')</h3>
         <div style="width: 100%; overflow: hidden;">
