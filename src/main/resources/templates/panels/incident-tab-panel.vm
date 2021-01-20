@@ -1,25 +1,518 @@
-<div class="mod-header">
-    <h3>$i18n.getText('incident-tab-panel.label')</h3>
+##<div class="mod-header">
+##    <h3>$i18n.getText('incident-tab-panel.label')</h3>
+##</div>
+##<div class="mod-header">
+##    $testVariable
+##</div>
+<div class="mod-content">
+    <div class="header-block">
+        <div>
+            <input type="button" onclick="updateIncident()" value="$i18n.getText('incident-tab-panel.save-button-text')">
+        </div>
+    </div>
+    <div class="general-block">
+        <div>
+            <h4>General Information</h4>
+        </div>
+        <div>
+            &nbsp;
+        </div>
+        <div>
+            <ul class="item-details">
+                <dl class="incident-glance-list-item">
+                    <dt>$i18n.getText('incident-glance-panel.page-name'):</dt>
+                    <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()">$page.name()</a></span></dd>
+                </dl>
+                <dl class="incident-glance-list-item">
+                    <dt>$i18n.getText('incident-glance-panel.incident-name'):</dt>
+                    <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()/incidents/$incident.id()">$incident.name()</a></span></dd>
+                </dl>
+                <dl class="incident-glance-list-item">
+                    <dt>$i18n.getText('incident-glance-panel.incident-status'):</dt>
+                    <dd><span class="incident-glance-common incident-status-$incident.status().value()">$incident.status().value()</span></dd>
+                </dl>
+                <dl class="incident-glance-list-item">
+                    <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
+                    <dd><span class="incident-glance-common incident-impact-$incident.impact().value()">$incident.impact().value()</span></dd>
+                </dl>
+                <dl class="incident-glance-list-item">
+                    <dt>$i18n.getText('incident-tab-panel.status-message'):</dt>
+                    <dd>
+                        <textarea style="resize: none;" rows="10" cols="30"></textarea>
+                    </dd>
+                </dl>
+            </ul>
+        </div>
+    </div>
+    <div class="components-block">
+        <div>
+            <h4>Affected Components</h4>
+        </div>
+        <div class="component" id="components-header">
+            <div class="component-name-header">&nbsp;</div>
+            <span id="components-header-operational"
+                  onclick="headerStatusClick(this)"
+                  title="Set all components to Operational sate"
+                  class="component-button header aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+            <span id="components-header-degraded_performance"
+                  onclick="headerStatusClick(this)"
+                  title="Set all components to Degraded Performance state"
+                  class="component-button header aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+            <span id="components-header-partial_outage"
+                  onclick="headerStatusClick(this)"
+                  title="Set all components to Partial Outage state"
+                  class="component-button header aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+            <span id="components-header-major_outage"
+                  onclick="headerStatusClick(this)"
+                  title="Set all components to Major Outage state"
+                  class="component-button header aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+            <span id="components-header-under_maintenance"
+                  onclick="headerStatusClick(this)"
+                  title="Set all components to Under Maintenance state"
+                  class="component-button header aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+            <span id="components-header-remove"
+                  title="Remove all components"
+                  onclick="headerRemoveClick(this)"
+                  class="component-button header remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+        </div>
+        <div id="tab-components-list" class="components-list">
+            <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
+            <div class="component" id="test-component-1">
+                <div class="component-name">Test Component 1</div>
+                <span id="test-component-1-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-1-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-1-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-1-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-1-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-1-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-2">
+                <div class="component-name">Test Component 2 with very-very-very-very long-long name</div>
+                <span id="test-component-2-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-2-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-2-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-2-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-2-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-2-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-3">
+                <div class="component-name">Test Component 3</div>
+                <span id="test-component-3-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-3-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-3-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-3-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-3-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-3-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-4">
+                <div class="component-name">Test Component 4</div>
+                <span id="test-component-4-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-4-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-4-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-4-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-4-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-4-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-5">
+                <div class="component-name">Test Component 5 with very-very-very-very long-long name</div>
+                <span id="test-component-5-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-5-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-5-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-5-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-5-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-5-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-6">
+                <div class="component-name">Test Component 6</div>
+                <span id="test-component-6-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-6-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-6-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-6-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-6-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-6-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-7">
+                <div class="component-name">Test Component 7</div>
+                <span id="test-component-7-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-7-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-7-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-7-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-7-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-7-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-8">
+                <div class="component-name">Test Component 8</div>
+                <span id="test-component-8-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-8-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-8-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-8-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-8-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-8-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-9">
+                <div class="component-name">Test Component 9</div>
+                <span id="test-component-9-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-9-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-9-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-9-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-9-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-9-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+            <div class="component" id="test-component-10">
+                <div class="component-name">Test Component 10</div>
+                <span id="test-component-10-operational"
+                      onclick="statusButtonClick(this)"
+                      title="Operational"
+                      class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
+                OPERATIONAL
+            </span>
+                <span id="test-component-10-degraded_performance"
+                      onclick="statusButtonClick(this)"
+                      title="Degraded Performance"
+                      class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
+                DEGRADED
+            </span>
+                <span id="test-component-10-partial_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Partial Outage"
+                      class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
+                PARTIAL OUTAGE
+            </span>
+                <span id="test-component-10-major_outage"
+                      onclick="statusButtonClick(this)"
+                      title="Major Outage"
+                      class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
+                MAJOR OUTAGE
+            </span>
+                <span id="test-component-10-under_maintenance"
+                      onclick="statusButtonClick(this)"
+                      title="Under Maintenance"
+                      class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
+                MAINTENANCE
+            </span>
+                <span id="test-component-10-remove"
+                      title="Remove Component"
+                      onclick="removeButtonClick(this)"
+                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                REMOVE
+            </span>
+            </div>
+        </div>
+        <div>
+            <h5>Add</h5>
+            <select>
+                <option>Value 1</option>
+                <option>Value 2</option>
+            </select>
+        </div>
+    </div>
+
+##    <span title="Add Component"        class="button-common aui-icon aui-icon-small aui-iconfont-add-circle">ADD v1</span>
+##    <span title="Add Component"        class="button-common aui-icon aui-icon-small aui-iconfont-add">ADD v2</span>
+##    <span class="button-common aui-icon aui-icon-small aui-icon-wait">LOADING</span><br>
+
 </div>
-<div class="mod-header">
-    $testVariable
-</div>
-<div>
-    <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
-    <span title="Operational" class="component-status-operational          aui-icon aui-icon-small aui-iconfont-check-circle">OPERATIONAL</span>
-    <span title="Degraded Performance" class="component-status-degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">DEGRADED</span>
-    <span title="Partial Outage" class="component-status-partial_outage       aui-icon aui-icon-small aui-iconfont-failed-build">PARTIAL OUTAGE</span>
-    <span title="Major Outage" class="component-status-major_outage         aui-icon aui-icon-small aui-iconfont-remove">MAJOR OUTAGE</span>
-    <span title="Under Maintenance" class="component-status-under_maintenance    aui-icon aui-icon-small aui-iconfont-info-circle">MAINTENANCE</span>
-    <span title="Remove Component" class="button-common aui-icon aui-icon-small aui-iconfont-trash">REMOVE</span>
-    <span title="Add Component" class="button-common aui-icon aui-icon-small aui-iconfont-add-circle">ADD v1</span>
-    <span title="Add Component" class="button-common aui-icon aui-icon-small aui-iconfont-add">ADD v2</span>
-    <span class="button-common aui-icon aui-icon-small aui-icon-wait">LOADING</span><br>
-</div>
-</body>
+
 <script>
     #include("/js/statuspage.js")
     #include("/js/incident-tab-panel.js")
+    function statusButtonClick(source) {
+        $incidentTabPanel.changeComponentState(source);
+    }
+    function removeButtonClick(source) {
+        $incidentTabPanel.removeComponent(source);
+    }
+    function headerStatusClick(source) {
+        $incidentTabPanel.changeAllComponentsState(source);
+    }
+    function headerRemoveClick(source) {
+        $incidentTabPanel.removeAllComponents(source);
+    }
+    function updateIncident() {
+        $incidentTabPanel.getComponentsConfig();
+    }
     ## $('#sp-link-page').change(function(){
     ##     let pageId = $(this).val();
     ##         $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident');

@@ -50,7 +50,7 @@
              weight="1">
     <description key="incident-glance-panel.description">Incident Glance Panel Plugin</description>
     <conditions type="AND">
-      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition"/>
+      <condition class="ws.slink.statuspage.condition.IncidentsConfiguredCondition"/>
       <condition class="ws.slink.statuspage.condition.IncidentAssignedCondition"/>
       <condition class="ws.slink.statuspage.condition.IncidentViewerCondition"/>
     </conditions>
@@ -88,7 +88,7 @@
     <label key="sp-incident-button-section.label" />
     <condition class="ws.slink.statuspage.condition.GlobalConfigDoneCondition"  />
     <condition class="ws.slink.statuspage.condition.ProjectConfigDoneCondition" />
-    <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition"  />
+    <condition class="ws.slink.statuspage.condition.IncidentsConfiguredCondition"  />
   </web-section>
   <web-item name="IncidentCreateButton" i18n-name-key="incident-create-button.name" key="incident-create-button" section="sp-incident-button-section" weight="1">
     <description key="incident-create-button.description">Incident Button Plugin</description>
@@ -97,7 +97,7 @@
     <link linkId="incident-create">/CreateIncident!default.jspa?id=${issue.id}</link>
     <styleClass>trigger-dialog</styleClass>
     <conditions type="AND" >
-      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.IncidentsConfiguredCondition" />
       <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
       <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
     </conditions>
@@ -109,7 +109,7 @@
     <link linkId="incident-link">/LinkIncident!default.jspa?id=${issue.id}</link>
     <styleClass>trigger-dialog</styleClass>
     <conditions type="AND" >
-      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.IncidentsConfiguredCondition" />
       <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
       <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
     </conditions>
@@ -121,7 +121,7 @@
     <link linkId="incident-unlink">/UnlinkIncident!default.jspa?id=${issue.id}</link>
     <styleClass>trigger-dialog</styleClass>
     <conditions type="AND" >
-      <condition class="ws.slink.statuspage.condition.IncidentsEnabledCondition" />
+      <condition class="ws.slink.statuspage.condition.IncidentsConfiguredCondition" />
       <condition class="ws.slink.statuspage.condition.IncidentAssignedCondition"/>
       <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
     </conditions>

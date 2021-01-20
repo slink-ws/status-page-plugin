@@ -1,12 +1,36 @@
+.header-block {
+    width: 100%;
+    min-width: 400px;
+    height: 30px;
+    display: block;
+    float: none;
+    background-color: lightgrey;
+    vertical-align: middle;
+    horiz-align: right;
+}
+.general-block {
+    width: 50%;
+    min-width: 400px;
+    float: left;
+    /*background-color: yellow;*/
+}
+.components-block {
+    width: 50%;
+    min-width: 400px;
+    float: left;
+}
+.components-list {
+    overflow: scroll;
+    height: 200px;
+}
+
 .incident-glance-list-item {
     margin-top: 5px;
 }
-
 .incident-glance-common {
     padding: 3px;
     border-radius: 4px;
 }
-
 .incident-impact-none {
     background-color: palegreen;
 }
@@ -35,21 +59,61 @@
     color: palegreen;
 }
 
-.component-status-degraded_performance {
-    color: rgb(254, 185, 9);
+.component {
+    border-bottom: 1px solid gainsboro;
 }
-.component-status-partial_outage {
-    color: rgb(252, 119, 8);
+.component-name-header {
+    float        : left;
+    color        : grey;
+    font-family  : Tahoma, Arial;
+    font-size    : 0.9em;
+    white-space  : nowrap;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+    width        : 250px;
+    margin-right : 1em;
 }
-.component-status-major_outage {
-    color: rgb(211, 31, 13);
+.component-name {
+    float        : left;
+    color        : grey;
+    font-family  : Tahoma, Arial;
+    font-size    : 0.9em;
+    white-space  : nowrap;
+    overflow     : hidden;
+    text-overflow: ellipsis;
+    width        : 250px;
+    margin-right : 1em;
 }
-.component-status-operational {
+.component-name.removed {
+    color               : rgb(211, 31, 13);
+    text-decoration-line: line-through;
+}
+.component-button {
+    color : lightgrey;
+    cursor: pointer;
+}
+.component-button.operational.selected {
     color: rgb(45, 198, 83);
 }
-.component-status-under_maintenance {
+.component-button.degraded_performance.selected {
+    color: rgb(254, 185, 9);
+}
+.component-button.partial_outage.selected {
+    color: rgb(252, 119, 8);
+}
+.component-button.major_outage.selected {
+    color: rgb(211, 31, 13);
+}
+.component-button.under_maintenance.selected  {
     color: rgb(43, 132, 210);
 }
-.button-common {
+.component-button.remove {
+    margin-left: 1em;
+}
+.component-button.remove.selected {
+    color: rgb(211, 31, 13);
+}
+
+.component-button.header {
     color: grey;
 }
