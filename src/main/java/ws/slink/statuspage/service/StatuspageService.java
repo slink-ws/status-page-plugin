@@ -1,13 +1,14 @@
 package ws.slink.statuspage.service;
 
 import org.apache.commons.lang3.StringUtils;
+import org.ofbiz.core.util.UtilTimer;
 import ws.slink.statuspage.StatusPage;
-import ws.slink.statuspage.model.Incident;
+import ws.slink.statuspage.model.AffectedComponentStatus;
+import ws.slink.statuspage.type.ComponentStatus;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 public class StatuspageService {
 
@@ -43,5 +44,14 @@ public class StatuspageService {
     }
     public Optional<StatusPage> get(String projectKey) {
         return Optional.ofNullable(statusPages.get(projectKey));
+    }
+    public List<AffectedComponentStatus> componentStatusList() {
+        return Arrays.asList(ComponentStatus.values())
+            .stream()
+            .sorted(Comparator.comparing(a -> Integer.valueOf(a.id())))
+            .map(AffectedComponentStatus::of)
+            .filter(s -> StringUtils.isNotBlank(s.title))
+            .collect(Collectors.toList())
+        ;
     }
 }

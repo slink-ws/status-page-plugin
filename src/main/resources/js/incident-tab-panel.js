@@ -1,12 +1,20 @@
 let $incidentTabPanel = {
-    changeComponentState: function(source) {
+    changeComponentState: function (source, f) {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
         // console.log("componentId: " + componentId + ", status: " + statusId);
+        let update = this.enableSaveButton;
+        console.log("f:");
+        console.log(f);
+        if (undefined != f && 'undefined' != f)
+            update = f;
+        console.log("update:");
+        console.log(update);
         if (!($("#" + componentId + "-remove").hasClass("selected"))) {
             $("#" + componentId).children("span").removeClass("selected");
             $("#" + source.id).addClass("selected");
+            update();
         }
     } // changeComponentState
    ,removeComponent: function(source) {
@@ -14,9 +22,11 @@ let $incidentTabPanel = {
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
         // console.log("componentId: " + componentId + ", status: " + statusId);
+        let f = this.enableSaveButton;
         if (!$("#" + source.id).hasClass("selected")) {
             $("#" + source.id).addClass("selected");
             $("#" + parentElement.id).find(".component-name").addClass("removed");
+            f();
         } else {
             $("#" + source.id).removeClass("selected");
             $("#" + parentElement.id).find(".component-name").removeClass("removed");
@@ -28,9 +38,10 @@ let $incidentTabPanel = {
         let statusId    = source.id.replace(componentId + "-", "");
         // console.log("componentId: " + componentId + ", status: " + statusId);
         let f = this.changeComponentState;
+        let u = this.enableSaveButton;
         $(".component-name").not(".removed").each( function(idx, value) {
             let parentId = $(this).parent().attr("id");
-            f($("#" + parentId + "-" + statusId)[0]);
+            f($("#" + parentId + "-" + statusId)[0], u);
         });
     } // changeAllComponentsState
    ,removeAllComponents: function(source) {
@@ -58,7 +69,7 @@ let $incidentTabPanel = {
         console.log(result);
         return result;
     }
-   ,getComponents(state) {
+   ,getComponents: function(state) {
         let result = [];
         $(".component-name").not(".removed").each(function() {
             $(this).parent().find("." + state + ".selected").each(function (){
@@ -66,6 +77,14 @@ let $incidentTabPanel = {
             });
         });
         return result;
+    }
+   ,enableSaveButton: function() {
+        try {
+            if (!$("#tab-update-incident-button").hasClass("aui-button-primary"))
+                $("#tab-update-incident-button").addClass("aui-button-primary");
+        } catch (e) {
+            console.log("error: " + e)
+        }
     }
    ,test: function() {
         console.log("incident tab panel test");

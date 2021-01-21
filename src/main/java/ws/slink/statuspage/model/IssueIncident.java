@@ -1,10 +1,12 @@
 package ws.slink.statuspage.model;
 
 import com.google.gson.annotations.Expose;
+import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -79,12 +81,25 @@ public class IssueIncident {
     public LocalDateTime createdAt() {
         return createdAt;
     }
+    public String createdAtStr() {
+        if (null != createdAt)
+            return createdAt.format(DateTimeFormatter.ofPattern(JiraTools.getDateTimeFormat()));
+        else
+            return "";
+    }
     public IssueIncident createdAt(LocalDateTime value) {
         this.createdAt = value;
         return this;
     }
     public LocalDateTime linkedAt() {
         return linkedAt;
+    }
+    public String linkedAtStr() {
+        if (null != linkedAt)
+//            return linkedAt.format(DateTimeFormatter.ofPattern(JiraTools.getDateTimeFormat()));
+            return linkedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")) + " UTC";
+        else
+            return "";
     }
     public IssueIncident linkedAt(LocalDateTime value) {
         this.linkedAt = value;
@@ -96,6 +111,13 @@ public class IssueIncident {
     public IssueIncident projectKey(String  value) {
         this.projectKey = value;
         return this;
+    }
+
+    public boolean isLinked() {
+        return StringUtils.isNotBlank(this.linkedBy);
+    }
+    public boolean isCreated() {
+        return StringUtils.isNotBlank(this.createdBy);
     }
 
 

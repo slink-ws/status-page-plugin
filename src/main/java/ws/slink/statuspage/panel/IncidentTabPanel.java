@@ -49,11 +49,15 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
         Object cfv = getActionsRequest.issue().getCustomFieldValue(customField);
         if (null != cfv) {
             IssueIncident ii = (IssueIncident)cfv;
+            context.put("issueIncident", ii);
             StatuspageService.instance().get(getActionsRequest.issue().getProjectObject().getKey()).ifPresent(statusPage -> {
                 statusPage.getPage(ii.pageId()).ifPresent(page -> context.put("page", page));
                 statusPage.getIncident(ii.pageId(), ii.incidentId(), true).ifPresent(incident -> context.put("incident", incident));
             });
         }
+
+        context.put("componentStatuses", StatuspageService.instance().componentStatusList());
+
 
         String renderedText = vm.getEncodedBody("templates/panels/", "incident-tab-panel.vm", baseUrl, webworkEncoding, context);
         return Collections.singletonList(new GenericMessageAction(renderedText));

@@ -60,7 +60,7 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
             .projectKey(issue.getProjectObject().getKey())
             .incidentId(incident)
             .pageId(page)
-            .linkedBy("...")
+            .linkedBy(getLoggedInUser().getUsername())
             .linkedAt(LocalDateTime.now(ZoneId.of("UTC")))
         ;
         JiraTools.setCustomFieldValue(issue, customField, issueIncident, true);

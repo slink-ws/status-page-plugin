@@ -3,6 +3,8 @@ package ws.slink.statuspage.tools;
 import com.atlassian.jira.bc.issue.IssueService;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.component.pico.ComponentManager;
+import com.atlassian.jira.config.properties.APKeys;
+import com.atlassian.jira.config.properties.ApplicationProperties;
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.IssueInputParameters;
 import com.atlassian.jira.issue.IssueInputParametersImpl;
@@ -222,6 +224,11 @@ public class JiraTools {
         ;
     }
 
+    public static String getDateTimeFormat() {
+//        String key = APKeys.JIRA_LF_DATE_TIME;
+        String key = APKeys.JIRA_LF_DATE_COMPLETE;
+        return ComponentManager.getComponentInstanceOfType(ApplicationProperties.class).getDefaultBackedString(key);
+    }
 }
 
 
