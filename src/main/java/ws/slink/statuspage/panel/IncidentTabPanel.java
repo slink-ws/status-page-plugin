@@ -11,15 +11,21 @@ import com.atlassian.jira.plugin.issuetabpanel.IssueAction;
 import com.atlassian.jira.plugin.issuetabpanel.ShowPanelRequest;
 import com.atlassian.jira.util.VelocityParamFactory;
 import com.atlassian.velocity.VelocityManager;
+import ws.slink.statuspage.model.Component;
+import ws.slink.statuspage.model.Incident;
 import ws.slink.statuspage.model.IssueIncident;
+import ws.slink.statuspage.model.Page;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
+import ws.slink.statuspage.type.IncidentStatus;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
@@ -47,17 +53,31 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
         CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
         Object cfv = getActionsRequest.issue().getCustomFieldValue(customField);
+
+        AtomicReference<List<Component>> loadedComponents = new AtomicReference<>(null);
+        AtomicReference<Incident> loadedIncident          = new AtomicReference<>(null);
         if (null != cfv) {
             IssueIncident ii = (IssueIncident)cfv;
             context.put("issueIncident", ii);
             StatuspageService.instance().get(getActionsRequest.issue().getProjectObject().getKey()).ifPresent(statusPage -> {
-                statusPage.getPage(ii.pageId()).ifPresent(page -> context.put("page", page));
-                statusPage.getIncident(ii.pageId(), ii.incidentId(), true).ifPresent(incident -> context.put("incident", incident));
+                statusPage.getPage(ii.pageId()).ifPresent(page -> {
+                    context.put("page", page);
+                    loadedComponents.set(statusPage.components(page, true));
+                });
+                statusPage.getIncident(ii.pageId(), ii.incidentId(), true).ifPresent(incident -> {
+                    context.put("incident", incident);
+                    loadedIncident.set(incident);
+                });
             });
         }
 
+        if (null != loadedIncident.get() && null != loadedComponents.get()) {
+            context.put("incidentStatuses", StatuspageService.instance().incidentStatusList(loadedIncident.get().isScheduled()));
+            context.put("nonAffectedComponents", StatuspageService.instance().nonAffectedComponentsList(loadedComponents.get(), loadedIncident.get()));
+        }
         context.put("componentStatuses", StatuspageService.instance().componentStatusList());
-
+        context.put("incidentImpacts", StatuspageService.instance().incidentImpactList());
+        context.put("issueKey", getActionsRequest.issue().getKey());
 
         String renderedText = vm.getEncodedBody("templates/panels/", "incident-tab-panel.vm", baseUrl, webworkEncoding, context);
         return Collections.singletonList(new GenericMessageAction(renderedText));

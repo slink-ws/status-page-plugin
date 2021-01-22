@@ -14,7 +14,13 @@
         </dl>
         <dl class="incident-glance-list-item">
             <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
-            <dd><span class="incident-glance-common incident-impact-$incident.impact().value()">$incident.impact().value()</span></dd>
+            <dd>
+##                <span class="incident-glance-common incident-impact incident-impact-$incident.impact().value() selected">
+                <div class="incident-impact incident-impact-$incident.impact().value() selected">
+                    $incident.impact().value()
+                </div>
+##                </span>
+            </dd>
         </dl>
     </ul>
 </div>

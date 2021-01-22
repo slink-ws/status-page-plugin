@@ -1,14 +1,16 @@
 package ws.slink.statuspage.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ofbiz.core.util.UtilTimer;
 import ws.slink.statuspage.StatusPage;
-import ws.slink.statuspage.model.AffectedComponentStatus;
+import ws.slink.statuspage.model.*;
 import ws.slink.statuspage.type.ComponentStatus;
+import ws.slink.statuspage.type.IncidentSeverity;
+import ws.slink.statuspage.type.IncidentStatus;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StatuspageService {
 
@@ -54,4 +56,36 @@ public class StatuspageService {
             .collect(Collectors.toList())
         ;
     }
+    public List<IssueIncidentImpact> incidentImpactList() {
+        return Arrays.asList(IncidentSeverity.values())
+                .stream()
+                .sorted(Comparator.comparing(a -> Integer.valueOf(a.id())))
+                .map(IssueIncidentImpact::of)
+                .filter(s -> StringUtils.isNotBlank(s.title))
+                .collect(Collectors.toList())
+                ;
+    }
+    public List<IssueIncidentStatus> incidentStatusList(boolean sheduledIncident) {
+        Stream<IncidentStatus> is = Arrays.asList(IncidentStatus.values()).stream();
+        if (sheduledIncident)
+            is = is.filter(s -> s.id() >= IncidentStatus.SCHEDULED.id());
+        else
+            is = is.filter(s -> s.id() < IncidentStatus.SCHEDULED.id());
+        return is
+            .sorted(Comparator.comparing(a -> Integer.valueOf(a.id())))
+            .map(IssueIncidentStatus::of)
+            .filter(s -> StringUtils.isNotBlank(s.title))
+            .collect(Collectors.toList())
+        ;
+    }
+    public List<Component> nonAffectedComponentsList(List<Component> allComponents, Incident incident) {
+        if (null == allComponents || null == incident) {
+            return Collections.emptyList();
+        } else {
+            List<Component> result = new ArrayList<>(allComponents);
+            result.removeAll(incident.components());
+            return result;
+        }
+    }
+
 }

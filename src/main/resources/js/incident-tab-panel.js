@@ -5,12 +5,12 @@ let $incidentTabPanel = {
         let statusId    = source.id.replace(componentId + "-", "");
         // console.log("componentId: " + componentId + ", status: " + statusId);
         let update = this.enableSaveButton;
-        console.log("f:");
-        console.log(f);
+        // console.log("f:");
+        // console.log(f);
         if (undefined != f && 'undefined' != f)
             update = f;
-        console.log("update:");
-        console.log(update);
+        // console.log("update:");
+        // console.log(update);
         if (!($("#" + componentId + "-remove").hasClass("selected"))) {
             $("#" + componentId).children("span").removeClass("selected");
             $("#" + source.id).addClass("selected");
@@ -55,6 +55,48 @@ let $incidentTabPanel = {
             $(".component-button.remove").not(".header").removeClass("selected");
         }
     } // removeAllComponents
+    ,changeIncidentImpact: function(source) {
+        if(!$(".tab-panel div.incident-impact-" + source.id).hasClass("selected")) {
+            $(".tab-panel div.incident-impact").removeClass("selected");
+            $(".tab-panel div.incident-impact-" + source.id).addClass("selected");
+            this.enableSaveButton();
+        }
+    } // changeIncidentImpact
+    ,changeIncidentStatus: function(source) {
+        if (!$(".tab-panel div.incident-status-" + source.id).hasClass("selected")) {
+            $(".tab-panel div.incident-status").removeClass("selected");
+            $(".tab-panel div.incident-status-" + source.id).addClass("selected");
+            this.enableSaveButton();
+        }
+    } // changeIncidentImpact
+   ,addAffectedComponent: function(title, status, container) {
+        let componentId   = $("#" + title).val();
+        if (null != componentId && undefined != componentId && "" != componentId) {
+            let componentName = $("#" + title + " option:selected").text();
+            let statusId      = $("#" + status).val();
+            let statusName    = $("#" + status+ " option:selected").text();
+            $("#" + title + " option[value='" + componentId + "']").remove();
+
+            let f = this.getComponentStatusButtonClass;
+            let html  = '<div class="component" id="' + componentId + '">\n';
+            html += '<div class="component-name">' + componentName + '</div>\n';
+            $("#" + status + " > option").each(function() {
+                html += '<span id="' + componentId + '-' + this.value + '" onClick="statusButtonClick(this)" title="' + this.text + '" ';
+                html += 'class="component-button aui-icon aui-icon-small ' + this.value + ' ';
+                html += f(this.value) + ' ' + ((this.value == statusId) ? "selected" : "") + '">\n';
+                html += this.text + "\n</span>\n";
+                // console.log("option: " + this.text + ' ' + this.value);
+            });
+            html += '<span id="' + componentId + '-remove" title="Remove Component" onClick="removeButtonClick(this)" ';
+            html += 'class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">\nREMOVE\n</span>\n';
+            html += '</div>';
+            // console.log(html);
+            // console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            // console.log($("#" + container).html());
+            $("#" + container).append(html);
+            this.enableSaveButton();
+        }
+    }
    ,getComponentsConfig: function() {
         let result = {};
         result["remove"]               = [];
@@ -66,8 +108,32 @@ let $incidentTabPanel = {
         $(".component-name.removed").each(function() {
             result["remove"].push($(this).parent().attr("id"));
         });
-        console.log(result);
         return result;
+    }
+   ,updateIncident: function(statusBlockId, impactBlockId, messageBlockId, pageIdBlock, incidentIdBlock, projectKeyBlock, issueKeyBlock) {
+        let status     = $("#" + statusBlockId + " .selected").attr("id");
+        let impact     = $("#" + impactBlockId + " .selected").attr("id");
+        let message    = $("#" + messageBlockId + " textarea").val();
+
+        let pageId     = $("#" + pageIdBlock).val();
+        let incidentId = $("#" + incidentIdBlock).val();
+        let projectKey = $("#" + projectKeyBlock).val();
+        let issueKey   = $("#" + issueKeyBlock).val();
+
+        let components = $incidentTabPanel.getComponentsConfig();
+        delete components.remove;
+
+        let config = {}
+        config["project"]    = projectKey;
+        config["issue"]      = issueKey;
+        config["page"]       = pageId;
+        config["incident"]   = incidentId;
+        config["status"]     = status;
+        config["impact"]     = impact;
+        config["message"]    = message;
+        config["components"] = components;
+
+        console.log(JSON.stringify(config, null, 2));
     }
    ,getComponents: function(state) {
         let result = [];
@@ -85,6 +151,20 @@ let $incidentTabPanel = {
         } catch (e) {
             console.log("error: " + e)
         }
+    }
+   ,getComponentStatusButtonClass(status) {
+        if (status == 'operational')
+            return "aui-iconfont-check-circle";
+        else if (status == 'degraded_performance')
+            return "aui-iconfont-devtools-task-disabled";
+        else if (status == 'partial_outage')
+            return "aui-iconfont-failed-build";
+        else if (status == 'major_outage')
+            return "aui-iconfont-remove";
+        else if (status == 'under_maintenance')
+            return "aui-iconfont-info-circle";
+        else
+            return "";
     }
    ,test: function() {
         console.log("incident tab panel test");

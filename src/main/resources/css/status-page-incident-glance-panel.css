@@ -42,7 +42,7 @@
     align-items: center;
     position: relative;
 
-    min-width: 15ch;
+    min-width: 30ch;
     max-width: 30ch;
 
     border: 1px solid var(--select-border);
@@ -178,37 +178,92 @@ textarea {
     padding: 3px;
     border-radius: 4px;
 }
+
+div.incident-impact {
+    float: left;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+}
+div.incident-impact.selected {
+    cursor: default;
+}
 .incident-impact-none {
-    background-color: palegreen;
+    color: rgb(45, 198, 83);
+}
+.incident-impact-none.selected {
+    color: white;
+    background-color: rgb(45, 198, 83);
 }
 .incident-impact-minor {
+    color: rgb(254, 185, 9);
+}
+.incident-impact-minor.selected {
+    color: white;
     background-color: rgb(254, 185, 9);
 }
 .incident-impact-major {
-    background-color: rgb(252, 119, 8);
+    color: rgb(252, 119, 8);
+}
+.incident-impact-major.selected {
     color: white;
+    background-color: rgb(252, 119, 8);
 }
 .incident-impact-critical {
-    background-color: rgb(211, 31, 13);
+    color: rgb(211, 31, 13);
+}
+.incident-impact-critical.selected {
     color: white;
+    background-color: rgb(211, 31, 13);
 }
 
+div.incident-status {
+    float: left;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+}
+div.incident-status.selected {
+    cursor: default;
+}
 .incident-status-investigating {
     color: rgb(211, 31, 13);
+}
+.incident-status-investigating.selected {
+    color: white;
+    background-color: rgb(211, 31, 13);
 }
 .incident-status-identified {
     color: rgb(252, 119, 8);
 }
+.incident-status-identified.selected {
+    color: white;
+    background-color: rgb(252, 119, 8);
+}
 .incident-status-monitoring {
-    color: rgb(254, 185, 9);
+    color: rgb(43, 132, 210);
+}
+.incident-status-monitoring.selected {
+    color: white;
+    background-color: rgb(43, 132, 210);
 }
 .incident-status-resolved {
-    color: palegreen;
+    color: rgb(45, 198, 83);
+}
+.incident-status-resolved.selected {
+    color: white;
+    background-color: rgb(45, 198, 83);
 }
 
 .components-list {
     overflow: scroll;
-    height: 200px;
+    height: 180px;
 }
 .component {
     border-bottom: 1px solid gainsboro;
@@ -282,6 +337,52 @@ textarea {
 .component-button.header {
     color: rgb(110, 121, 141);
 }
+.components-add-block-container {
+    padding-top: 20px;
+    display: flex;
+    height: 100%;
+}
+.components-add-block-content {
+    align-self: flex-end;
+}
+
+.component-button.operational:hover {
+    color: rgb(45, 198, 83);
+}
+.component-button.degraded_performance:hover {
+    color: rgb(254, 185, 9);
+}
+.component-button.partial_outage:hover {
+    color: rgb(252, 119, 8);
+}
+.component-button.major_outage:hover {
+    color: rgb(211, 31, 13);
+}
+.component-button.under_maintenance:hover  {
+    color: rgb(43, 132, 210);
+}
+.component-button.remove:hover {
+    color: rgb(211, 31, 13);
+}
+.component-header.operational:hover {
+    color: rgb(45, 198, 83);
+}
+.component-header.degraded_performance:hover {
+    color: rgb(254, 185, 9);
+}
+.component-header.partial_outage:hover {
+    color: rgb(252, 119, 8);
+}
+.component-header.major_outage:hover {
+    color: rgb(211, 31, 13);
+}
+.component-header.under_maintenance:hover  {
+    color: rgb(43, 132, 210);
+}
+.component-header.remove:hover {
+    color: rgb(211, 31, 13);
+}
+
 
 .item-label {
     color: rgb(110, 121, 141);

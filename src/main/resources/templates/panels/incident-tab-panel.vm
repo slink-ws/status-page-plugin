@@ -1,563 +1,204 @@
-##<div class="mod-header">
-##    <h3>$i18n.getText('incident-tab-panel.label')</h3>
-##</div>
-##<div class="mod-header">
-##    $testVariable
-##</div>
-##<div class="mod-content">
+#macro(getComponentStatusButtonClass $inStatus $outResult)
+    #if     ($inStatus == 'operational')
+        #set($outResult = "aui-iconfont-check-circle")
+    #elseif ($inStatus == 'degraded_performance')
+        #set($outResult = "aui-iconfont-devtools-task-disabled")
+    #elseif ($inStatus == 'partial_outage')
+        #set($outResult = "aui-iconfont-failed-build")
+    #elseif ($inStatus == 'major_outage')
+        #set($outResult = "aui-iconfont-remove")
+    #elseif ($inStatus == 'under_maintenance')
+        #set($outResult = "aui-iconfont-info-circle")
+    #end
+#end
 
-    <div class="tab-panel">
+<div class="tab-panel">
+    <div class="float_container">
+        <div class="float_child float_child_left">
+            <div class="tab-general-block">
+                <div>
+                    <h4>$i18n.getText('incident-tab-panel.incident-general-section-title')</h4>
+                </div>
+                <div>
+                    &nbsp;
+                </div>
+                <div>
+                    <ul class="item-details">
+                        <dl class="incident-glance-list-item">
+                            <dt>$i18n.getText('incident-glance-panel.page-name'):</dt>
+                            <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()">$page.name()</a></span></dd>
+                        </dl>
+                        <dl class="incident-glance-list-item">
+                            <dt>$i18n.getText('incident-glance-panel.incident-name'):</dt>
+                            <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()/incidents/$incident.id()">$incident.name()</a></span></dd>
+                        </dl>
 
-        <div class="float_container">
-            <div class="float_child float_child_left">
-                <div class="tab-general-block">
-                    <div>
-                        <h4>$i18n.getText('incident-tab-panel.incident-general-section-title')</h4>
-                    </div>
-                    <div>
-                        &nbsp;
-                    </div>
-                    <div>
-                        <ul class="item-details">
-                            <dl class="incident-glance-list-item">
-                                <dt>$i18n.getText('incident-glance-panel.page-name'):</dt>
-                                <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()">$page.name()</a></span></dd>
-                            </dl>
-                            <dl class="incident-glance-list-item">
-                                <dt>$i18n.getText('incident-glance-panel.incident-name'):</dt>
-                                <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()/incidents/$incident.id()">$incident.name()</a></span></dd>
-                            </dl>
-                            <dl class="incident-glance-list-item">
-                                <dt>$i18n.getText('incident-glance-panel.incident-status'):</dt>
-                                <dd><span class="incident-glance-common incident-status-$incident.status().value()">$incident.status().value()</span></dd>
-                            </dl>
-                            <dl class="incident-glance-list-item">
-                                <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
-                                <dd><span class="incident-glance-common incident-impact-$incident.impact().value()">$incident.impact().value()</span></dd>
-                            </dl>
-
-                            #if ($issueIncident.isLinked())
-                                <dl class="incident-glance-list-item">
-                                    <dt>$i18n.getText('incident-tab-panel.incident-linked-by'):</dt>
-                                    <dd><span class="incident-glance-common">$issueIncident.linkedBy()</span></dd>
-                                </dl>
-                                <dl class="incident-glance-list-item">
-                                    <dt>$i18n.getText('incident-tab-panel.incident-linked-at'):</dt>
-                                    <dd><span class="incident-glance-common">$issueIncident.linkedAtStr()</span></dd>
-                                </dl>
-                            #elseif ($issueIncident.isCreated())
-                                <dl class="incident-glance-list-item">
-                                    <dt>$i18n.getText('incident-tab-panel.incident-created-by'):</dt>
-                                    <dd><span class="incident-glance-common">$issueIncident.createdBy()</span></dd>
-                                </dl>
-                                <dl class="incident-glance-list-item">
-                                    <dt>$i18n.getText('incident-tab-panel.incident-created-at'):</dt>
-                                    <dd><span class="incident-glance-common">$issueIncident.createdAtStr()</span></dd>
-                                </dl>
-                            #end
-
-                            <dl class="incident-glance-list-item">
-                                <dt>$i18n.getText('incident-tab-panel.status-message'):</dt>
-                                <dd>
-                                    <div style="display: block;" id="rulesformitem" class="formitem">
-                                        <div class="textwrapper">
-                                            <textarea cols="2" rows="8" id="rules"></textarea>
+                        <dl class="incident-glance-list-item">
+                            <dt>$i18n.getText('incident-glance-panel.incident-status'):</dt>
+                            <dd id="incident-status-block">
+                                #foreach($incidentStatus in $incidentStatuses)
+                                    #if ($incident.status().value() == $incidentStatus.title())
+                                        <div id="$incidentStatus.title()"
+                                             onclick="changeIncidentStatus(this)"
+                                             class="incident-status incident-status-$incidentStatus.title() selected">
+                                            $incidentStatus.title()
                                         </div>
-                                    </div>
-                                </dd>
+                                    #else
+                                        <div id="$incidentStatus.title()"
+                                             onclick="changeIncidentStatus(this)"
+                                             class="incident-status incident-status-$incidentStatus.title()">
+                                            $incidentStatus.title()
+                                        </div>
+                                    #end
+                                #end
+                            </dd>
+                        </dl>
+
+                        <dl class="incident-glance-list-item">
+                            <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
+                            <dd id="incident-impact-block">
+                                #foreach($impact in $incidentImpacts)
+                                    #if ($incident.impact().value() == $impact.title())
+                                        <div id="$impact.title()"
+                                             onclick="changeIncidentImpact(this)"
+                                             class="incident-impact incident-impact-$impact.title() selected">
+                                            $impact.title()
+                                        </div>
+                                    #else
+                                        <div id="$impact.title()"
+                                             onclick="changeIncidentImpact(this)"
+                                             class="incident-impact incident-impact-$impact.title()">
+                                            $impact.title()
+                                        </div>
+                                    #end
+                                #end
+                            </dd>
+                        </dl>
+
+                        #if ($issueIncident.isLinked())
+                            <dl class="incident-glance-list-item">
+                                <dt>$i18n.getText('incident-tab-panel.incident-linked-by'):</dt>
+                                <dd><span class="incident-glance-common">$issueIncident.linkedBy()</span></dd>
                             </dl>
-                        </ul>
-                    </div>
+                            <dl class="incident-glance-list-item">
+                                <dt>$i18n.getText('incident-tab-panel.incident-linked-at'):</dt>
+                                <dd><span class="incident-glance-common">$issueIncident.linkedAtStr()</span></dd>
+                            </dl>
+                        #elseif ($issueIncident.isCreated())
+                            <dl class="incident-glance-list-item">
+                                <dt>$i18n.getText('incident-tab-panel.incident-created-by'):</dt>
+                                <dd><span class="incident-glance-common">$issueIncident.createdBy()</span></dd>
+                            </dl>
+                            <dl class="incident-glance-list-item">
+                                <dt>$i18n.getText('incident-tab-panel.incident-created-at'):</dt>
+                                <dd><span class="incident-glance-common">$issueIncident.createdAtStr()</span></dd>
+                            </dl>
+                        #end
+
+                        <dl class="incident-glance-list-item">
+                            <dt>$i18n.getText('incident-tab-panel.status-message'):</dt>
+                            <dd id="incident-message-block">
+                                <div style="display: block;" id="rulesformitem" class="formitem">
+                                    <div class="textwrapper">
+                                        <textarea cols="2" rows="8" id="rules"></textarea>
+                                    </div>
+                                </div>
+                            </dd>
+                        </dl>
+                    </ul>
                 </div>
             </div>
-            <div class="float_child float_child_right">
-                <div class="tab-components-block">
-                    <div>
-                        <h4>$i18n.getText('incident-tab-panel.incident-components-section-title')</h4>
-                    </div>
-                    <div class="component" id="components-header">
-                        <div class="component-name-header">&nbsp;</div>
-                        <span id="components-header-operational"
+        </div>
+        <div class="float_child float_child_right">
+            <div class="tab-components-block">
+                <div>
+                    <h4>$i18n.getText('incident-tab-panel.incident-components-section-title')</h4>
+                </div>
+                <div class="component" id="components-header">
+                    <div class="component-name-header">&nbsp;</div>
+                    #foreach($componentStatus in $componentStatuses)
+                        #set ($buttonClass = "")
+                        #getComponentStatusButtonClass($componentStatus.id() $buttonClass)
+                        <span id="components-header-$componentStatus.id()"
                               onclick="headerStatusClick(this)"
-                              title="Set all components to Operational sate"
-                              class="component-button header aui-icon aui-icon-small aui-iconfont-check-circle">
-                OPERATIONAL
-            </span>
-                        <span id="components-header-degraded_performance"
-                              onclick="headerStatusClick(this)"
-                              title="Set all components to Degraded Performance state"
-                              class="component-button header aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-                DEGRADED
-            </span>
-                        <span id="components-header-partial_outage"
-                              onclick="headerStatusClick(this)"
-                              title="Set all components to Partial Outage state"
-                              class="component-button header aui-icon aui-icon-small aui-iconfont-failed-build">
-                PARTIAL OUTAGE
-            </span>
-                        <span id="components-header-major_outage"
-                              onclick="headerStatusClick(this)"
-                              title="Set all components to Major Outage state"
-                              class="component-button header aui-icon aui-icon-small aui-iconfont-remove">
-                MAJOR OUTAGE
-            </span>
-                        <span id="components-header-under_maintenance"
-                              onclick="headerStatusClick(this)"
-                              title="Set all components to Under Maintenance state"
-                              class="component-button header aui-icon aui-icon-small aui-iconfont-info-circle">
-                MAINTENANCE
-            </span>
-                        <span id="components-header-remove"
-                              title="Remove all components"
-                              onclick="headerRemoveClick(this)"
-                              class="component-button header remove aui-icon aui-icon-small aui-iconfont-trash">
-                REMOVE
-            </span>
-                    </div>
-                    <div id="tab-components-list" class="components-list">
-                        <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
-                        <div class="component" id="test-component-1">
-                            <div class="component-name">Test Component 1</div>
-                            <span id="test-component-1-operational"
-                                  onclick="statusButtonClick(this)"
-                                  title="Operational"
-                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-                OPERATIONAL
-            </span>
-                            <span id="test-component-1-degraded_performance"
-                                  onclick="statusButtonClick(this)"
-                                  title="Degraded Performance"
-                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-                DEGRADED
-            </span>
-                            <span id="test-component-1-partial_outage"
-                                  onclick="statusButtonClick(this)"
-                                  title="Partial Outage"
-                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-                PARTIAL OUTAGE
-            </span>
-                            <span id="test-component-1-major_outage"
-                                  onclick="statusButtonClick(this)"
-                                  title="Major Outage"
-                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-                MAJOR OUTAGE
-            </span>
-                            <span id="test-component-1-under_maintenance"
-                                  onclick="statusButtonClick(this)"
-                                  title="Under Maintenance"
-                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-                MAINTENANCE
-            </span>
-                            <span id="test-component-1-remove"
+                              title="Set all components to '$componentStatus.title()' sate"
+                              class="component-button components-header $componentStatus.id() header aui-icon aui-icon-small $buttonClass">
+                            $componentStatus.title()
+                        </span>
+                    #end
+                    <span id="components-header-remove"
+                          title="Remove all components"
+                          onclick="headerRemoveClick(this)"
+                          class="component-button header remove aui-icon aui-icon-small aui-iconfont-trash">
+                        Remove
+                    </span>
+                </div>
+                <div id="tab-components-list" class="components-list">
+                    <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
+                    #foreach($component in $incident.components())
+                        <div class="component" id="$component.id()">
+                            <div class="component-name">$component.name()</div>
+                            #foreach($componentStatus in $componentStatuses)
+                                #set ($buttonClass = "")
+                                #getComponentStatusButtonClass($componentStatus.id() $buttonClass)
+                                #if($componentStatus.id() == $component.status().value())
+                                    <span id="$component.id()-$componentStatus.id()"
+                                          onclick="statusButtonClick(this)"
+                                          title="$componentStatus.title()"
+                                          class="component-button $componentStatus.id() selected aui-icon aui-icon-small $buttonClass">
+                                        $componentStatus.title()
+                                    </span>
+                                #else
+                                    <span id="$component.id()-$componentStatus.id()"
+                                          onclick="statusButtonClick(this)"
+                                          title="$componentStatus.title()"
+                                          class="component-button $componentStatus.id() aui-icon aui-icon-small $buttonClass">
+                                        $componentStatus.title()
+                                    </span>
+                                #end
+                            #end
+                            <span id="$component.id()-remove"
                                   title="Remove Component"
                                   onclick="removeButtonClick(this)"
                                   class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-                REMOVE
-            </span>
-                        </div>
-                        <div class="component" id="test-component-2">
-                            <div class="component-name">Test Component 2 with very-very-very-very long-long name</div>
-                            <span id="test-component-2-operational"
-                                  onclick="statusButtonClick(this)"
-                                  title="Operational"
-                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-                OPERATIONAL
-            </span>
-                            <span id="test-component-2-degraded_performance"
-                                  onclick="statusButtonClick(this)"
-                                  title="Degraded Performance"
-                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-                DEGRADED
-            </span>
-                            <span id="test-component-2-partial_outage"
-                                  onclick="statusButtonClick(this)"
-                                  title="Partial Outage"
-                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-                PARTIAL OUTAGE
-            </span>
-                            <span id="test-component-2-major_outage"
-                                  onclick="statusButtonClick(this)"
-                                  title="Major Outage"
-                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-                MAJOR OUTAGE
-            </span>
-                            <span id="test-component-2-under_maintenance"
-                                  onclick="statusButtonClick(this)"
-                                  title="Under Maintenance"
-                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-                MAINTENANCE
-            </span>
-                            <span id="test-component-2-remove"
-                                  title="Remove Component"
-                                  onclick="removeButtonClick(this)"
-                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-                REMOVE
-            </span>
-                        </div>
-                        <div class="component" id="test-component-3">
-                            <div class="component-name">Test Component 3</div>
-                            <span id="test-component-3-operational"
-                                  onclick="statusButtonClick(this)"
-                                  title="Operational"
-                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-                OPERATIONAL
-            </span>
-                            <span id="test-component-3-degraded_performance"
-                                  onclick="statusButtonClick(this)"
-                                  title="Degraded Performance"
-                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-                DEGRADED
-            </span>
-                            <span id="test-component-3-partial_outage"
-                                  onclick="statusButtonClick(this)"
-                                  title="Partial Outage"
-                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-                PARTIAL OUTAGE
-            </span>
-                            <span id="test-component-3-major_outage"
-                                  onclick="statusButtonClick(this)"
-                                  title="Major Outage"
-                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-                MAJOR OUTAGE
-            </span>
-                            <span id="test-component-3-under_maintenance"
-                                  onclick="statusButtonClick(this)"
-                                  title="Under Maintenance"
-                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-                MAINTENANCE
-            </span>
-                            <span id="test-component-3-remove"
-                                  title="Remove Component"
-                                  onclick="removeButtonClick(this)"
-                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-                REMOVE
-            </span>
-                        </div>
-##                        <div class="component" id="test-component-4">
-##                            <div class="component-name">Test Component 4</div>
-##                            <span id="test-component-4-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-4-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-4-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-4-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-4-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-4-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-##                        <div class="component" id="test-component-5">
-##                            <div class="component-name">Test Component 5 with very-very-very-very long-long name</div>
-##                            <span id="test-component-5-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-5-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-5-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-5-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-5-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-5-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-##                        <div class="component" id="test-component-6">
-##                            <div class="component-name">Test Component 6</div>
-##                            <span id="test-component-6-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-6-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-6-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-6-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-6-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-6-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-##                        <div class="component" id="test-component-7">
-##                            <div class="component-name">Test Component 7</div>
-##                            <span id="test-component-7-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-7-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-7-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-7-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-7-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-7-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-##                        <div class="component" id="test-component-8">
-##                            <div class="component-name">Test Component 8</div>
-##                            <span id="test-component-8-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-8-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-8-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-8-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-8-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-8-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-##                        <div class="component" id="test-component-9">
-##                            <div class="component-name">Test Component 9</div>
-##                            <span id="test-component-9-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-9-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-9-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-9-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-9-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-9-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-##                        <div class="component" id="test-component-10">
-##                            <div class="component-name">Test Component 10</div>
-##                            <span id="test-component-10-operational"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Operational"
-##                                  class="component-button operational aui-icon aui-icon-small aui-iconfont-check-circle">
-##                OPERATIONAL
-##            </span>
-##                            <span id="test-component-10-degraded_performance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Degraded Performance"
-##                                  class="component-button degraded_performance aui-icon aui-icon-small aui-iconfont-devtools-task-disabled">
-##                DEGRADED
-##            </span>
-##                            <span id="test-component-10-partial_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Partial Outage"
-##                                  class="component-button partial_outage aui-icon aui-icon-small aui-iconfont-failed-build">
-##                PARTIAL OUTAGE
-##            </span>
-##                            <span id="test-component-10-major_outage"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Major Outage"
-##                                  class="component-button major_outage aui-icon aui-icon-small aui-iconfont-remove">
-##                MAJOR OUTAGE
-##            </span>
-##                            <span id="test-component-10-under_maintenance"
-##                                  onclick="statusButtonClick(this)"
-##                                  title="Under Maintenance"
-##                                  class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-info-circle">
-##                MAINTENANCE
-##            </span>
-##                            <span id="test-component-10-remove"
-##                                  title="Remove Component"
-##                                  onclick="removeButtonClick(this)"
-##                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-##                REMOVE
-##            </span>
-##                        </div>
-                    </div>
-                    <div style="display: flex; height: 100%;">
-                        <div style="align-self: flex-end;">
-                            <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
-                            <div class="input-element">
-                                <label  class="item-label" for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
-                                <span class="select">
-                                <select id="new-component-title">
-                                    <option>Value 1</option>
-                                    <option>Value 2</option>
-                                    <option>Value 3 with very-very-very-very long-long-long-long-long-long-long-long-long-long-long-long-long-long title</option>
-                                    <option>Value 4</option>
-                                    <option>Value 5</option>
-                                    <option>Value 6</option>
-                                    <option>Value 7</option>
-                                    <option>Value 8</option>
-                                    <option>Value 9</option>
-                                    <option>Value 10</option>
-                                    <option>Value 11</option>
-                                    <option>Value 12</option>
-                                    <option>Value 13</option>
-                                    <option>Value 14</option>
-                                    <option>Value 15</option>
-                                    <option>Value 16</option>
-                                    <option>Value 17</option>
-                                    <option>Value 18</option>
-                                    <option>Value 19</option>
-                                    <option>Value 20</option>
-                                </select>
-                                <span class="focus"></span>
+                                REMOVE
                             </span>
-                            </div>
-                            <div class="input-element">
-                                <label class="item-label" for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
-                                <span class="select">
-                                <select id="new-component-status">
-                                    #foreach($status in $componentStatuses)
-                                        <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>
-                                    #end
-                                </select>
-                                <span class="focus"></span>
-                            </span>
-                            </div>
-                            <div class="input-element">
-                                <label for="add-component-button">&nbsp;</label>
-                                <div>
-                                    <div id="add-component-button"
-                                         onclick=""
-                                         title="Add affected component"
-                                         class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-add">
-                                        ADD
-                                    </div>
+                        </div>
+                    #end
+                </div>
+                <div class="components-add-block-container">
+                    <div class="components-add-block-content">
+                        <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
+                        <div class="input-element">
+                            <label  class="item-label" for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
+                            <span class="select">
+                            <select id="new-component-title">
+                                #foreach($nac in $nonAffectedComponents)
+                                    <option value="$nac.id()">$nac.name()</option>
+                                #end
+                            </select>
+                            <span class="focus"></span>
+                        </span>
+                        </div>
+                        <div class="input-element">
+                            <label class="item-label" for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
+                            <span class="select">
+                            <select id="new-component-status">
+                                #foreach($status in $componentStatuses)
+                                    <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>
+                                #end
+                            </select>
+                            <span class="focus"></span>
+                        </span>
+                        </div>
+                        <div class="input-element">
+                            <label for="add-component-button">&nbsp;</label>
+                            <div>
+                                <div id="add-component-button"
+                                     onclick="addAffectedComponent()"
+                                     title="Add affected component"
+                                     class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-add">
+                                    ADD
                                 </div>
                             </div>
                         </div>
@@ -565,26 +206,25 @@
                 </div>
             </div>
         </div>
-
-        <div class="tab-buttons-block">
-            <div class="buttons">
-                <input class="aui-button button"
-                       type="submit"
-                       onclick="updateIncident()"
-                       id="tab-update-incident-button"
-                       value="$i18n.getText('incident-tab-panel.save-button-text')" />
-            </div>
-        </div>
-
     </div>
 
+    <div class="tab-buttons-block">
+        <div class="buttons">
+            <input class="aui-button button"
+                   type="submit"
+                   onclick="updateIncident()"
+                   id="tab-update-incident-button"
+                   value="$i18n.getText('incident-tab-panel.save-button-text')" />
+        </div>
+    </div>
 
-##    <span title="Add Component"        class="button-common aui-icon aui-icon-small aui-iconfont-add-circle">ADD v1</span>
-##    <span title="Add Component"        class="button-common aui-icon aui-icon-small aui-iconfont-add">ADD v2</span>
-##    <span class="button-common aui-icon aui-icon-small aui-icon-wait">LOADING</span><br>
+    <input type="hidden" id="page-id" value="$issueIncident.pageId()" />
+    <input type="hidden" id="incident-id" value="$issueIncident.incidentId()" />
+    <input type="hidden" id="project-key" value="$issueIncident.projectKey()" />
+    <input type="hidden" id="issue-key" value="$issueKey" />
 
-##</div>
 
+</div>
 <script>
     #include("/js/statuspage.js")
     #include("/js/incident-tab-panel.js")
@@ -601,11 +241,24 @@
         $incidentTabPanel.removeAllComponents(source);
     }
     function updateIncident() {
-        $incidentTabPanel.getComponentsConfig();
+        // TODO: https://community.atlassian.com/t5/Jira-questions/How-to-add-a-change-history-entry-to-an-Issue-that-has-no/qaq-p/1002049
+        $incidentTabPanel.updateIncident(
+            'incident-status-block',
+            'incident-impact-block',
+            'incident-message-block',
+            'page-id',
+            'incident-id',
+            'project-key',
+            'issue-key'
+        );
     }
-    ## $('#sp-link-page').change(function(){
-    ##     let pageId = $(this).val();
-    ##         $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident');
-    ## })
-    ## $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident');
+    function changeIncidentImpact(source) {
+            $incidentTabPanel.changeIncidentImpact(source);
+    }
+    function changeIncidentStatus(source) {
+        $incidentTabPanel.changeIncidentStatus(source);
+    }
+    function addAffectedComponent() {
+        $incidentTabPanel.addAffectedComponent('new-component-title', 'new-component-status', 'tab-components-list');
+    }
 </script>
