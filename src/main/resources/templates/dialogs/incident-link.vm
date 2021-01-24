@@ -38,6 +38,7 @@
             <select class="select" name="incident" id="sp-link-incident" required="true" placeholder="select incident" />
             <span id="incidents-loading-wheel" style="vertical-align: middle;" class="button-common aui-icon aui-icon-small aui-icon-wait">...</span><br>
         </div>
+        <input type="hidden" name="location" id="page-location" value="" />
 
 ##        <div class="field-group">
 ##            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
@@ -77,7 +78,7 @@
 ##        let group = groups[idx];
 ##        let groupId = group.id;
 ##        let pageId  = group.page_id;
-##        console.log(pageId + " - " + groupId);
+##        AJS.log(pageId + " - " + groupId);
 ##        $statuspage.groupComponents(pageId, groupId);
 ####        $statuspage.groupComponents(group.page_id, group.id);
 ##    }

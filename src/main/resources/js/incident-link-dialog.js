@@ -1,12 +1,13 @@
 jQuery(function () {
-    // console.log("incidentLinkDialog loaded");
+    // AJS.log("incidentLinkDialog loaded");
+    $("#page-location").val($(location).attr('href'));
 });
 let $incidentLinkDialog = {
 
     loadPages : function(pagesElement, incidentsElement, wheelElement) {
-        // console.log("incidentLinkDialog.loadPages");
+        // AJS.log("incidentLinkDialog.loadPages");
         const pages = $statuspage.pages();
-        // console.log(pages);
+        // AJS.log(pages);
         let options_str = "";
         pages.forEach( function(page) {
             options_str += '<option value="' + page.id + '">' + page.name + '</option>';
@@ -16,10 +17,10 @@ let $incidentLinkDialog = {
     },
 
     loadIncidents : function(pageId, element, wheelElement) {
-        // console.log("incidentLinkDialog.loadIncidents for " + pageId);
+        // AJS.log("incidentLinkDialog.loadIncidents for " + pageId);
         $('#' + wheelElement).show();
         const incidents = $statuspage.incidents(pageId, true);
-        // console.log(incidents);
+        // AJS.log(incidents);
         let options_str = "";
         incidents.forEach( function(page) {
             options_str += '<option value="' + page.id + '">' + page.name + '</option>';
@@ -29,6 +30,8 @@ let $incidentLinkDialog = {
     },
 
     test : function() {
-        // console.log("$incidentLinkDialog: test");
+        // AJS.log("$incidentLinkDialog: test");
     }
+
 }
+

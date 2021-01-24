@@ -9,7 +9,7 @@ function sort_options(element) {
 }
 function move_items(from, to, items) {
     for (let idx = 0; idx < items.length; idx++) {
-        // console.log(items[idx].value + " -> " + items[idx].text + " : " + items[idx].selected);
+        // AJS.log(items[idx].value + " -> " + items[idx].text + " : " + items[idx].selected);
         $('#' + to).append('<option value="' + items[idx].value + '">' + items[idx].text + '</option>');
         $('#' + from + ' option[value=' + items[idx].value + ']').remove();
         sort_options(to);
@@ -18,7 +18,7 @@ function move_items(from, to, items) {
 function get_selected(items) {
     let result = [];
     for (let idx = 0; idx < items.length; idx++) {
-        // console.log(idx + " : " + items[idx].value + " -> " + items[idx].text + " (" + items[idx].selected + ")");
+        // AJS.log(idx + " : " + items[idx].value + " -> " + items[idx].text + " (" + items[idx].selected + ")");
         if (items[idx].selected) {
             result.push(items[idx]);
         }
@@ -70,12 +70,12 @@ function config_update_config() {
     let mgmt_roles = get_select_values_string("selected-mgmt-roles");
     let view_roles = get_select_values_string("selected-view-roles");
 
-    console.log("~~~ SAVING CONFIGURATION:");
-    console.log("       project   : " + project);
-    console.log("       api key   : " + apikey);
-    console.log("       m.roles   : " + mgmt_roles);
-    console.log("       v.roles   : " + view_roles);
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    AJS.log("~~~ SAVING CONFIGURATION:");
+    AJS.log("       project   : " + project);
+    AJS.log("       api key   : " + apikey);
+    AJS.log("       m.roles   : " + mgmt_roles);
+    AJS.log("       v.roles   : " + view_roles);
+    AJS.log("~~~~~~~~~~~~~~~~~~~~~~~~~~")
     AJS.$.ajax({
         url: AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/config",
         type: "PUT",

@@ -1,3 +1,8 @@
+
+/*
+ https://stackoverflow.com/questions/7638677/how-can-i-remove-the-gloss-on-a-select-element-in-safari-on-mac
+*/
+
 .tab-panel,
 .tab-panel::before,
 .tab-panel::after {
@@ -9,6 +14,7 @@
     --select-arrow: var(--select-border);
 }
 .tab-panel select {
+    -webkit-appearance:none;
     appearance: none;
     background-color: transparent;
     border: none;
@@ -36,14 +42,19 @@
     background-color: var(--select-arrow);
     clip-path: polygon(100% 0%, 0 0%, 50% 100%);
 }
+.tab-panel .select .components {
+    min-width: 25ch;
+    max-width: 25ch;
+}
+.tab-panel .select .statuses {
+    min-width: 15ch;
+    max-width: 15ch;
+}
 .tab-panel .select {
     display: grid;
     grid-template-areas: "select";
     align-items: center;
     position: relative;
-
-    min-width: 30ch;
-    max-width: 30ch;
 
     border: 1px solid var(--select-border);
     border-radius: 0.25em;

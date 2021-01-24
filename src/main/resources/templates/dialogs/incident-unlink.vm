@@ -4,6 +4,7 @@
 
     <input type="hidden" name="atl_token" value="${atl_token}" />
     <input type="hidden" name="id" value="$action.id" />
+    <input type="hidden" name="location" id="page-location" value="" />
 
     <div class="content-body">
         <h4>$i18n.getText('incident-unlink-dialog.unlink-question')</h4>
@@ -16,3 +17,6 @@
         </div>
     </div>
 </form>
+<script>
+    $("#page-location").val($(location).attr('href'));
+</script>

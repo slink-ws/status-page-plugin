@@ -171,7 +171,7 @@
                         <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
                         <div class="input-element">
                             <label  class="item-label" for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
-                            <span class="select">
+                            <span class="select components">
                             <select id="new-component-title">
                                 #foreach($nac in $nonAffectedComponents)
                                     <option value="$nac.id()">$nac.name()</option>
@@ -182,7 +182,7 @@
                         </div>
                         <div class="input-element">
                             <label class="item-label" for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
-                            <span class="select">
+                            <span class="select statuses">
                             <select id="new-component-status">
                                 #foreach($status in $componentStatuses)
                                     <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>

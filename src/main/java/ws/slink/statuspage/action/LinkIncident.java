@@ -12,6 +12,7 @@ import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
 import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
+import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.customfield.IncidentCustomField;
 import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
@@ -28,12 +29,16 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
 
     private String     page;
     private String incident;
+    private String location;
 
     public void setPage(String value) {
         this.page = value;
     }
     public void setIncident(String value) {
         this.incident = value;
+    }
+    public void setLocation(String value) {
+        this.location = value;
     }
 
     @Override
@@ -64,7 +69,11 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
             .linkedAt(LocalDateTime.now(ZoneId.of("UTC")))
         ;
         JiraTools.setCustomFieldValue(issue, customField, issueIncident, true);
-        return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
+
+        if (StringUtils.isNotBlank(location))
+            return returnCompleteWithInlineRedirect(location);
+        else
+            return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
     }
 
 }

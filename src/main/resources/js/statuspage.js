@@ -1,5 +1,5 @@
 jQuery(function () {
-    console.log("statuspage loaded");
+    AJS.log("statuspage loaded");
 });
 let $statuspage = {
 
@@ -7,43 +7,43 @@ let $statuspage = {
     pages : function() {
         let url = this.baseUrl() + "pages?issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        // console.log("----------- pages")
-        // console.log(result);
+        // AJS.log("----------- pages")
+        // AJS.log(result);
         return result;
     },
     groups : function(pageId) {
         let url = this.baseUrl() + "groups?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        // console.log("----------- groups")
-        // console.log(result);
+        // AJS.log("----------- groups")
+        // AJS.log(result);
         return result;
     },
     groupComponents : function(pageId, groupId) {
         let url = this.baseUrl() + "groupComponents?pageId=" + pageId + "&groupId=" + groupId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        // console.log("----------- group components")
-        // console.log(result);
+        // AJS.log("----------- group components")
+        // AJS.log(result);
         return result;
     },
     nonGroupComponents : function(pageId) {
         let url = this.baseUrl() + "nonGroupComponents?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        // console.log("----------- non-group components")
-        // console.log(result);
+        // AJS.log("----------- non-group components")
+        // AJS.log(result);
         return result;
     },
     components : function(pageId) {
         let url = this.baseUrl() + "components?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey();
         const result = this.serviceCall(url);
-        // console.log("----------- components")
-        // console.log(result);
+        // AJS.log("----------- components")
+        // AJS.log(result);
         return result;
     },
     incidents : function(pageId, activeOnly) {
         let url = this.baseUrl() + "incidents?pageId=" + pageId + "&issueKey=" + JIRA.Issue.getIssueKey() + "&activeOnly=" + activeOnly;
         const result = this.serviceCall(url);
-        // console.log("----------- incidents")
-        // console.log(result);
+        // AJS.log("----------- incidents")
+        // AJS.log(result);
         return result;
     },
 
@@ -67,7 +67,7 @@ let $statuspage = {
     updateTestDiv : function () {
         // document.getElementById('test-div').innerHTML = "H E L L O  F R O M  A J A X !";
         // $('#test-div')[0].innerHTML = "H E L L O  F R O M  A J A X !";
-        // console.log("updateTestDiv");
+        // AJS.log("updateTestDiv");
     }
 
 }

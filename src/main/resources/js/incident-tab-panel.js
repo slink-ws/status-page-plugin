@@ -3,14 +3,14 @@ let $incidentTabPanel = {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
-        // console.log("componentId: " + componentId + ", status: " + statusId);
+        // AJS.log("componentId: " + componentId + ", status: " + statusId);
         let update = this.enableSaveButton;
-        // console.log("f:");
-        // console.log(f);
+        // AJS.log("f:");
+        // AJS.log(f);
         if (undefined != f && 'undefined' != f)
             update = f;
-        // console.log("update:");
-        // console.log(update);
+        // AJS.log("update:");
+        // AJS.log(update);
         if (!($("#" + componentId + "-remove").hasClass("selected"))) {
             $("#" + componentId).children("span").removeClass("selected");
             $("#" + source.id).addClass("selected");
@@ -21,7 +21,7 @@ let $incidentTabPanel = {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
-        // console.log("componentId: " + componentId + ", status: " + statusId);
+        // AJS.log("componentId: " + componentId + ", status: " + statusId);
         let f = this.enableSaveButton;
         if (!$("#" + source.id).hasClass("selected")) {
             $("#" + source.id).addClass("selected");
@@ -36,7 +36,7 @@ let $incidentTabPanel = {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
-        // console.log("componentId: " + componentId + ", status: " + statusId);
+        // AJS.log("componentId: " + componentId + ", status: " + statusId);
         let f = this.changeComponentState;
         let u = this.enableSaveButton;
         $(".component-name").not(".removed").each( function(idx, value) {
@@ -85,14 +85,14 @@ let $incidentTabPanel = {
                 html += 'class="component-button aui-icon aui-icon-small ' + this.value + ' ';
                 html += f(this.value) + ' ' + ((this.value == statusId) ? "selected" : "") + '">\n';
                 html += this.text + "\n</span>\n";
-                // console.log("option: " + this.text + ' ' + this.value);
+                // AJS.log("option: " + this.text + ' ' + this.value);
             });
             html += '<span id="' + componentId + '-remove" title="Remove Component" onClick="removeButtonClick(this)" ';
             html += 'class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">\nREMOVE\n</span>\n';
             html += '</div>';
-            // console.log(html);
-            // console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-            // console.log($("#" + container).html());
+            // AJS.log(html);
+            // AJS.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+            // AJS.log($("#" + container).html());
             $("#" + container).append(html);
             this.enableSaveButton();
         }
@@ -133,7 +133,12 @@ let $incidentTabPanel = {
         config["message"]    = message;
         config["components"] = components;
 
-        console.log(JSON.stringify(config, null, 2));
+        AJS.log(JSON.stringify(config, null, 2));
+
+        // PUT AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/incident"
+
+        // window.location = $(location).attr('href');
+
     }
    ,getComponents: function(state) {
         let result = [];
@@ -149,7 +154,7 @@ let $incidentTabPanel = {
             if (!$("#tab-update-incident-button").hasClass("aui-button-primary"))
                 $("#tab-update-incident-button").addClass("aui-button-primary");
         } catch (e) {
-            console.log("error: " + e)
+            AJS.log("error: " + e)
         }
     }
    ,getComponentStatusButtonClass(status) {
@@ -167,9 +172,9 @@ let $incidentTabPanel = {
             return "";
     }
    ,test: function() {
-        console.log("incident tab panel test");
+        AJS.log("incident tab panel test");
     }
 } // $incidentTabPanel
 // jQuery(function () {
-//     console.log("incident-tab-panel loaded");
+//     AJS.log("incident-tab-panel loaded");
 // });
