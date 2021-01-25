@@ -66,6 +66,7 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
                 });
                 statusPage.getIncident(ii.pageId(), ii.incidentId(), true).ifPresent(incident -> {
                     context.put("incident", incident);
+                    context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
                     loadedIncident.set(incident);
                 });
             });
@@ -78,6 +79,7 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
         context.put("componentStatuses", StatuspageService.instance().componentStatusList());
         context.put("incidentImpacts", StatuspageService.instance().incidentImpactList());
         context.put("issueKey", getActionsRequest.issue().getKey());
+
 
         String renderedText = vm.getEncodedBody("templates/panels/", "incident-tab-panel.vm", baseUrl, webworkEncoding, context);
         return Collections.singletonList(new GenericMessageAction(renderedText));

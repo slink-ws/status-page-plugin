@@ -190,6 +190,10 @@ textarea {
     border-radius: 4px;
 }
 
+textarea:disabled {
+    opacity: 0.3;
+}
+
 div.incident-impact {
     float: left;
     margin-right: 5px;
@@ -198,6 +202,10 @@ div.incident-impact {
     text-align: center;
     border-radius: 3px;
     cursor: pointer;
+}
+div.incident-impact.disabled {
+    color: rgba(110, 121, 141, 0.5);
+    cursor: default;
 }
 div.incident-impact.selected {
     cursor: default;
@@ -239,6 +247,10 @@ div.incident-status {
     text-align: center;
     border-radius: 3px;
     cursor: pointer;
+}
+div.incident-status.disabled {
+    color: rgba(110, 121, 141, 0.5);
+    cursor: default;
 }
 div.incident-status.selected {
     cursor: default;
@@ -317,7 +329,7 @@ div.incident-status.selected {
     text-decoration-line: line-through;
 }
 .component-button {
-    color: rgb(110, 121, 141);
+    color: rgba(110, 121, 141, 0.5);
     cursor    : pointer;
     min-width : 20px;
     /*width     : 16px;*/
@@ -348,6 +360,9 @@ div.incident-status.selected {
 .component-button.header {
     color: rgb(110, 121, 141);
 }
+.component-button.disabled {
+    cursor: default;
+}
 .components-add-block-container {
     padding-top: 20px;
     display: flex;
@@ -357,19 +372,22 @@ div.incident-status.selected {
     align-self: flex-end;
 }
 
-.component-button.operational:hover {
+.component-button.operational:not(.removed):hover {
     color: rgb(45, 198, 83);
 }
-.component-button.degraded_performance:hover {
+.component-button.removed:not(.remove):hover {
+    cursor: default;
+}
+.component-button.degraded_performance:not(.removed):hover {
     color: rgb(254, 185, 9);
 }
-.component-button.partial_outage:hover {
+.component-button.partial_outage:not(.removed):hover {
     color: rgb(252, 119, 8);
 }
-.component-button.major_outage:hover {
+.component-button.major_outage:not(.removed):hover {
     color: rgb(211, 31, 13);
 }
-.component-button.under_maintenance:hover  {
+.component-button.under_maintenance:not(.removed):hover  {
     color: rgb(43, 132, 210);
 }
 .component-button.remove:hover {
@@ -390,8 +408,11 @@ div.incident-status.selected {
 .component-header.under_maintenance:hover  {
     color: rgb(43, 132, 210);
 }
-.component-header.remove:hover {
+.component-header.:hover {
     color: rgb(211, 31, 13);
+}
+.component-button.disabled:hover {
+    color: rgba(110, 121, 141, 0.5);
 }
 
 

@@ -36,19 +36,26 @@
                         <dl class="incident-glance-list-item">
                             <dt>$i18n.getText('incident-glance-panel.incident-status'):</dt>
                             <dd id="incident-status-block">
-                                #foreach($incidentStatus in $incidentStatuses)
-                                    #if ($incident.status().value() == $incidentStatus.title())
-                                        <div id="$incidentStatus.title()"
-                                             onclick="changeIncidentStatus(this)"
-                                             class="incident-status incident-status-$incidentStatus.title() selected">
-                                            $incidentStatus.title()
-                                        </div>
-                                    #else
-                                        <div id="$incidentStatus.title()"
+                                #if ($incidentClosed)
+                                    <div id="$incident.status().value()"
+                                         class="incident-status incident-status-$incident.status().value() selected">
+                                        $incident.status().value()
+                                    </div>
+                                #else
+                                    #foreach($incidentStatus in $incidentStatuses)
+                                        #if ($incident.status().value() == $incidentStatus.title())
+                                            <div id="$incidentStatus.title()"
+                                                 onclick="changeIncidentStatus(this)"
+                                                 class="incident-status incident-status-$incidentStatus.title() selected">
+                                                $incidentStatus.title()
+                                            </div>
+                                        #else
+                                            <div id="$incidentStatus.title()"
                                              onclick="changeIncidentStatus(this)"
                                              class="incident-status incident-status-$incidentStatus.title()">
-                                            $incidentStatus.title()
-                                        </div>
+                                                $incidentStatus.title()
+                                            </div>
+                                        #end
                                     #end
                                 #end
                             </dd>
@@ -57,19 +64,26 @@
                         <dl class="incident-glance-list-item">
                             <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
                             <dd id="incident-impact-block">
-                                #foreach($impact in $incidentImpacts)
-                                    #if ($incident.impact().value() == $impact.title())
-                                        <div id="$impact.title()"
-                                             onclick="changeIncidentImpact(this)"
-                                             class="incident-impact incident-impact-$impact.title() selected">
-                                            $impact.title()
-                                        </div>
-                                    #else
-                                        <div id="$impact.title()"
-                                             onclick="changeIncidentImpact(this)"
-                                             class="incident-impact incident-impact-$impact.title()">
-                                            $impact.title()
-                                        </div>
+                                #if ($incidentClosed)
+                                    <div id="$incident.impact().value()"
+                                         class="incident-impact incident-impact-$incident.impact().value() selected">
+                                        $incident.impact().value()
+                                    </div>
+                                #else
+                                    #foreach($impact in $incidentImpacts)
+                                        #if ($incident.impact().value() == $impact.title())
+                                            <div id="$impact.title()"
+                                                 onclick="changeIncidentImpact(this)"
+                                                 class="incident-impact incident-impact-$impact.title() selected">
+                                                $impact.title()
+                                            </div>
+                                        #else
+                                            <div id="$impact.title()"
+                                                 onclick="changeIncidentImpact(this)"
+                                                 class="incident-impact incident-impact-$impact.title()">
+                                                $impact.title()
+                                            </div>
+                                        #end
                                     #end
                                 #end
                             </dd>
@@ -100,7 +114,11 @@
                             <dd id="incident-message-block">
                                 <div style="display: block;" id="rulesformitem" class="formitem">
                                     <div class="textwrapper">
-                                        <textarea cols="2" rows="8" id="rules"></textarea>
+                                        #if ($incidentClosed)
+                                            <textarea disabled cols="2" rows="8" id="rules"></textarea>
+                                        #else
+                                            <textarea cols="2" rows="8" id="rules"></textarea>
+                                        #end
                                     </div>
                                 </div>
                             </dd>
@@ -119,19 +137,36 @@
                     #foreach($componentStatus in $componentStatuses)
                         #set ($buttonClass = "")
                         #getComponentStatusButtonClass($componentStatus.id() $buttonClass)
-                        <span id="components-header-$componentStatus.id()"
-                              onclick="headerStatusClick(this)"
-                              title="Set all components to '$componentStatus.title()' sate"
-                              class="component-button components-header $componentStatus.id() header aui-icon aui-icon-small $buttonClass">
-                            $componentStatus.title()
+                        #if ($incidentClosed)
+                            <span id="components-header-$componentStatus.id()"
+                                  title="Set all components to '$componentStatus.title()' sate"
+                                  class="component-button components-header disabled header aui-icon aui-icon-small $buttonClass">
+                                $componentStatus.title()
+                            </span>
+                        #else
+                            <span id="components-header-$componentStatus.id()"
+                                  onclick="headerStatusClick(this)"
+                                  title="Set all components to '$componentStatus.title()' sate"
+                                  class="component-button components-header $componentStatus.id() header aui-icon aui-icon-small $buttonClass">
+                                $componentStatus.title()
+                            </span>
+                        #end
+                    #end
+
+                    #if ($incidentClosed)
+##                        <span id="components-header-remove"
+##                              title="Remove all components"
+##                              class="component-button header remove disabled aui-icon aui-icon-small aui-iconfont-trash">
+##                            Remove
+##                        </span>
+                    #else
+                        <span id="components-header-remove"
+                              title="Remove all components"
+                              onclick="headerRemoveClick(this)"
+                              class="component-button header remove aui-icon aui-icon-small aui-iconfont-trash">
+                            Remove
                         </span>
                     #end
-                    <span id="components-header-remove"
-                          title="Remove all components"
-                          onclick="headerRemoveClick(this)"
-                          class="component-button header remove aui-icon aui-icon-small aui-iconfont-trash">
-                        Remove
-                    </span>
                 </div>
                 <div id="tab-components-list" class="components-list">
                     <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
@@ -143,65 +178,81 @@
                                 #getComponentStatusButtonClass($componentStatus.id() $buttonClass)
                                 #if($componentStatus.id() == $component.status().value())
                                     <span id="$component.id()-$componentStatus.id()"
-                                          onclick="statusButtonClick(this)"
-                                          title="$componentStatus.title()"
-                                          class="component-button $componentStatus.id() selected aui-icon aui-icon-small $buttonClass">
+                                      onclick="statusButtonClick(this)"
+                                      title="$componentStatus.title()"
+                                      class="component-button $componentStatus.id() selected aui-icon aui-icon-small $buttonClass"
+                                      style="cursor: default;"
+                                    >
                                         $componentStatus.title()
                                     </span>
                                 #else
-                                    <span id="$component.id()-$componentStatus.id()"
-                                          onclick="statusButtonClick(this)"
-                                          title="$componentStatus.title()"
-                                          class="component-button $componentStatus.id() aui-icon aui-icon-small $buttonClass">
-                                        $componentStatus.title()
-                                    </span>
+                                    #if ($incidentClosed)
+                                        <span id="$component.id()-$componentStatus.id()"
+                                              title="$componentStatus.title()"
+                                              class="component-button $componentStatus.id() disabled aui-icon aui-icon-small $buttonClass">
+                                            $componentStatus.title()
+                                        </span>
+                                    #else
+                                        <span id="$component.id()-$componentStatus.id()"
+                                              onclick="statusButtonClick(this)"
+                                              title="$componentStatus.title()"
+                                              class="component-button $componentStatus.id() aui-icon aui-icon-small $buttonClass">
+                                            $componentStatus.title()
+                                        </span>
+                                    #end
                                 #end
                             #end
-                            <span id="$component.id()-remove"
-                                  title="Remove Component"
-                                  onclick="removeButtonClick(this)"
-                                  class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
-                                REMOVE
-                            </span>
+                            #if ($incidentClosed)
+                            #else
+                                <span id="$component.id()-remove"
+                                      title="Remove Component"
+                                      onclick="removeButtonClick(this)"
+                                      class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">
+                                    REMOVE
+                                </span>
+                            #end
                         </div>
                     #end
                 </div>
                 <div class="components-add-block-container">
                     <div class="components-add-block-content">
-                        <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
-                        <div class="input-element">
-                            <label  class="item-label" for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
-                            <span class="select components">
-                            <select id="new-component-title">
-                                #foreach($nac in $nonAffectedComponents)
-                                    <option value="$nac.id()">$nac.name()</option>
-                                #end
-                            </select>
-                            <span class="focus"></span>
-                        </span>
-                        </div>
-                        <div class="input-element">
-                            <label class="item-label" for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
-                            <span class="select statuses">
-                            <select id="new-component-status">
-                                #foreach($status in $componentStatuses)
-                                    <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>
-                                #end
-                            </select>
-                            <span class="focus"></span>
-                        </span>
-                        </div>
-                        <div class="input-element">
-                            <label for="add-component-button">&nbsp;</label>
-                            <div>
-                                <div id="add-component-button"
-                                     onclick="addAffectedComponent()"
-                                     title="Add affected component"
-                                     class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-add">
-                                    ADD
+                        #if ($incidentClosed)
+                        #else
+                            <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
+                            <div class="input-element">
+                                <label  class="item-label" for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
+                                <span class="select components">
+                                <select id="new-component-title">
+                                    #foreach($nac in $nonAffectedComponents)
+                                        <option value="$nac.id()">$nac.name()</option>
+                                    #end
+                                </select>
+                                <span class="focus"></span>
+                            </span>
+                            </div>
+                            <div class="input-element">
+                                <label class="item-label" for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
+                                <span class="select statuses">
+                                <select id="new-component-status">
+                                    #foreach($status in $componentStatuses)
+                                        <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>
+                                    #end
+                                </select>
+                                <span class="focus"></span>
+                            </span>
+                            </div>
+                            <div class="input-element">
+                                <label for="add-component-button">&nbsp;</label>
+                                <div>
+                                    <div id="add-component-button"
+                                         onclick="addAffectedComponent()"
+                                         title="Add affected component"
+                                         class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-add">
+                                        ADD
+                                    </div>
                                 </div>
                             </div>
-                        </div>
+                        #end
                     </div>
                 </div>
             </div>
@@ -210,11 +261,14 @@
 
     <div class="tab-buttons-block">
         <div class="buttons">
-            <input class="aui-button button"
-                   type="submit"
-                   onclick="updateIncident()"
-                   id="tab-update-incident-button"
-                   value="$i18n.getText('incident-tab-panel.save-button-text')" />
+            #if ($incidentClosed)
+            #else
+                <input class="aui-button button"
+                       type="submit"
+                       onclick="updateIncident()"
+                       id="tab-update-incident-button"
+                       value="$i18n.getText('incident-tab-panel.save-button-text')" />
+            #end
         </div>
     </div>
 

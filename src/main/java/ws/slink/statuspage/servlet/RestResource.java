@@ -9,12 +9,19 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import com.google.gson.Gson;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.StatusPage;
+import ws.slink.statuspage.error.ServiceCallException;
+import ws.slink.statuspage.error.StatusPageException;
+import ws.slink.statuspage.model.Component;
+import ws.slink.statuspage.model.Incident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
+import ws.slink.statuspage.type.ComponentStatus;
+import ws.slink.statuspage.type.IncidentSeverity;
 import ws.slink.statuspage.type.IncidentStatus;
 
 import javax.inject.Inject;
@@ -29,6 +36,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -121,6 +129,85 @@ public class RestResource {
             return project + " : " + apikey + " : " + mgmt_roles + " : " + view_roles;
         }
         public ConfigParams log(String prefix) {
+            System.out.println(prefix + this);
+            return this;
+        }
+    }
+
+    @XmlRootElement
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static final class IncidentUpdateParams {
+
+        @XmlElement private String project;
+        @XmlElement private String issue;
+        @XmlElement private String page;
+        @XmlElement private String incident;
+        @XmlElement private String status;
+        @XmlElement private String impact;
+        @XmlElement private String message;
+        @XmlElement private Map<String, List<String>> components;
+
+        public String getProject() {
+            return project;
+        }
+        public IncidentUpdateParams setProject(String value) {
+            this.project = value;
+            return this;
+        }
+        public String getIssue() {
+            return issue;
+        }
+        public IncidentUpdateParams setIssue(String value) {
+            this.issue = value;
+            return this;
+        }
+        public String getPage() {
+            return page;
+        }
+        public IncidentUpdateParams setPage(String value) {
+            this.page = value;
+            return this;
+        }
+        public String getIncident() {
+            return incident;
+        }
+        public IncidentUpdateParams setIncident(String value) {
+            this.incident = value;
+            return this;
+        }
+        public String getStatus() {
+            return status;
+        }
+        public IncidentUpdateParams setStatus(String value) {
+            this.status = value;
+            return this;
+        }
+        public String getImpact() {
+            return impact;
+        }
+        public IncidentUpdateParams setImpact(String value) {
+            this.impact = value;
+            return this;
+        }
+        public String getMessage() {
+            return message;
+        }
+        public IncidentUpdateParams setMessage(String value) {
+            this.message = value;
+            return this;
+        }
+        public Map<String, List<String>> getComponents() {
+            return components;
+        }
+        public IncidentUpdateParams setComponents(Map<String, List<String>> value) {
+            this.components = value;
+            return this;
+        }
+
+        public String toString() {
+            return project + " " + issue + " " + page + " " + incident + " " + status + " " + impact + " " + message + " " + components;
+        }
+        public IncidentUpdateParams log(String prefix) {
             System.out.println(prefix + this);
             return this;
         }
@@ -397,6 +484,116 @@ public class RestResource {
         }
     }
 
+
+    @PUT
+    @Path("/api/incident")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateIncident(final IncidentUpdateParams incidentUpdateParams, @Context HttpServletRequest request) {
+//        System.out.println("----> SAVING INCIDENT: " + incidentUpdateParams);
+
+        AtomicInteger resultCode              = new AtomicInteger(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        AtomicBoolean resultStatus            = new AtomicBoolean(false);
+        AtomicReference<String> resultMessage = new AtomicReference<>("");
+
+        try {
+            Optional<StatusPage> statusPage = StatuspageService.instance().get(incidentUpdateParams.getProject());
+            if (!statusPage.isPresent()) {
+                resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
+                resultMessage.set("could not find StatusPage object for project " + incidentUpdateParams.project);
+            } else {
+                Optional<Incident> incident = statusPage.get().getIncident(incidentUpdateParams.page, incidentUpdateParams.incident, true);
+                if (!incident.isPresent()) {
+                    resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
+                    resultMessage.set("could not find incident " + incidentUpdateParams.getIncident() + " for page " + incidentUpdateParams.getPage());
+                } else {
+                    incident.get().status(IncidentStatus.of(incidentUpdateParams.getStatus()));
+                    incident.get().impact(IncidentSeverity.of(incidentUpdateParams.getImpact()));
+                    incident.get().components(getAffectedComponents(statusPage.get(), incidentUpdateParams));
+
+                    String messageEscaped = null;
+                    if (StringUtils.isNotBlank(incidentUpdateParams.getMessage())) {
+                        messageEscaped = org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(incidentUpdateParams.getMessage());
+                    } else {
+                        messageEscaped = getDefaultStatusMessage(IncidentStatus.of(incidentUpdateParams.getStatus()));
+                    }
+
+                    Optional<Incident> updated = statusPage.get().updateIncident(incident.get(), messageEscaped);
+                    if (updated.isPresent()
+                            && updated.get().id().equals(incident.get().id())
+                            && updated.get().impact() == incident.get().impact()
+                            && updated.get().status() == incident.get().status()
+                    ) {
+                        resultStatus.set(true);
+                        resultCode.set(Response.Status.OK.getStatusCode());
+                    } else {
+                        resultMessage.set("incident update error");
+                    }
+                }
+            }
+        } catch (ServiceCallException e) {
+            resultMessage.set("StatusPage service error: "+ e.getMessage());
+            resultCode.set(e.getCode());
+        } catch (StatusPageException e) {
+            resultMessage.set("StatusPage API error: " + e.getMessage());
+        } catch (Exception e) {
+            resultMessage.set(e.getMessage());
+        }
+
+//        System.out.println("-- rest: " + resultCode.get() + " " + resultStatus.get() + " " + resultMessage.get());
+
+        if (resultStatus.get()) {
+            return Response.ok().build();
+        } else {
+            return Response.status(resultCode.get()).entity(resultMessage.get()).build();
+        }
+    }
+
+    private List<Component> getAffectedComponents(StatusPage statusPage, IncidentUpdateParams incidentUpdateParams) {
+
+        Map<String, Component> pageComponents =
+            statusPage.components(incidentUpdateParams.getPage(), true)
+                .stream()
+                .collect(Collectors.toMap(Component::id, c -> c));
+
+        List<Component> result = new ArrayList<>();
+
+        incidentUpdateParams.getComponents().keySet().stream().forEach(status -> {
+            ComponentStatus componentStatus = ComponentStatus.of(status);
+            incidentUpdateParams.getComponents().get(status).stream().forEach(componentId -> {
+                Component component = pageComponents.get(componentId);
+                if (null != component) {
+                    component.status(componentStatus);
+                }
+                result.add(component);
+            });
+        });
+
+        return result;
+    }
+    private String getDefaultStatusMessage(IncidentStatus status) {
+        switch (status) {
+            case INVESTIGATING:
+                return "We are continuing to investigate this issue.";
+            case IDENTIFIED:
+                return "The issue has been identified and a fix is being implemented.";
+            case MONITORING:
+                return "A fix has been implemented and we are monitoring the results.";
+            case RESOLVED:
+                return "This incident has been resolved.";
+            case SCHEDULED:
+                return "We will be undergoing scheduled maintenance during this time.";
+            case IN_PROGRESS:
+                return "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
+            case VERIFYING:
+                return "Verification is currently underway for the maintenance items.";
+            case COMPLETED:
+                return "The scheduled maintenance has been completed.";
+            default:
+                return "";
+
+        }
+    }
     private List<Project> getConfiguredProjects(String sourceStr) {
         return Arrays.asList(sourceStr.split(","))
             .stream()

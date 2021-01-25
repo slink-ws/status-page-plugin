@@ -26,10 +26,12 @@ let $incidentTabPanel = {
         if (!$("#" + source.id).hasClass("selected")) {
             $("#" + source.id).addClass("selected");
             $("#" + parentElement.id).find(".component-name").addClass("removed");
+            $("#" + parentElement.id).find(".component-button").addClass("removed");
             f();
         } else {
             $("#" + source.id).removeClass("selected");
             $("#" + parentElement.id).find(".component-name").removeClass("removed");
+            $("#" + parentElement.id).find(".component-button").removeClass("removed");
         }
     } // removeComponent
    ,changeAllComponentsState: function(source) {
@@ -133,12 +135,27 @@ let $incidentTabPanel = {
         config["message"]    = message;
         config["components"] = components;
 
-        AJS.log(JSON.stringify(config, null, 2));
+        // AJS.log(JSON.stringify(config, null, 2));
 
-        // PUT AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/incident"
-
-        // window.location = $(location).attr('href');
-
+        AJS.$.ajax({
+            url: AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/api/incident",
+            type: "PUT",
+            contentType: "application/json",
+            data: JSON.stringify(config, null, 2),
+            processData: false
+        }).done(function () {
+            JIRA.Messages.showSuccessMsg("statuspage updated");
+            setTimeout(() => {
+                window.location = $(location).attr('href');
+            }, 1000);
+        }).error(function (error, message) {
+            AJS.log("--- error -----------------------------------------");
+            AJS.log(error);
+            AJS.log("--- message ---------------------------------------");
+            AJS.log(message);
+            AJS.log("---------------------------------------------------");
+            JIRA.Messages.showErrorMsg("could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText)
+        });
     }
    ,getComponents: function(state) {
         let result = [];
