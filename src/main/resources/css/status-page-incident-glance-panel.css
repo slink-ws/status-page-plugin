@@ -408,10 +408,7 @@ div.incident-status.selected {
 .component-header.under_maintenance:hover  {
     color: rgb(43, 132, 210);
 }
-.component-header.:hover {
-    color: rgb(211, 31, 13);
-}
-.component-button.disabled:hover {
+.component-button.disabled:not(.header):hover {
     color: rgba(110, 121, 141, 0.5);
 }
 
