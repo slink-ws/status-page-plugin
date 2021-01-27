@@ -1,10 +1,54 @@
 package ws.slink.statuspage.action;
 
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
+import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
+import ws.slink.statuspage.model.Component;
+import ws.slink.statuspage.model.IssueIncident;
+import ws.slink.statuspage.service.ConfigService;
+import ws.slink.statuspage.service.CustomFieldService;
+import ws.slink.statuspage.service.StatuspageService;
+import ws.slink.statuspage.tools.JiraTools;
+import ws.slink.statuspage.type.ComponentStatus;
+import ws.slink.statuspage.type.IncidentSeverity;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 // https://developer.atlassian.com/server/jira/platform/creating-an-ajax-dialog/
 
 public class CreateIncident extends AbstractIssueSelectAction {
+
+    private String page;
+    private String impact;
+    private String title;
+    private String message;
+    private String components;
+    private String location;
+
+    public void setPage(String value) {
+        this.page = value;
+    }
+    public void setImpact(String value) {
+        this.impact = value;
+    }
+    public void setTitle(String value) {
+        this.title = value;
+    }
+    public void setMessage(String value) {
+        this.message = value;
+    }
+    public void setComponents(String value) {
+        this.components = value;
+    }
+    public void setLocation(String value) {
+        this.location = value;
+    }
 
     @Override
     public String doDefault() throws Exception {
@@ -13,30 +57,61 @@ public class CreateIncident extends AbstractIssueSelectAction {
 
     @Override
     protected void doValidation() {
-//        for (String username : watcherUserNames)
-//        {
-//            username = username.trim();
-//
-//            if (UserUtils.userExists(username))
-//            {
-//                validUsernames.add(username);
-//            }
-//            else
-//            {
-//                addErrorMessage(beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user", username));
-//            }
-//        }
-        // TODO: validate incident form here
+
+//        System.out.println("page      : " + page);
+//        System.out.println("impact    : " + impact);
+//        System.out.println("title     : " + title);
+//        System.out.println("message   : " + message);
+//        System.out.println("components: " + components);
+//        System.out.println("location  : " + location);
+
+        // for error:
+        // addErrorMessage(beanFactory.getInstance(getLoggedInUser()).getText("tutorial.errors.user", username));
     }
 
     @Override
     public String doExecute() throws Exception {
-//        for (String validUsername : validUsernames)
-//        {
-//            watcherManager.startWatching(UserUtils.getUser(validUsername), getIssueObject());
-//        }
-        // TODO: create incident here
-        return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
+        AtomicReference<Map<String, String>> componentsMap = new AtomicReference<>(new HashMap<>());
+        if (StringUtils.isNotBlank(components)) {
+            new Gson()
+                .fromJson(components, Map.class)
+                .entrySet()
+                .stream()
+                .forEach(e -> {
+                    String key = (String) ((Map.Entry<?, ?>) e).getKey();
+                    List<String> values = (List<String>) ((Map.Entry<?, ?>) e).getValue();
+                    values.stream().forEach(v -> {
+                        componentsMap.get().put(v, key);
+                    });
+                });
+        }
+        Issue issue = getIssueObject();
+        StatuspageService.instance().get(issue.getProjectObject().getKey()).ifPresent(statusPage -> {
+            List<Component> affectedComponents = Collections.emptyList();
+            if (!componentsMap.get().isEmpty()) {
+                affectedComponents = statusPage.components(page).stream().filter(c -> componentsMap.get().containsKey(c.id())).collect(Collectors.toList());
+            }
+            affectedComponents.stream().forEach(c -> c.status(ComponentStatus.of(componentsMap.get().get(c.id()))));
+            statusPage.createIncident(page, title, message, IncidentSeverity.of(impact), null, affectedComponents).ifPresent(incident -> {
+
+//                System.out.println("new incident created: " + incident.id());
+
+                CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
+                IssueIncident issueIncident = new IssueIncident()
+                    .projectKey(issue.getProjectObject().getKey())
+                    .incidentId(incident.id())
+                    .pageId(page)
+                    .createdBy(getLoggedInUser().getUsername())
+                    .createdAt(LocalDateTime.now(ZoneId.of("UTC")))
+                ;
+                JiraTools.setCustomFieldValue(issue, customField, issueIncident, true);
+            });
+        });
+
+        if (StringUtils.isNotBlank(location))
+            return returnCompleteWithInlineRedirect(location);
+        else
+            return returnCompleteWithInlineRedirect("/browse/" + getIssueObject().getKey());
     }
 
 }

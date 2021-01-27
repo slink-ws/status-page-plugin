@@ -1,5 +1,6 @@
 package ws.slink.statuspage.servlet;
 
+import bsh.StringUtil;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
@@ -14,7 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.StatusPage;
 import ws.slink.statuspage.error.ServiceCallException;
 import ws.slink.statuspage.error.StatusPageException;
+import ws.slink.statuspage.model.AffectedComponentStatus;
 import ws.slink.statuspage.model.Component;
+import ws.slink.statuspage.model.Group;
 import ws.slink.statuspage.model.Incident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
@@ -378,7 +381,16 @@ public class RestResource {
         if (!statusPage.isPresent())
             return Response.noContent().build();
 
-        return Response.ok(new Gson().toJson(statusPage.get().groups(pageId))).build();
+        return Response.ok(
+            new Gson().toJson(
+                statusPage
+                    .get()
+                    .groups(pageId)
+                    .stream()
+                    .sorted(Comparator.comparing(Group::name))
+                    .collect(Collectors.toList())
+            )
+        ).build();
     }
 
     @GET
@@ -440,7 +452,15 @@ public class RestResource {
         if (!statusPage.isPresent())
             return Response.noContent().build();
 
-        return Response.ok(new Gson().toJson(statusPage.get().nonGroupComponents(pageId))).build();
+        return Response.ok(new Gson().toJson(
+            statusPage
+                .get()
+                .nonGroupComponents(pageId)
+                .stream()
+                .filter(c -> !c.group())
+                .collect(Collectors.toList())
+            )
+        ).build();
     }
 
     @GET
@@ -547,6 +567,31 @@ public class RestResource {
         } else {
             return Response.status(resultCode.get()).entity(resultMessage.get()).build();
         }
+    }
+
+    @GET
+    @Path("/api/impacts")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response impacts(@Context HttpServletRequest request) {
+        return Response.ok(new Gson().toJson(
+            Arrays.stream(IncidentSeverity.values())
+                .sorted(Comparator.comparing(IncidentSeverity::id))
+                .map(IncidentSeverity::value)
+                .collect(Collectors.toList())
+        )).build();
+    }
+    @GET
+    @Path("/api/component/statuses")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response componentsStatuses(
+            @Context HttpServletRequest request) {
+        return Response.ok(new Gson().toJson(
+            Arrays.stream(ComponentStatus.values())
+                .sorted(Comparator.comparing(ComponentStatus::id))
+                .filter(c -> StringUtils.isNotBlank(c.value()))
+                .map(AffectedComponentStatus::of)
+                .collect(Collectors.toList())
+        )).build();
     }
 
     private List<Component> getAffectedComponents(StatusPage statusPage, IncidentUpdateParams incidentUpdateParams) {

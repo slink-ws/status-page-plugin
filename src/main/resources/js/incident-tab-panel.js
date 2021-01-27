@@ -79,7 +79,7 @@ let $incidentTabPanel = {
             let statusName    = $("#" + status+ " option:selected").text();
             $("#" + title + " option[value='" + componentId + "']").remove();
 
-            let f = this.getComponentStatusButtonClass;
+            let f = $pluginCommon.getComponentStatusButtonClass;
             let html  = '<div class="component" id="' + componentId + '">\n';
             html += '<div class="component-name">' + componentName + '</div>\n';
             $("#" + status + " > option").each(function() {
@@ -99,19 +99,6 @@ let $incidentTabPanel = {
             this.enableSaveButton();
         }
     }
-   ,getComponentsConfig: function() {
-        let result = {};
-        result["remove"]               = [];
-        result["operational"]          = this.getComponents("operational");
-        result["degraded_performance"] = this.getComponents("degraded_performance");
-        result["partial_outage"]       = this.getComponents("partial_outage");
-        result["major_outage"]         = this.getComponents("major_outage");
-        result["under_maintenance"]    = this.getComponents("under_maintenance");
-        $(".component-name.removed").each(function() {
-            result["remove"].push($(this).parent().attr("id"));
-        });
-        return result;
-    }
    ,updateIncident: function(statusBlockId, impactBlockId, messageBlockId, pageIdBlock, incidentIdBlock, projectKeyBlock, issueKeyBlock) {
         let status     = $("#" + statusBlockId + " .selected").attr("id");
         let impact     = $("#" + impactBlockId + " .selected").attr("id");
@@ -122,7 +109,7 @@ let $incidentTabPanel = {
         let projectKey = $("#" + projectKeyBlock).val();
         let issueKey   = $("#" + issueKeyBlock).val();
 
-        let components = $incidentTabPanel.getComponentsConfig();
+        let components = $pluginCommon.getComponentsConfig();
         delete components.remove;
 
         let config = {}
@@ -157,15 +144,6 @@ let $incidentTabPanel = {
             JIRA.Messages.showErrorMsg("could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText)
         });
     }
-   ,getComponents: function(state) {
-        let result = [];
-        $(".component-name").not(".removed").each(function() {
-            $(this).parent().find("." + state + ".selected").each(function (){
-                result.push($(this).parent().attr("id"));
-            });
-        });
-        return result;
-    }
    ,enableSaveButton: function() {
         try {
             if (!$("#tab-update-incident-button").hasClass("aui-button-primary"))
@@ -173,20 +151,6 @@ let $incidentTabPanel = {
         } catch (e) {
             AJS.log("error: " + e)
         }
-    }
-   ,getComponentStatusButtonClass(status) {
-        if (status == 'operational')
-            return "aui-iconfont-check-circle";
-        else if (status == 'degraded_performance')
-            return "aui-iconfont-devtools-task-disabled";
-        else if (status == 'partial_outage')
-            return "aui-iconfont-failed-build";
-        else if (status == 'major_outage')
-            return "aui-iconfont-remove";
-        else if (status == 'under_maintenance')
-            return "aui-iconfont-info-circle";
-        else
-            return "";
     }
    ,test: function() {
         AJS.log("incident tab panel test");

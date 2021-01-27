@@ -1,9 +1,10 @@
 <h2 class="dialog-title">$i18n.getText('incident-create-dialog.title')</h2>
 
-<form class="aui" action="CreateIncident.jspa" method="post">
+<form class="aui" action="CreateIncident.jspa" method="post" class="incident-dialog-form">
 
     <input type="hidden" name="atl_token" value="${atl_token}" />
     <input type="hidden" name="id" value="$action.id" />
+    <input type="hidden" name="components" id="components-config" value="" />
 
     <div class="content-body">
 
@@ -19,16 +20,51 @@
         #end
 
         <div>
-            <br><br><br>
-            Here should go form elements for incident creation
-            <br><br><br>
-        </div>
 
-##        <div class="field-group">
-##            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
-##            &nbsp;<textarea name="watcherUserNames" class="textarea long-field"></textarea>
-##            <div class="description">$i18n.getText('tutorial.fields.users.desc'))</div>
-##        </div>
+            <div class="create-form-part left">
+                <div class="create-form-left">
+                    <div class="field-group">
+                        <label for="sp-create-page">$i18n.getText('incident-create-dialog.page-select.label')&nbsp;</label>
+                        ##                    <span class="custom-select">
+                        <select class="select" name="page" id="sp-create-page" required="true" placeholder="select status page" />
+                        ##                        <span class="focus"></span>
+                        ##                    </span>
+                    </div>
+                    <div class="field-group">
+                        <label for="sp-create-impact">$i18n.getText('incident-create-dialog.impact-select.label')&nbsp;</label>
+                        <select class="select" name="impact" id="sp-create-impact" required="true" placeholder="select incident impact" />
+                    </div>
+                    <div class="field-group">
+                        <label for="sp-create-title">$i18n.getText('incident-create-dialog.title.label')&nbsp;</label>
+                        <input class="text large-field" id="sp-create-title" name="title" type="text" required="true" placeholder="enter incident title"/>
+                    </div>
+                    <div class="field-group">
+                        <label for="sp-create-message">$i18n.getText('incident-create-dialog.message.label')&nbsp;</label>
+                        <textarea class="textarea" id="sp-create-message" rows="5" name="message" placeholder="enter incident message"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="create-form-part right">
+                <div class="create-form-right">
+
+                    <div class="tab-components-block">
+                        <label for="components-header">$i18n.getText('incident-tab-panel.incident-components-section-title')&nbsp
+                            <span id="components-load-spinner"
+                                  hidden="true"
+                                  style="vertical-align: middle;"
+                                  class="button-common aui-icon aui-icon-small aui-icon-wait">
+                            </span>
+                        </label>
+                        <div class="component" id="components-header" />
+                        <div class="components-list" id="tab-components-list" />
+                    </div> <!-- tab-components-block -->
+
+                </div>
+            </div>
+
+            <input type="hidden" name="location" id="page-location" value="" />
+
+        </div>
     </div>
 
     <div class="buttons-container content-footer">
@@ -40,3 +76,22 @@
     </div>
 
 </form>
+<script>
+    #include("/js/statuspage.js")
+    #include("/js/incident-create-dialog.js")
+    function statusButtonClick(source) {
+        $incidentCreateDialog.changeComponentState(source);
+    }
+    function headerButtonClick(source) {
+        $incidentCreateDialog.changeAllComponentsState(source);
+    }
+    jQuery(function () {
+        $('#sp-create-page').change(function(){
+            let pageElementId = $(this).attr("id");
+            $incidentCreateDialog.loadComponents('tab-components-list', pageElementId);
+        })
+        $incidentCreateDialog.loadPages('sp-create-page'); // 'sp-link-incident', 'incidents-loading-wheel'
+        $incidentCreateDialog.loadImpacts('sp-create-impact');
+        $incidentCreateDialog.loadHeader('components-header', 'tab-components-list', 'sp-create-page');
+    });
+</script>

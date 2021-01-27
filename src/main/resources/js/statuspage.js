@@ -1,5 +1,5 @@
 jQuery(function () {
-    AJS.log("statuspage loaded");
+    // AJS.log("statuspage loaded");
 });
 let $statuspage = {
 
@@ -44,6 +44,18 @@ let $statuspage = {
         const result = this.serviceCall(url);
         // AJS.log("----------- incidents")
         // AJS.log(result);
+        return result;
+    },
+    impacts: function() {
+        let url = this.baseUrl() + "impacts";
+        const result = this.serviceCall(url);
+        // AJS.log("----------- impacts: " + JSON.stringify(result))
+        return result;
+    },
+    componentStatuses: function() {
+        let url = this.baseUrl() + "component/statuses";
+        const result = this.serviceCall(url);
+        // AJS.log("----------- component statuses: " + JSON.stringify(result))
         return result;
     },
 

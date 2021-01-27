@@ -29,7 +29,7 @@
       <param name="content-type" value="image/png"/>  
       <param name="allow-public-use" value="true"/> 
     </resource>  
-    <context>status-page-plugin</context> 
+    <context>jira.view.issue</context>
   </web-resource>
 
   <!-- ~~~~~~~~~~~~~~~~~~~ incident tab panel ~~~~~~~~~~~~~~~~~~~~ -->
@@ -158,7 +158,8 @@
   <web-resource name="Issue View Resources" key="issue-view-resources">
     <resource name="incidentCreate.js" type="download" location="/js/incident-create.js"/>
     <resource name="incidentLink.js" type="download" location="/js/incident-link.js"/>
-    <resource name="incidentUmlink.js" type="download" location="/js/incident-unlink.js"/>
+    <resource name="incidentUnlink.js" type="download" location="/js/incident-unlink.js"/>
+    <resource name="incidentDialog.css" type="download" location="/css/status-page-incident-dialog.css"/>
     <context>jira.view.issue</context>
   </web-resource>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

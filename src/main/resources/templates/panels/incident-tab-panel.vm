@@ -172,7 +172,7 @@
                     <!-- https://aui.atlassian.com/aui/7.9/docs/icons.html -->
                     #foreach($component in $incident.components())
                         <div class="component" id="$component.id()">
-                            <div class="component-name">$component.name()</div>
+                            <div class="component-name" title="$component.name()">$component.name()</div>
                             #foreach($componentStatus in $componentStatuses)
                                 #set ($buttonClass = "")
                                 #getComponentStatusButtonClass($componentStatus.id() $buttonClass)
