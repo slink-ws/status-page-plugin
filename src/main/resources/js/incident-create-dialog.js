@@ -4,6 +4,7 @@ jQuery(function () {
 let $incidentCreateDialog = {
 
     componentStatuses: [],
+    cachedComponents: {},
     loadImpacts: function(impactsElement) {
         const impacts = $statuspage.impacts();
         let options_str = "";
@@ -25,6 +26,14 @@ let $incidentCreateDialog = {
     loadHeader : function(headerElement, componentsElement, pageElement) {
         this.componentStatuses = $statuspage.componentStatuses();
         let header_str = '<div class="component-name-header">&nbsp;</div>';
+
+
+        header_str  += '<span id="components-header-reset"' +
+            ' onclick="headerButtonClick(this)" ' +
+            ' title="Set all components to actual state" ' +
+            ' class="component-button component-header reset header aui-icon aui-icon-small aui-iconfont-refresh">' +
+            'Reset' + '</span>';
+
         this.componentStatuses.forEach( function(item) {
             // console.log(item);
             header_str  += '<span id="components-header-' + item.id + '"' +
@@ -33,6 +42,7 @@ let $incidentCreateDialog = {
                            ' class="component-button component-header ' + item.id + ' header aui-icon aui-icon-small ' + $pluginCommon.getComponentStatusButtonClass(item.id) + '">' +
                            item.title + '</span>';
         });
+        header_str += '<div style="float: left; width: 10px;"></div>'
         // header_str += '<span id="components-header-remove" title="Remove all components" onClick="headerRemoveClick(this)"' +
         //               ' class="component-button header remove aui-icon aui-icon-small aui-iconfont-trash">Remove</span>';
         // header_str += '<span class="component-button header remove>&nbsp;</span>';
@@ -47,6 +57,8 @@ let $incidentCreateDialog = {
 
         let groups     = $statuspage.groups($('#' + pageElement).val())
         let components = $statuspage.components($('#' + pageElement).val());
+
+        // console.log(components);
 
         let groupedComponents = {};
         groupedComponents["---no-group---"] = {};
@@ -76,13 +88,32 @@ let $incidentCreateDialog = {
                 group.components.forEach(function(component) {
                     components_str += '<div class="component" id="' + component.id + '">' +
                                       '  <div class="component-name" title="' + component.name + '">&nbsp;&nbsp;' + component.name +'</div>';
+
+
+                    components_str += $incidentCreateDialog.buttonHTML(
+                        'aui-iconfont-refresh',
+                        false,
+                        component.id,
+                        'reset',
+                        'Set to actual component state'
+                    );
+
+                    $incidentCreateDialog.cachedComponents[component.id] = component;
+
                     $incidentCreateDialog.componentStatuses.forEach(function(status) {
-                        components_str +=
-                           '    <span id="' + component.id + '-' + status.id + '" ' +
-                           '          onclick="statusButtonClick(this)" ' +
-                           '          title="' + status.title + '" ' +
-                           '          class="component-button ' + status.id + ' aui-icon aui-icon-small ' + $pluginCommon.getComponentStatusButtonClass(status.id) + '" ' +
-                           '          >' + status.title + '</span>';
+                        components_str += $incidentCreateDialog.buttonHTML(
+                            $pluginCommon.getComponentStatusButtonClass(status.id),
+                            false,//(component.status == status.id),
+                            component.id,
+                            status.id,
+                            status.title
+                        );
+                           // '    <span id="' + component.id + '-' + status.id + '" ' +
+                           // '          onclick="statusButtonClick(this)" ' +
+                           // '          title="' + status.title + '" ' +
+                           // '          class="component-button ' + status.id + ' ' + ((component.status == status.id) ? 'selected' : '') +
+                           // '                 aui-icon aui-icon-small ' + $pluginCommon.getComponentStatusButtonClass(status.id) + '" ' +
+                           // '          >' + status.title + '</span>';
                     });
                     // components_str += '<span id="' + component.id + '-remove" title="Remove Component" ' +
                     //                   '      onclick="removeButtonClick(this)" ' +
@@ -90,12 +121,14 @@ let $incidentCreateDialog = {
                     //                   '  REMOVE' +
                     //                   '</span>';
                     // components_str += '<span class="component-button remove>&nbsp;</span>';
+                    components_str += '<div style="float: left; width: 10px;"></div>'
                     components_str += '</div>';
                 });
             }
         }
         $('#components-load-spinner').hide();
         $('#' + componentsElement).html(components_str);
+        // console.log($incidentCreateDialog.cachedComponents);
     },
 
     changeAllComponentsState : function(source) {
@@ -106,24 +139,46 @@ let $incidentCreateDialog = {
         // console.log("source id: " + sourceId);
         // console.log("parent id: " + parentId);
         // console.log("status id: " + statusId);
-
-        let selected = $("#" + sourceId).hasClass("selected");
-        $("#" + parentId).children("span").removeClass("selected");
-        if (selected) {
-            $("#" + sourceId).addClass("selected");
-            $(".component .component-button").removeClass("selected");
+        if (source.id.includes('reset')) {
+            if ($("#" + sourceId).hasClass("selected")) {
+                // $("#" + sourceId).removeClass("selected");
+                $("#" + parentId).children("span").removeClass("selected");
+                $(".component .component-button").removeClass("selected");
+            } else {
+                $(".component .component-button").removeClass("selected");
+                $("#" + parentId).children("span").removeClass("selected");
+                $("#" + sourceId).addClass("selected");
+                $(".component").each(function (item, element) {
+                    let component = $incidentCreateDialog.cachedComponents[$(element).attr("id")];
+                    if (null != component && undefined != component) {
+                        $("#" + component.id + "-" + component.status).addClass("selected");
+                    }
+                })
+            }
         } else {
-            // console.log("-----> check all components with " + statusId);
-            $(".component .component-button").removeClass("selected");
-            $(".component .component-button." + statusId).addClass("selected");
+            let selected = $("#" + sourceId).hasClass("selected");
+            $("#" + parentId).children("span").removeClass("selected");
+            if (selected) {
+                $("#" + sourceId).addClass("selected");
+                $(".component .component-button").removeClass("selected");
+            } else {
+                // console.log("-----> check all components with " + statusId);
+                $(".component .component-button").removeClass("selected");
+                $(".component .component-button." + statusId).addClass("selected");
+            }
         }
         this.updateComponentsConfig();
     },
     changeComponentState : function(source) {
         let selected = $("#" + source.id).hasClass("selected");
         $("#" + source.parentElement.id).children("span").removeClass("selected");
-        if (!selected) {
-            $("#" + source.id).addClass("selected");
+
+        if (source.id.includes('reset')) {
+            $("#" + source.parentElement.id).find("." + $incidentCreateDialog.cachedComponents[source.parentElement.id].status).addClass("selected");
+        } else {
+            if (!selected) {
+                $("#" + source.id).addClass("selected");
+            }
         }
         this.updateComponentsConfig();
     },
@@ -146,6 +201,16 @@ let $incidentCreateDialog = {
     //     $('#' + element)[0].innerHTML = options_str;
     //     $('#' + wheelElement).hide();
     // },
+    buttonHTML: function (buttonClass, selected, componentId, statusId, title) {
+        let result =
+            '    <span id="' + componentId + '-' + statusId + '" ' +
+            '          onclick="statusButtonClick(this)" ' +
+            '          title="' + title + '" ' +
+            '          class="component-button ' + statusId + ' ' + ((selected) ? 'selected' : '') +
+            '                 aui-icon aui-icon-small ' + buttonClass + '" ' +
+            '          >' + title + '</span>';
+        return result;
+    },
 
     test : function() {
         // AJS.log("$incidentLinkDialog: test");
