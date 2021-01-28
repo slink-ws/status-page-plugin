@@ -9,9 +9,9 @@ public class IncidentsConfiguredCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentsGlobalConfigReady()
-            && JiraTools.isIncidentsProjectConfigReady(jiraHelper.getProject())
-            && JiraTools.isIncidentsEnabled(jiraHelper.getProject())
+        return JiraTools.instance().isIncidentsGlobalConfigReady()
+            && JiraTools.instance().isIncidentsProjectConfigReady(jiraHelper.getProject())
+            && JiraTools.instance().isIncidentsEnabled(jiraHelper.getProject())
         ;
     }
 

@@ -52,7 +52,7 @@ public class IncidentCustomField extends AbstractSingleFieldType<IssueIncident> 
 
     @Override
     public IssueIncident getSingularObjectFromString(String s) throws FieldValidationException {
-        return JiraTools.getGsonObject().fromJson(s, IssueIncident.class);
+        return JiraTools.instance().getGsonObject().fromJson(s, IssueIncident.class);
     }
 
     @Override

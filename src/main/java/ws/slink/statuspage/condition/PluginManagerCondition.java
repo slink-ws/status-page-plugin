@@ -9,7 +9,7 @@ public class PluginManagerCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isPluginManager(applicationUser);
+        return JiraTools.instance().isPluginManager(applicationUser);
     }
 
 }

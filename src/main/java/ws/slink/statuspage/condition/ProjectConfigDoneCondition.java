@@ -9,7 +9,7 @@ public class ProjectConfigDoneCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentsProjectConfigReady(jiraHelper.getProject());
+        return JiraTools.instance().isIncidentsProjectConfigReady(jiraHelper.getProject());
     }
 
 }

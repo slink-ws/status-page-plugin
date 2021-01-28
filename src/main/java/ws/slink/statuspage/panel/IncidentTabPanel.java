@@ -14,7 +14,6 @@ import com.atlassian.velocity.VelocityManager;
 import ws.slink.statuspage.model.Component;
 import ws.slink.statuspage.model.Incident;
 import ws.slink.statuspage.model.IssueIncident;
-import ws.slink.statuspage.model.Page;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
@@ -24,16 +23,15 @@ import ws.slink.statuspage.type.IncidentStatus;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
     @Override
     public boolean showPanel(ShowPanelRequest showPanelRequest) {
-        return JiraTools.isIncidentsEnabled(showPanelRequest.issue().getProjectId())
-            && JiraTools.isIncidentManager(showPanelRequest.issue().getProjectId(), showPanelRequest.remoteUser())
-            && JiraTools.isIncidentExists(showPanelRequest.issue())
+        return JiraTools.instance().isIncidentsEnabled(showPanelRequest.issue().getProjectId())
+            && JiraTools.instance().isIncidentManager(showPanelRequest.issue().getProjectId(), showPanelRequest.remoteUser())
+            && JiraTools.instance().isIncidentExists(showPanelRequest.issue())
         ;
     }
 
@@ -64,7 +62,9 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
                     context.put("page", page);
                     loadedComponents.set(statusPage.components(page, true));
                 });
-                statusPage.getIncident(ii.pageId(), ii.incidentId(), true).ifPresent(incident -> {
+//                statusPage.getIncident(ii.pageId(), ii.incidentId(), true)
+                StatuspageService.instance().getIncident(getActionsRequest.issue(), true)
+                    .ifPresent(incident -> {
                     context.put("incident", incident);
                     context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
                     loadedIncident.set(incident);

@@ -42,7 +42,7 @@ public class ConfigServlet extends HttpServlet {
         String [] parts = request.getRequestURL().toString().split("/");
         Map<String, Object> contextParams = new HashMap<>();
         if (parts.length > 1) {
-            Project project = JiraTools.getProjectByKey(parts[parts.length - 2]);
+            Project project = JiraTools.instance().getProjectByKey(parts[parts.length - 2]);
             if (null != project) {
                 contextParams.put("projectKey", project.getKey());
                 contextParams.put("projectId", project.getId());
@@ -64,7 +64,7 @@ public class ConfigServlet extends HttpServlet {
             contextParams.put("selectedViewRoles" , selectedViewRoles);
             contextParams.put("apiKey", ConfigService.instance().getConfigApiKey(project.getKey()));
 
-            if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
+            if (!JiraTools.instance().isPluginManager(userManager.getRemoteUser())) {
                 response.setContentType("text/html;charset=utf-8");
                 renderer.render("templates/unauthorized.vm", contextParams, response.getWriter());
             } else {

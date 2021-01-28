@@ -9,7 +9,7 @@ public class IncidentManagerCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentManager(jiraHelper.getProject(), applicationUser);
+        return JiraTools.instance().isIncidentManager(jiraHelper.getProject(), applicationUser);
     }
 
 }

@@ -68,7 +68,7 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
             .linkedBy(getLoggedInUser().getUsername())
             .linkedAt(LocalDateTime.now(ZoneId.of("UTC")))
         ;
-        JiraTools.setCustomFieldValue(issue, customField, issueIncident, true);
+        JiraTools.instance().setCustomFieldValue(issue, customField, issueIncident, true);
 
         if (StringUtils.isNotBlank(location))
             return returnCompleteWithInlineRedirect(location);

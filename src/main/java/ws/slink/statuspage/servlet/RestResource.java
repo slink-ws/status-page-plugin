@@ -284,7 +284,7 @@ public class RestResource {
     @Path("/config")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putConfigParams(final ConfigParams config, @Context HttpServletRequest request) {
-        if (!JiraTools.isPluginManager(userManager.getRemoteUser())) {
+        if (!JiraTools.instance().isPluginManager(userManager.getRemoteUser())) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         transactionTemplate.execute((TransactionCallback) () -> {
@@ -308,11 +308,11 @@ public class RestResource {
         @QueryParam("issueKey") String issueKey,
         @Context HttpServletRequest request) {
 
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
             return Response.noContent().build();
 
-        if (!JiraTools.isIncidentManager(
+        if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             System.out.println("--- UNAUTHORIZED");
@@ -337,11 +337,11 @@ public class RestResource {
         if (StringUtils.isBlank(pageId))
             return Response.noContent().build();
 
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
             return Response.noContent().build();
 
-        if (!JiraTools.isIncidentManager(
+        if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             System.out.println("--- UNAUTHORIZED");
@@ -366,11 +366,11 @@ public class RestResource {
         if (StringUtils.isBlank(pageId))
             return Response.noContent().build();
 
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
             return Response.noContent().build();
 
-        if (!JiraTools.isIncidentManager(
+        if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             System.out.println("--- UNAUTHORIZED");
@@ -408,11 +408,11 @@ public class RestResource {
         if (StringUtils.isBlank(groupId))
             return Response.noContent().build();
 
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
             return Response.noContent().build();
 
-        if (!JiraTools.isIncidentManager(
+        if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             System.out.println("--- UNAUTHORIZED");
@@ -437,11 +437,11 @@ public class RestResource {
         if (StringUtils.isBlank(pageId))
             return Response.noContent().build();
 
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
             return Response.noContent().build();
 
-        if (!JiraTools.isIncidentManager(
+        if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             System.out.println("--- UNAUTHORIZED");
@@ -475,11 +475,11 @@ public class RestResource {
         if (StringUtils.isBlank(pageId))
             return Response.noContent().build();
 
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
+        Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
             return Response.noContent().build();
 
-        if (!JiraTools.isIncidentManager(
+        if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
             System.out.println("--- UNAUTHORIZED");
@@ -644,7 +644,7 @@ public class RestResource {
             .stream()
             .map(String::trim)
             .distinct()
-            .map(JiraTools::getProjectByKey)
+            .map(JiraTools.instance()::getProjectByKey)
             .filter(Objects::nonNull)
             .collect(Collectors.toList())
         ;

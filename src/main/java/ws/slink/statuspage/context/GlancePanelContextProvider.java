@@ -43,7 +43,7 @@ public class GlancePanelContextProvider extends AbstractJiraContextProvider {
         if (!page.isPresent())
             return contextMap;
 
-        Optional<Incident> incident = statusPage.get().getIncident(issueIncident.pageId(), issueIncident.incidentId(), true);
+        Optional<Incident> incident = StatuspageService.instance().getIncident(currentIssue, true);//statusPage.get().getIncident(issueIncident.pageId(), issueIncident.incidentId(), true);
         if (!incident.isPresent())
             return contextMap;
 

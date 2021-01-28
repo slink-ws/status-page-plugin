@@ -10,7 +10,7 @@ public class GlobalConfigDoneCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentsGlobalConfigReady();
+        return JiraTools.instance().isIncidentsGlobalConfigReady();
     }
 
 }

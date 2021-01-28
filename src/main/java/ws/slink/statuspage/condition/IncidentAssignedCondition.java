@@ -10,7 +10,7 @@ public class IncidentAssignedCondition extends AbstractWebCondition {
 
     @Override
     public boolean shouldDisplay(ApplicationUser applicationUser, JiraHelper jiraHelper) {
-        return JiraTools.isIncidentExists((Issue) jiraHelper.getContextParams().get("issue"));
+        return JiraTools.instance().isIncidentExists((Issue) jiraHelper.getContextParams().get("issue"));
     }
 
 }

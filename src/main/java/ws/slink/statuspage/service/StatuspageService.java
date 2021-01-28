@@ -1,8 +1,14 @@
 package ws.slink.statuspage.service;
 
+import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.plugin.webresource.impl.support.Tuple;
+import electric.soap.rpc.In;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.StatusPage;
+import ws.slink.statuspage.error.ServiceCallException;
 import ws.slink.statuspage.model.*;
+import ws.slink.statuspage.tools.Cache;
 import ws.slink.statuspage.type.ComponentStatus;
 import ws.slink.statuspage.type.IncidentSeverity;
 import ws.slink.statuspage.type.IncidentStatus;
@@ -21,9 +27,12 @@ public class StatuspageService {
         return StatuspageService.StatuspageServiceSingleton.INSTANCE;
     }
 
+    private Cache<String, Tuple<Boolean, Incident>> incidentCache;
+
     private final Map<String, StatusPage> statusPages = new ConcurrentHashMap<>();
 
     private StatuspageService() {
+        incidentCache = new Cache<>(5, 2, 100);
         System.out.println("---- created statuspage service");
     }
 
@@ -47,6 +56,7 @@ public class StatuspageService {
     public Optional<StatusPage> get(String projectKey) {
         return Optional.ofNullable(statusPages.get(projectKey));
     }
+
     public List<AffectedComponentStatus> componentStatusList() {
         return Arrays.asList(ComponentStatus.values())
             .stream()
@@ -86,6 +96,49 @@ public class StatuspageService {
             result.removeAll(incident.components());
             return result;
         }
+    }
+
+    public Optional<Incident> getIncident(Issue issue) {
+        return getIncident(issue, false);
+    }
+    public Optional<Incident> getIncident(Issue issue, boolean full) {
+        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
+        Object cf = issue.getCustomFieldValue(customField);
+        if (null != cf && cf instanceof IssueIncident) {
+            IssueIncident issueIncident = (IssueIncident)cf;
+            Tuple<Boolean, Incident> cachedTuple = incidentCache.get(incidentCacheKey(issueIncident));
+            if (null == cachedTuple) {
+                if (statusPages.containsKey(issue.getProjectObject().getKey())) {
+                    Optional<Incident> incidentOpt = null;
+                    try {
+                        incidentOpt = statusPages
+                            .get(issue.getProjectObject().getKey())
+                            .getIncident(issueIncident.pageId(), issueIncident.incidentId(), full);
+                    } catch (ServiceCallException e) {
+                        //
+                    }
+                    if (null != incidentOpt && incidentOpt.isPresent()) {
+//                        System.out.println(" ----> got incident from statuspage: " + incidentOpt.get());
+                        incidentCache.put(incidentCacheKey(issueIncident), new Tuple<>(true, incidentOpt.get()));
+                    } else {
+//                        System.out.println(" ----> could not get incident from statuspage");
+                        incidentCache.put(incidentCacheKey(issueIncident), new Tuple<>(false, null));
+                    }
+                    return incidentOpt;
+                }
+            } else {
+//                System.out.println(" ----> got incident from cache: " + cachedTuple.getLast());
+                return Optional.ofNullable(cachedTuple.getLast());
+            }
+        }
+        return Optional.empty();
+    }
+
+    private String incidentCacheKey(IssueIncident issueIncident) {
+        return incidentCacheKey(issueIncident.projectKey(), issueIncident.incidentId());
+    }
+    private String incidentCacheKey(String projectKey, String incidentKey) {
+        return projectKey + "#" + incidentKey;
     }
 
 }

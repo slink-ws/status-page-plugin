@@ -83,7 +83,7 @@ public class IssueIncident {
     }
     public String createdAtStr() {
         if (null != createdAt)
-            return createdAt.format(DateTimeFormatter.ofPattern(JiraTools.getDateTimeFormat()));
+            return createdAt.format(DateTimeFormatter.ofPattern(JiraTools.instance().getDateTimeFormat()));
         else
             return "";
     }
@@ -122,7 +122,7 @@ public class IssueIncident {
 
 
     public String toJsonString() {
-        return JiraTools.getGsonObject().toJson(this);
+        return JiraTools.instance().getGsonObject().toJson(this);
     }
     public String toString() {
         if (!synced.get()) {

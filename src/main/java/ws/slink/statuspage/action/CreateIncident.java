@@ -104,7 +104,7 @@ public class CreateIncident extends AbstractIssueSelectAction {
                     .createdBy(getLoggedInUser().getUsername())
                     .createdAt(LocalDateTime.now(ZoneId.of("UTC")))
                 ;
-                JiraTools.setCustomFieldValue(issue, customField, issueIncident, true);
+                JiraTools.instance().setCustomFieldValue(issue, customField, issueIncident, true);
             });
         });
 
