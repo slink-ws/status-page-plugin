@@ -1,14 +1,10 @@
 package ws.slink.statuspage.model;
 
-import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.StringUtils;
-import ws.slink.statuspage.service.StatuspageService;
 import ws.slink.statuspage.tools.JiraTools;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class IssueIncident {
 
@@ -19,36 +15,6 @@ public class IssueIncident {
     private String linkedBy;
     private LocalDateTime createdAt;
     private LocalDateTime linkedAt;
-
-    @Expose(serialize = false, deserialize = false)
-    private AtomicReference<Incident> incident = new AtomicReference<>(null);
-
-    @Expose(serialize = false, deserialize = false)
-    private AtomicBoolean synced = new AtomicBoolean(false);
-
-    @Expose(serialize = false, deserialize = false)
-    private String pageName = null;
-    @Expose(serialize = false, deserialize = false)
-    private String incidentName = null;
-
-    public void sync() {
-        StatuspageService.instance().get(projectKey).ifPresent(statusPage -> {
-//            System.out.println("---> statuspage: " + statusPage);
-            statusPage.getPage(pageId, false).ifPresent(page -> {
-                pageName = page.name();
-//                System.out.println("---> page: " + page);
-                statusPage.getIncident(pageId, incidentId, false).ifPresent(inc -> {
-                    incidentName = inc.name();
-//                    System.out.println("---> incident: " + inc);
-                });
-            });
-        });
-//            sp.getIncident(pageId, incidentId, true).ifPresent(i -> {
-//            System.out.println("---> synced incident: " + i);
-//            incident.set(i);
-//            synced.set(true);
-//        }));
-    }
 
     public String pageId() {
         return pageId;
@@ -83,7 +49,8 @@ public class IssueIncident {
     }
     public String createdAtStr() {
         if (null != createdAt)
-            return createdAt.format(DateTimeFormatter.ofPattern(JiraTools.instance().getDateTimeFormat()));
+//            return createdAt.format(DateTimeFormatter.ofPattern(JiraTools.instance().getDateTimeFormat()));
+            return linkedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")) + " UTC";
         else
             return "";
     }
@@ -120,20 +87,42 @@ public class IssueIncident {
         return StringUtils.isNotBlank(this.createdBy);
     }
 
+    @Override
+    public int hashCode() {
+        return (projectKey + "#" + pageId + "#" + incidentId).hashCode();
+    }
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (null == other)
+            return false;
+        if (this.getClass() != other.getClass())
+            return false;
+        IssueIncident ii = (IssueIncident)other;
+
+        if (StringUtils.isBlank(this.projectKey) && !(StringUtils.isBlank(ii.projectKey)))
+            return false;
+        if (!this.projectKey.equals(ii.projectKey))
+            return false;
+
+        if (StringUtils.isBlank(this.pageId) && !(StringUtils.isBlank(ii.pageId)))
+            return false;
+        if (!this.pageId.equals(ii.pageId))
+            return false;
+
+        if (StringUtils.isBlank(this.incidentId) && !(StringUtils.isBlank(ii.incidentId)))
+            return false;
+        if (!this.incidentId.equals(ii.incidentId))
+            return false;
+
+        return true;
+    }
 
     public String toJsonString() {
         return JiraTools.instance().getGsonObject().toJson(this);
     }
     public String toString() {
-        if (!synced.get()) {
-            sync();
-        }
-//        if (null != incident)
-//            return incident.get().page().name() + " : " + incident.get().name() + " : " + incident.get().status().value();
-//        else
-        if (null != pageName && null != incidentName)
-            return projectKey + " : " + pageName + " : " + incidentName;
-        else
-            return projectKey + " : " + pageId + " : " + incidentId;
+        return projectKey + " : " + pageId + " : " + incidentId;
     }
 }

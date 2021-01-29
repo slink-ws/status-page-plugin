@@ -63,7 +63,7 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
                     loadedComponents.set(statusPage.components(page, true));
                 });
 //                statusPage.getIncident(ii.pageId(), ii.incidentId(), true)
-                StatuspageService.instance().getIncident(getActionsRequest.issue(), true)
+                StatuspageService.instance().getIncident(getActionsRequest.issue())
                     .ifPresent(incident -> {
                     context.put("incident", incident);
                     context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);

@@ -522,7 +522,15 @@ public class RestResource {
                 resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
                 resultMessage.set("could not find StatusPage object for project " + incidentUpdateParams.project);
             } else {
-                Optional<Incident> incident = statusPage.get().getIncident(incidentUpdateParams.page, incidentUpdateParams.incident, true);
+                Optional<Incident> incident = Optional.empty();
+                try {
+                    incident = statusPage.get().getIncident(incidentUpdateParams.page, incidentUpdateParams.incident, true);
+                } catch (ServiceCallException e) {
+//                    System.out.println("---> could not find incident on statuspage: " +
+//                                       incidentUpdateParams.page +
+//                                       " : " +
+//                                       incidentUpdateParams.incident);
+                }
                 if (!incident.isPresent()) {
                     resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
                     resultMessage.set("could not find incident " + incidentUpdateParams.getIncident() + " for page " + incidentUpdateParams.getPage());
@@ -651,130 +659,3 @@ public class RestResource {
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-/*
-            System.out.println("--- available custom fields ----------------------");
-            ComponentAccessor.getComponent(CustomFieldManager.class)
-                .getCustomFieldObjects()
-                .stream()
-                .map(CustomField::getName)
-                .forEach(System.out::println)
-            ;
-            System.out.println("--------------------------------------------------");
-            Optional<CustomField> existingIncidentCustomField =
-                ComponentAccessor
-                    .getComponent(CustomFieldManager.class)
-                    .getCustomFieldObjectsByName(ConfigService.instance().getAdminCustomFieldId())
-                    .stream()
-                    .filter(cf -> cf.getFieldName().equals(ConfigService.instance().getAdminCustomFieldId()))
-                    .findAny();
-            if (existingIncidentCustomField.isPresent()) {
-                System.out.println(
-                    "found custom field with name " +
-                    ConfigService.instance().getAdminCustomFieldId() +
-                    " of type '" +
-                    existingIncidentCustomField.get().getCustomFieldType().getName() +
-                    "'"
-                );
-                System.out.println("type key         :" + existingIncidentCustomField.get().getCustomFieldType().getKey());
-                System.out.println("type cit         :" +
-                    existingIncidentCustomField.get().getCustomFieldType().getConfigurationItemTypes());
-                System.out.println("type name        :" + existingIncidentCustomField.get().getCustomFieldType().getName());
-                System.out.println("type description :" + existingIncidentCustomField.get().getCustomFieldType().getDescription());
-                System.out.println("type descriptor  :" + existingIncidentCustomField.get().getCustomFieldType().getDescriptor());
-            } else {
-                System.out.println("not found custom field with name " + ConfigService.instance().getAdminCustomFieldId());
-            }
-            System.out.println("--------------------------------------------------");
-*/
-//            status-page-incident
-
-//            CustomFieldType cft =  ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType("status-page-incident");
-//                .getCustomFieldType("ws.slink.statuspage.customfield:incidentcustomfield");
-//            System.out.println("custom field type: " + cft);
-
-//            ComponentAccessor.getComponent(CustomFieldManager.class)
-//                .createCustomField("incident", "statuspage incident assigned to the issue", IncidentCustomField.class, null, null, null)
-
-//            CustomFieldUtils.
-
-//            FieldConfigScheme newConfigScheme = new FieldConfigScheme.Builder()
-//                .setName("incident")
-//                .setDescription("statuspage incident assigned to the issue")
-//                .setFieldId(ConfigService.instance().getAdminCustomFieldId())
-//                .toFieldConfigScheme()
-//            ;
-//
-//            System.out.println("   id:" + newConfigScheme.getId());
-//            System.out.println(" name:" + newConfigScheme.getName());
-//            System.out.println("descr:" + newConfigScheme.getDescription());
-//            System.out.println("  cfg:" + newConfigScheme.getOneAndOnlyConfig());
-
-//            System.out.println(new Gson().toJson(newConfigScheme));
-
-
-//            ComponentAccessor.getComponent(FieldConfigSchemeManager.class)
-//                .getConfigSchemesForField(newConfigScheme.getField())
-//                .stream()
-//                .map(cs -> cs.getName())
-//                .forEach(System.out::println)
-//            ;
-//                    .createFieldConfigScheme(newConfigScheme, contexts, issueTypes, field);
-
-
-
-    /*
-    @POST
-    @Path("/api/incident/link")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response linkIncident(
-            @QueryParam("issueKey") String issueKey,
-            @QueryParam("pageId") String pageId,
-            @QueryParam("incidentId") String incidentId,
-            @Context HttpServletRequest request) {
-
-        if (StringUtils.isBlank(issueKey))
-            return Response.status(Response.Status.BAD_REQUEST).build();
-
-        if (StringUtils.isBlank(pageId))
-            return Response.status(Response.Status.BAD_REQUEST).build();
-
-        if (StringUtils.isBlank(incidentId))
-            return Response.status(Response.Status.BAD_REQUEST).build();
-
-        Optional<Project> project = JiraTools.getProjectForIssue(issueKey);
-        if (!project.isPresent())
-            return Response.status(Response.Status.BAD_REQUEST).build();
-
-        if (!JiraTools.isIncidentManager(
-            project.get().getKey(),
-            ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-
-        Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
-        if (!statusPage.isPresent())
-            return Response.noContent().build();
-
-        Optional<Issue> issue = JiraTools.getIssueByKey(issueKey);
-
-        System.out.println("--- link incident:      issue - " + issue);
-        System.out.println("--- link incident:     pageId - " + pageId);
-        System.out.println("--- link incident: incidentId - " + incidentId);
-
-//        issue.get().getCustomFieldValue(CustomField)
-
-//        return Response.ok(new Gson().toJson(statusPage.get().nonGroupComponents(pageId))).build();
-        return Response.noContent().build();
-    }
-    */
-
