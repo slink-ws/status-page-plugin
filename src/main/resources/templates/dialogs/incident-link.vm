@@ -7,17 +7,13 @@
     $webResourceManager.requireResource("com.atlassian.auiplugin:aui-select")
 </head>
 <body>
-
-
 <h2 class="dialog-title">$i18n.getText('incident-link-dialog.title')</h2>
-
 <form class="aui" action="LinkIncident.jspa" method="post">
 
     <input type="hidden" name="atl_token" value="${atl_token}" />
     <input type="hidden" name="id" value="$action.id" />
 
     <div class="content-body">
-
         #if ($action.hasAnyErrors())
             <div class="form-message error">
                 #foreach ($error in $action.getErrorMessages())
@@ -28,7 +24,6 @@
                 #end
             </div>
         #end
-
         <div class="field-group">
             <label for="sp-link-page">$i18n.getText('incident-link-dialog.page-select.label')&nbsp;</label>
             <select class="select" name="page" id="sp-link-page" required="true" placeholder="select status page" />
@@ -39,12 +34,6 @@
             <span id="incidents-loading-wheel" style="vertical-align: middle;" class="button-common aui-icon aui-icon-small aui-icon-wait">...</span><br>
         </div>
         <input type="hidden" name="location" id="page-location" value="" />
-
-##        <div class="field-group">
-##            <label>$i18n.getText('tutorial.fields.users.label') <span class="aui-icon icon-required"></span></label>
-##            &nbsp;<textarea name="watcherUserNames" class="textarea long-field"></textarea>
-##            <div class="description">$i18n.getText('tutorial.fields.users.desc'))</div>
-##        </div>
     </div>
     <div class="buttons-container content-footer">
         <div class="buttons">
@@ -65,22 +54,3 @@
 </script>
 </body>
 </html>
-
-
-
-
-##    $statuspage.updateTestDiv();
-##    $statuspage.pages();
-##    let testPageId = '6clp0q4nsbpj';
-##    const ngComponents = $statuspage.nonGroupComponents(testPageId);
-##    let groups = $statuspage.groups(testPageId);
-##    for(let idx = 0; idx < groups.length; idx++) {
-##        let group = groups[idx];
-##        let groupId = group.id;
-##        let pageId  = group.page_id;
-##        AJS.log(pageId + " - " + groupId);
-##        $statuspage.groupComponents(pageId, groupId);
-####        $statuspage.groupComponents(group.page_id, group.id);
-##    }
-##    $statuspage.components('6clp0q4nsbpj');
-##    $statuspage.incidents('6clp0q4nsbpj');

@@ -87,11 +87,12 @@
     }
     jQuery(function () {
         $('#sp-create-page').change(function(){
-            let pageElementId = $(this).attr("id");
-            $incidentCreateDialog.loadComponents('tab-components-list', pageElementId);
+            $incidentCreateDialog.loadGroups();
         })
-        $incidentCreateDialog.loadPages('sp-create-page'); // 'sp-link-incident', 'incidents-loading-wheel'
-        $incidentCreateDialog.loadImpacts('sp-create-impact');
-        $incidentCreateDialog.loadHeader('components-header', 'tab-components-list', 'sp-create-page');
+        $incidentCreateDialog.params['pagesElement']      = 'sp-create-page';
+        $incidentCreateDialog.params['impactsElement']    = 'sp-create-impact';
+        $incidentCreateDialog.params['headerElement']     = 'components-header';
+        $incidentCreateDialog.params['componentsElement'] = 'tab-components-list';
+        $incidentCreateDialog.loadDialog();
     });
 </script>

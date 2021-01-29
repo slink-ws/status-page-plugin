@@ -50,7 +50,7 @@ public class IssueIncident {
     public String createdAtStr() {
         if (null != createdAt)
 //            return createdAt.format(DateTimeFormatter.ofPattern(JiraTools.instance().getDateTimeFormat()));
-            return linkedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")) + " UTC";
+            return createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm")) + " UTC";
         else
             return "";
     }

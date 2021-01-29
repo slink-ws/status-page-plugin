@@ -49,7 +49,8 @@ let $statuspage = {
     impacts: function() {
         let url = this.baseUrl() + "impacts";
         const result = this.serviceCall(url);
-        // AJS.log("----------- impacts: " + JSON.stringify(result))
+        // AJS.log("----------- impacts: ")
+        // AJS.log(result);
         return result;
     },
     componentStatuses: function() {
@@ -63,23 +64,7 @@ let $statuspage = {
     baseUrl: function () {
         return AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/api/";
     },
-    // https://stackoverflow.com/questions/133310/how-can-i-get-jquery-to-perform-a-synchronous-rather-than-asynchronous-ajax-re/39058130#39058130
-    // TODO: rework serviceCall function according to link above
-    serviceCall : function(url_) {
-        let strReturn = "";
-        AJS.$.ajax({
-            url: url_,
-            success: function(html) {
-                strReturn = html;
-            },
-            async:false
-        });
-        return strReturn;
-    },
-    updateTestDiv : function () {
-        // document.getElementById('test-div').innerHTML = "H E L L O  F R O M  A J A X !";
-        // $('#test-div')[0].innerHTML = "H E L L O  F R O M  A J A X !";
-        // AJS.log("updateTestDiv");
-    }
-
+    serviceCall : async function(url_) {
+        return await jQuery.get(url_);
+   }
 }
