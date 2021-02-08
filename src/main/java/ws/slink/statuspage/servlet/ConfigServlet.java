@@ -51,7 +51,7 @@ public class ConfigServlet extends HttpServlet {
             Collection<String> selectedMgmtRolesParam  = ConfigService.instance().getConfigMgmtRoles(project.getKey());
             Collection<String> selectedViewRolesParam  = ConfigService.instance().getConfigViewRoles(project.getKey());
 
-            ProjectRoleManager projectRoleManager      = ComponentManager.getComponentInstanceOfType(ProjectRoleManager.class);
+            ProjectRoleManager projectRoleManager      = ComponentManager.getInstance().getComponentInstanceOfType(ProjectRoleManager.class);
             Collection<ProjectRole> allProjectRoles    = projectRoleManager.getProjectRoles();
             Collection<ProjectRole> selectedMgmtRoles  = allProjectRoles.stream().filter(p ->  selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
             Collection<ProjectRole> availableMgmtRoles = allProjectRoles.stream().filter(p -> !selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());

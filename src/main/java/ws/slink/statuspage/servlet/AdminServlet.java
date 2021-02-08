@@ -50,12 +50,12 @@ public class AdminServlet extends HttpServlet {
                 Collection<String> selectedProjectsParam = ConfigService.instance().getAdminProjects();
                 Collection<String> selectedRolesParam    = ConfigService.instance().getAdminRoles();
 
-                ProjectManager projectManager            = ComponentManager.getComponentInstanceOfType(ProjectManager.class);
+                ProjectManager projectManager            = ComponentManager.getInstance().getComponentInstanceOfType(ProjectManager.class);
                 Collection<Project> allProjects          = projectManager.getProjectObjects();
                 Collection<Project> selectedProjects     = allProjects.stream().filter(p ->  selectedProjectsParam.contains(p.getKey())).collect(Collectors.toList());
                 Collection<Project> availableProjects    = allProjects.stream().filter(p -> !selectedProjectsParam.contains(p.getKey())).collect(Collectors.toList());
 
-                ProjectRoleManager projectRoleManager    = ComponentManager.getComponentInstanceOfType(ProjectRoleManager.class);
+                ProjectRoleManager projectRoleManager    = ComponentManager.getInstance().getComponentInstanceOfType(ProjectRoleManager.class);
                 Collection<ProjectRole> allProjectRoles  = projectRoleManager.getProjectRoles();
                 Collection<ProjectRole> selectedRoles    = allProjectRoles.stream().filter(p ->  selectedRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
                 Collection<ProjectRole> availableRoles   = allProjectRoles.stream().filter(p -> !selectedRolesParam.contains(p.getId().toString())).collect(Collectors.toList());

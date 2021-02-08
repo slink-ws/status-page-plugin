@@ -20,7 +20,7 @@ public class StatuspagePluginComponentImpl implements StatuspagePluginComponent 
 
     @Inject
     public StatuspagePluginComponentImpl(final ApplicationProperties applicationProperties, final PluginSettingsFactory pluginSettingsFactory) {
-        System.out.println("---- created component");
+//        System.out.println("---- created component");
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
         ConfigService.instance().setPluginSettings(pluginSettingsFactory.createGlobalSettings());

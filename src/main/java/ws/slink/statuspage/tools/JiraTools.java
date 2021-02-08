@@ -19,10 +19,7 @@ import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
-import ws.slink.statuspage.StatusPage;
 import ws.slink.statuspage.json.CustomExclusionStrategy;
-import ws.slink.statuspage.model.Incident;
-import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
@@ -98,27 +95,6 @@ public class JiraTools {
 
     public boolean isIncidentExists(Issue issue) {
         return StatuspageService.instance().getIncident(issue).isPresent();
-//        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
-//        Object cf = issue.getCustomFieldValue(customField);
-//        if (null == cf)
-//            return false;
-//        if (cf instanceof IssueIncident) {
-//            IssueIncident ii = (IssueIncident)cf;
-//            if (null != i) {
-//                System.out.println("---> got incident from cache");
-//                return true;
-//            } else {
-//                Optional<StatusPage> sp = StatuspageService.instance().get(ii.projectKey());
-//                if (!sp.isPresent())
-//                    return false;
-//                Optional<Incident> io = sp.get().getIncident(ii.pageId(), ii.incidentId());
-//                if (io.isPresent()) {
-//                    incidentCache.put(ii.projectKey() + "#" + ii.incidentId(), io.get());
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
     }
 
     public boolean isIncidentsGlobalConfigReady() {
@@ -254,73 +230,6 @@ public class JiraTools {
     public String getDateTimeFormat() {
 //        String key = APKeys.JIRA_LF_DATE_TIME;
         String key = APKeys.JIRA_LF_DATE_COMPLETE;
-        return ComponentManager.getComponentInstanceOfType(ApplicationProperties.class).getDefaultBackedString(key);
+        return ComponentManager.getInstance().getComponentInstanceOfType(ApplicationProperties.class).getDefaultBackedString(key);
     }
 }
-
-
-/*
-        if (StringUtils.isBlank(ConfigService.instance().getRoles().trim())
-         && StringUtils.isBlank(ConfigService.instance().getProjects().trim())) {
-            System.out.println("~~~~ BRANCH 1");
-            return true;
-        }
-
-        if (null != currentProject
-         && StringUtils.isBlank(ConfigService.instance().getRoles().trim())
-         && ConfigService.instance().getProjects().contains(currentProject.getKey())) {
-            System.out.println("~~~~ BRANCH 2");
-            return true;
-        }
-
-        if ( null != currentProject
-          && StringUtils.isBlank(ConfigService.instance().getProjects().trim())) {
-            System.out.println("~~~~ BRANCH 3");
-            return userHasRoles(
-                currentProject,
-                ConfigService.instance().rolesList().stream()
-                        .map(JiraTools::getProjectRoleByKey).filter(Objects::nonNull).collect(Collectors.toList()),
-                ComponentAccessor.getUserManager().getUserByName(user))
-            ;
-        }
-
-//        return false;
-
-        System.out.println("~~~~ BRANCH 4");
-        return (userHasRolesInProjects(
-                ConfigService.instance().projectsList().stream()
-                        .map(JiraTools::getProjectByKey).filter(Objects::nonNull).collect(Collectors.toList()),
-                ConfigService.instance().rolesList().stream()
-                        .map(JiraTools::getProjectRoleByKey).filter(Objects::nonNull).collect(Collectors.toList()),
-                ComponentAccessor.getUserManager().getUserByName(user)));
-
-        /*
-        return
-
-          // plugin admin part not configured, allow for all
-            ( StringUtils.isBlank(ConfigService.instance().getRoles().trim())
-          &&  StringUtils.isBlank(ConfigService.instance().getProjects().trim()))
-
-          // only projects set in admin-config, allow for everyone in these projects
-          || ( null != currentProject
-          &&   StringUtils.isBlank(ConfigService.instance().getRoles().trim())
-          &&   ConfigService.instance().getProjects().contains(currentProject.getKey()))
-
-          // only roles set in admin-config, allow these roles for current project
-          || ( null != currentProject
-          &&   StringUtils.isBlank(ConfigService.instance().getProjects().trim())
-          &&   userHasRoles(
-                    currentProject,
-                    ConfigService.instance().rolesList().stream()
-                        .map(JiraTools::getProjectRoleByKey).filter(Objects::nonNull).collect(Collectors.toList()),
-                    ComponentAccessor.getUserManager().getUserByName(user)))
-
-          // only roles set in admin-config, allow these roles for current project
-          ||  userHasRolesInProjects(
-                ConfigService.instance().projectsList().stream()
-                    .map(JiraTools::getProjectByKey).filter(Objects::nonNull).collect(Collectors.toList()),
-                ConfigService.instance().rolesList().stream()
-                        .map(JiraTools::getProjectRoleByKey).filter(Objects::nonNull).collect(Collectors.toList()),
-                ComponentAccessor.getUserManager().getUserByName(user))
-        ;
-        */

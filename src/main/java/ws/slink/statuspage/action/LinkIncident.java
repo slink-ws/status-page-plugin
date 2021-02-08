@@ -1,19 +1,9 @@
 package ws.slink.statuspage.action;
 
-import com.atlassian.jira.ComponentManagerStateImpl;
-import com.atlassian.jira.bc.issue.IssueService;
-import com.atlassian.jira.component.ComponentAccessor;
-import com.atlassian.jira.component.pico.ComponentManager;
-import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueInputParameters;
-import com.atlassian.jira.issue.IssueInputParametersImpl;
 import com.atlassian.jira.issue.fields.CustomField;
-import com.atlassian.jira.issue.fields.config.FieldConfigScheme;
-import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
 import org.apache.commons.lang3.StringUtils;
-import ws.slink.statuspage.customfield.IncidentCustomField;
 import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
@@ -21,7 +11,6 @@ import ws.slink.statuspage.tools.JiraTools;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 
 // https://developer.atlassian.com/server/jira/platform/creating-an-ajax-dialog/
 // https://community.atlassian.com/t5/Answers-Developer-Questions/How-to-programatically-create-CustomField/qaq-p/506266

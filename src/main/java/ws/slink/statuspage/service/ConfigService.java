@@ -31,7 +31,7 @@ public class ConfigService {
     private PluginSettings pluginSettings;
 
     private ConfigService() {
-        System.out.println("---- created config service");
+//        System.out.println("---- created config service");
     }
 
     public void setPluginSettings(PluginSettings pluginSettings) {

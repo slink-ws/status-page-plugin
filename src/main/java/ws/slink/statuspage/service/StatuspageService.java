@@ -72,17 +72,17 @@ public class StatuspageService {
                 .build(loader)
         ;
 
-        System.out.println("---- created statuspage service");
+//        System.out.println("---- created statuspage service");
     }
 
     public void clear() {
-        System.out.println("--- clear statusPage store");
+//        System.out.println("--- clear statusPage store");
         statusPages.clear();
         incidentCache.cleanUp();
     }
 
     public void init(String projectKey, String apiKey) {
-        System.out.println("--- init statusPage for " + projectKey + " with ApiKey " + apiKey);
+        System.out.println("--- init statusPage for " + projectKey + " with ApiKey " + apiKey.substring(0, 10) + "...");
         if (StringUtils.isBlank(apiKey))
             return;
         statusPages.remove(projectKey);
