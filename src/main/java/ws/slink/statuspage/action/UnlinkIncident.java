@@ -29,7 +29,9 @@ public class UnlinkIncident extends AbstractIssueSelectAction {
 
     @Override
     public String doExecute() throws Exception {
+//        System.out.println("\n\n-----> unlink.doExecute");
         Issue issue = getIssueObject();
+//        System.out.println("\n\n-----> issue: " + issue);
         CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
         JiraTools.instance().setCustomFieldValue(issue, customField, null, true);
         if (StringUtils.isNotBlank(location))

@@ -31,7 +31,10 @@
         <div class="field-group">
             <label for="sp-link-incident">$i18n.getText('incident-link-dialog.incident-select.label')&nbsp;</label>
             <select class="select" name="incident" id="sp-link-incident" required="true" placeholder="select incident" />
-            <span id="incidents-loading-wheel" style="vertical-align: middle;" class="button-common aui-icon aui-icon-small aui-icon-wait">...</span><br>
+            <span id="incidents-loading-wheel" style="vertical-align: middle;" class="button-common aui-icon aui-icon-small aui-icon-wait">
+                ...
+            </span>
+            <br>
         </div>
         <input type="hidden" name="location" id="page-location" value="" />
     </div>

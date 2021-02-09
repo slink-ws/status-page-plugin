@@ -101,6 +101,7 @@
       <condition class="ws.slink.statuspage.condition.NoIncidentAssignedCondition"/>
       <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/>
     </conditions>
+    <context-provider class="ws.slink.statuspage.context.CreateIncidentDialogContextProvider" />
   </web-item>
   <web-item name="IncidentLinkButton" i18n-name-key="incident-link-button.name" key="incident-link-button" section="sp-incident-button-section" weight="2">
     <description key="incident-link-button.description">Incident Button Plugin</description>

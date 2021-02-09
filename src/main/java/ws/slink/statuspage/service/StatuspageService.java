@@ -82,7 +82,12 @@ public class StatuspageService {
     }
 
     public void init(String projectKey, String apiKey) {
-        System.out.println("--- init statusPage for " + projectKey + " with ApiKey " + apiKey.substring(0, 10) + "...");
+        String apiKeyStr = apiKey;
+        if (StringUtils.isNotBlank(apiKeyStr)) {
+            if (apiKeyStr.length() > 10)
+                apiKeyStr = apiKeyStr.substring(0,10) + "...";
+        }
+        System.out.println("--- init statusPage for " + projectKey + " with ApiKey " + apiKeyStr);
         if (StringUtils.isBlank(apiKey))
             return;
         statusPages.remove(projectKey);

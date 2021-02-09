@@ -160,6 +160,7 @@
                         <Spring-Context>*</Spring-Context>
                     </instructions>
                     <extractDependencies>false</extractDependencies>
+                    <allowGoogleTracking>false</allowGoogleTracking>
                 </configuration>
             </plugin>
             <plugin>

@@ -39,10 +39,13 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
     protected void doValidation() {
 //        ApplicationUser user = this.getLoggedInUser();
 //        addErrorMessage("error");
+        if (StringUtils.isBlank(this.page))
+            addErrorMessage("status page not selected");
+        if (StringUtils.isBlank(this.incident))
+            addErrorMessage("incident not selected");
         CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
         if (null == customField) {
             addErrorMessage("statuspage incident custom field not configured");
-        } else {
         }
     }
 

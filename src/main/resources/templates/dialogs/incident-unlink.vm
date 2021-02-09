@@ -1,22 +1,51 @@
-<h2 class="dialog-title">$i18n.getText('incident-unlink-dialog.title')</h2>
 
-<form class="aui" action="UnlinkIncident.jspa" method="post">
+##<form class="aui" action="UnlinkIncident.jspa" method="post">
+##    <section id="incident-unlink-dialog" class="aui-dialog2 aui-dialog2-small aui-dialog2-warning aui-layer" role="dialog" aria-hidden="false">
+##        <input type="hidden" name="location" id="page-location" value="" />
+##        <input type="hidden" name="id" value="$action.id" />
+##        <header class="aui-dialog2-header">
+##            <h2 class="aui-dialog2-header-main">$i18n.getText('incident-unlink-dialog.title')</h2>
+##            <a class="aui-dialog2-header-close">
+##                <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">Close</span>
+##            </a>
+##        </header>
+##        <div class="aui-dialog2-content">
+##            <p>$i18n.getText('incident-unlink-dialog.unlink-question')</p>
+##        </div>
+##        <footer class="aui-dialog2-footer">
+##            <div class="aui-dialog2-footer-actions">
+##                <button id="warning-dialog-confirm" class="aui-button aui-button-primary cancel">$i18n.getText('incident-unlink-dialog.button-cancel')</button>
+##                <button type="submit" id="warning-dialog-cancel" class="aui-button aui-button-link">$i18n.getText('incident-unlink-dialog.button-unlink')</button>
+##            </div>
+##        </footer>
+##    </section>
+##</form>
 
-    <input type="hidden" name="atl_token" value="${atl_token}" />
-    <input type="hidden" name="id" value="$action.id" />
-    <input type="hidden" name="location" id="page-location" value="" />
-
-    <div class="content-body">
-        <h4>$i18n.getText('incident-unlink-dialog.unlink-question')</h4>
-    </div>
-    <div class="buttons-container content-footer">
-        <div class="buttons">
-            ##  https://aui.atlassian.com/aui/7.9/docs/buttons.html
-            <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-unlink-dialog.button-cancel')</a>
-            <input class="aui-button button" type="submit" value="$i18n.getText('incident-unlink-dialog.button-unlink')" />
-        </div>
-    </div>
-</form>
-<script>
-    $("#page-location").val($(location).attr('href'));
-</script>
+<!doctype html>
+<html>
+    <body>
+        <form class="aui" action="UnlinkIncident.jspa" method="post">
+            <div class="content">
+                <input type="hidden" name="atl_token" value="${atl_token}" />
+                <input type="hidden" name="id" value="$action.id" />
+                <input type="hidden" name="location" id="page-location" value="" />
+                <div class="content-header">
+                    <h2 class="dialog-title">$i18n.getText('incident-unlink-dialog.title')</h2>
+                </div>
+                <div class="content-body">
+                    <h4>$i18n.getText('incident-unlink-dialog.unlink-question')</h4>
+                </div>
+                <div class="buttons-container content-footer">
+                    <div class="buttons">
+                        ##  https://aui.atlassian.com/aui/7.9/docs/buttons.html
+                        <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-unlink-dialog.button-cancel')</a>
+                        <input class="aui-button button" type="submit" value="$i18n.getText('incident-unlink-dialog.button-unlink')" />
+                    </div>
+                </div>
+            </div>
+        </form>
+        <script>
+            $("#page-location").val($(location).attr('href'));
+        </script>
+    </body>
+</html>
