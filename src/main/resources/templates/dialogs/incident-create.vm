@@ -22,7 +22,6 @@
                 #end
 
                 <div>
-
                     <div class="create-form-part left">
                         <div class="create-form-left">
                             <div class="field-group">
@@ -48,35 +47,23 @@
                     </div>
                     <div class="create-form-part right">
                         <div class="create-form-right">
-
                             <div class="tab-components-block">
-                                <label for="components-header">$i18n.getText('incident-tab-panel.incident-components-section-title')&nbsp
-                                    <span id="components-load-spinner"
-                                          hidden="true"
-                                          style="vertical-align: middle;"
-                                          class="button-common aui-icon aui-icon-small aui-icon-wait">
-                            </span>
-                                </label>
+                                <label for="components-header">$i18n.getText('incident-tab-panel.incident-components-section-title')&nbsp</label>
                                 <div class="component" id="components-header" />
                                 <div class="components-list" id="tab-components-list" />
                             </div> <!-- tab-components-block -->
-
                         </div>
                     </div>
-
                     <input type="hidden" name="location" id="page-location" value="" />
-
                 </div>
             </div>
-
             <div class="buttons-container content-footer">
                 <div class="buttons">
                     ##  https://aui.atlassian.com/aui/7.9/docs/buttons.html
-                    <a href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-create-dialog.button-cancel')</a>
-                    <input class="aui-button button" type="submit" value="$i18n.getText('incident-create-dialog.button-create')" />
+                    <button href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-create-dialog.button-cancel')</button>
+                    <button class="aui-button button" id="incident-create-dialog-submit-button" type="submit">$i18n.getText('incident-create-dialog.button-create')</button>
                 </div>
             </div>
-
         </form>
         <script>
                 #include("/js/statuspage.js")

@@ -7,9 +7,11 @@ let $incidentCreateDialog = {
     cachedComponents: {},
     params: {},
     loadDialog: function () {
+        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
         this.loadImpacts();
     },
     loadImpacts: function() {
+        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
         $statuspage.impacts().then(function(impacts) {
             let options_str = "";
             impacts.forEach( function(item) {
@@ -23,6 +25,7 @@ let $incidentCreateDialog = {
         });
     },
     loadHeader : function() {
+        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
         $statuspage.componentStatuses().then(function(statuses) {
             $incidentCreateDialog.componentStatuses = statuses;
             let header_str = '<div class="component-name-header">&nbsp;</div>';
@@ -48,7 +51,7 @@ let $incidentCreateDialog = {
         });
     },
     loadPages : function() {
-        $('#components-load-spinner').show();
+        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
         $statuspage.pages().then(function(pages) {
             let options_str = "";
             pages.forEach( function(page) {
@@ -62,8 +65,8 @@ let $incidentCreateDialog = {
         });
     },
     loadGroups : function() {
+        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
         $('#' + $incidentCreateDialog.params['componentsElement']).html("");
-        $('#components-load-spinner').show();
         $statuspage.groups($('#' + $incidentCreateDialog.params['pagesElement']).val()).then(function(groups) {
             $incidentCreateDialog.loadComponents(groups);
         }).catch(function(error) {
@@ -72,6 +75,7 @@ let $incidentCreateDialog = {
         });
     },
     loadComponents: function(groups) {
+        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
         $statuspage.components($('#' + $incidentCreateDialog.params['pagesElement']).val()).then(function(components) {
             let groupedComponents = {};
             groupedComponents["---no-group---"] = {};
@@ -121,8 +125,8 @@ let $incidentCreateDialog = {
                     });
                 }
             }
-            $('#components-load-spinner').hide();
             $('#' + $incidentCreateDialog.params['componentsElement']).html(components_str);
+            $pluginCommon.buttonIdle('incident-create-dialog-submit-button');
         }).catch(function(error) {
             AJS.log("service call error: ");
             AJS.log(error);
