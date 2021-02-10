@@ -1,7 +1,3 @@
-jQuery(function () {
-    // AJS.log("incidentLinkDialog loaded");
-    $("#page-location").val($(location).attr('href'));
-});
 let $incidentLinkDialog = {
     loadPages : function(pagesElement, incidentsElement, wheelElement) {
         $statuspage.pages().then(function(pages) {
@@ -25,6 +21,7 @@ let $incidentLinkDialog = {
             });
             $('#' + element)[0].innerHTML = options_str;
             $('#' + wheelElement).hide();
+            $pluginCommon.buttonIdle('incident-link-dialog-submit-button');
         }).catch(function(error) {
             AJS.log("service call error: ");
             AJS.log(error);
@@ -32,3 +29,7 @@ let $incidentLinkDialog = {
     }
 }
 
+AJS.$(function () {
+    AJS.log("incidentLinkDialog loaded");
+    $("#page-location").val($(location).attr('href'));
+});

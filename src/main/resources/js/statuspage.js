@@ -1,5 +1,5 @@
-jQuery(function () {
-    // AJS.log("statuspage loaded");
+AJS.$(function () {
+    AJS.log("statuspage loaded");
 });
 let $statuspage = {
 

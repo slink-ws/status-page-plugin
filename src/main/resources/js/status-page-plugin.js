@@ -1,9 +1,18 @@
-jQuery(function () {
-    // AJS.log("---> COMMON FUNCTION LOADED")
-});
-
 let $pluginCommon = {
-    getComponentStatusButtonClass(status) {
+     getIssueKey: function() {
+        if (JIRA.IssueNavigator.isNavigator()){
+            return JIRA.IssueNavigator.getSelectedIssueKey();
+        } else {
+            return AJS.$.trim(AJS.$("#key-val").text());
+        }
+    }
+    ,getProjectKey: function() {
+        let issueKey = this.getIssueKey();
+        if (issueKey){
+            return issueKey.match("[A-Z]*")[0];
+        }
+    }
+    ,getComponentStatusButtonClass: function(status) {
         if (status == 'operational')
             return "aui-iconfont-check-circle";
         else if (status == 'degraded_performance')
@@ -39,4 +48,61 @@ let $pluginCommon = {
         });
         return result;
     }
+    ,buttonBusy: function(buttonId) {
+        let buttonObject = AJS.$('#' + buttonId)[0];
+        try {
+            buttonObject.disabled = true;
+            if (!buttonObject.isBusy())
+                buttonObject.busy();
+        } catch (error) {
+            AJS.log("could not set busy state: " + error)
+            AJS.log(buttonObject);
+        }
+    }
+    ,buttonIdle: function(buttonId) {
+        let buttonObject = AJS.$('#' + buttonId)[0];
+        try {
+            buttonObject.disabled = false;
+            if (buttonObject.isBusy())
+                buttonObject.idle();
+        } catch (error) {
+            AJS.log("could not set idle state: " + error)
+            AJS.log(buttonObject);
+        }
+    }
 }
+
+AJS.$(function () {
+    AJS.log("status page plugin loaded");
+
+    JIRA.Dialogs.incidentLinkDialog = new JIRA.FormDialog({
+        id: "incident-link-dialog",
+        trigger: "#incident-link",
+        ajaxOptions: JIRA.Dialogs.getDefaultAjaxOptions,
+        width:450,
+        onSuccessfulSubmit : function() {},
+        onDialogFinished : function() {},
+        autoClose : true
+    });
+
+    JIRA.Dialogs.incidentUnlinkDialog = new JIRA.FormDialog({
+        id: "incident-unlink-dialog",
+        trigger: "#incident-unlink",
+        ajaxOptions: JIRA.Dialogs.getDefaultAjaxOptions,
+        width:450,
+        onSuccessfulSubmit : function() {},
+        onDialogFinished : function() {},
+        autoClose : true
+    });
+
+    JIRA.Dialogs.incidentCreateDialog = new JIRA.FormDialog({
+        id: "incident-create-dialog",
+        trigger: "#incident-create",
+        ajaxOptions: JIRA.Dialogs.getDefaultAjaxOptions,
+        width:800,
+        onSuccessfulSubmit : function() {},
+        onDialogFinished : function() {},
+        autoClose : true
+    });
+
+});
