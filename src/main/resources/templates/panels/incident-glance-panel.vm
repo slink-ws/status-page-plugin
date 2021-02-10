@@ -10,13 +10,13 @@
         </dl>
         <dl class="incident-glance-list-item">
             <dt>$i18n.getText('incident-glance-panel.incident-status'):</dt>
-            <dd><span class="incident-glance-common incident-status-$incident.status().value()">$incident.status().value()</span></dd>
+            <dd><span id="incident-glance-status" class="incident-glance-common incident-status-$incident.status().value()">$incident.status().value()</span></dd>
         </dl>
         <dl class="incident-glance-list-item">
             <dt>$i18n.getText('incident-glance-panel.incident-impact'):</dt>
             <dd>
 ##                <span class="incident-glance-common incident-impact incident-impact-$incident.impact().value() selected">
-                <div class="incident-impact incident-impact-$incident.impact().value() selected">
+                <div id="incident-glance-impact" class="incident-impact incident-impact-$incident.impact().value() selected">
                     $incident.impact().value()
                 </div>
 ##                </span>

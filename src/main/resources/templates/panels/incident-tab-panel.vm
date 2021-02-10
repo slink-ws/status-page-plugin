@@ -214,7 +214,7 @@
                         </div>
                     #end
                 </div>
-                <div class="components-add-block-container">
+                <div id="incident-tab-panel-add-component" class="components-add-block-container">
                     <div class="components-add-block-content">
                         #if ($incidentClosed)
                         #else

@@ -135,9 +135,31 @@ let $incidentTabPanel = {
         }).done(function () {
             JIRA.Messages.showSuccessMsg("statuspage updated");
             $pluginCommon.buttonIdle('tab-update-incident-button');
-            setTimeout(() => {
-                window.location = $(location).attr('href');
-            }, 1000);
+            let object = $('#incident-glance-impact');
+            object[0].className = "selected incident-impact incident-impact-" + impact;
+            object[0].innerText = impact;
+
+            object = $('#incident-glance-status');
+            object[0].className = "incident-glance-common incident-status-" + status;
+            object[0].innerText = status;
+
+            if (status == "resolved") {
+                $("#tab-update-incident-button").hide();
+                $("#incident-tab-panel-add-component").hide();
+                $('#incident-impact-block').find('div').each(function() {
+                    if ($(this).hasClass('incident-impact-' + impact))
+                        $(this).addClass("selected")
+                    else
+                        $(this).hide();
+                })
+                $('#incident-status-block').find('div').each(function() {
+                    if (!($(this).hasClass('incident-status-' + status)))
+                        $(this).hide()
+                })
+            }
+            // setTimeout(() => {
+            //     window.location = $(location).attr('href');
+            // }, 1000);
         }).error(function (error, message) {
             AJS.log("--- error -----------------------------------------");
             AJS.log(error);
