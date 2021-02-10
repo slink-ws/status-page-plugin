@@ -263,11 +263,12 @@
         <div class="buttons">
             #if ($incidentClosed)
             #else
-                <input class="aui-button button"
+                <button class="aui-button button"
                        type="submit"
                        onclick="updateIncident()"
-                       id="tab-update-incident-button"
-                       value="$i18n.getText('incident-tab-panel.save-button-text')" />
+                       id="tab-update-incident-button">
+                    $i18n.getText('incident-tab-panel.save-button-text')
+                </button>
             #end
         </div>
     </div>

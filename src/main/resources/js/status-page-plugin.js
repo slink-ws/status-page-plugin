@@ -48,10 +48,11 @@ let $pluginCommon = {
         });
         return result;
     }
-    ,buttonBusy: function(buttonId) {
+    ,buttonBusy: function(buttonId, doDisable) {
         let buttonObject = AJS.$('#' + buttonId)[0];
         try {
-            buttonObject.disabled = true;
+            if (doDisable)
+                buttonObject.disabled = true;
             if (!buttonObject.isBusy())
                 buttonObject.busy();
         } catch (error) {

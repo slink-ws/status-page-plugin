@@ -100,6 +100,8 @@ let $incidentTabPanel = {
         }
     }
    ,updateIncident: function(statusBlockId, impactBlockId, messageBlockId, pageIdBlock, incidentIdBlock, projectKeyBlock, issueKeyBlock) {
+        $pluginCommon.buttonBusy('tab-update-incident-button', false);
+
         let status     = $("#" + statusBlockId + " .selected").attr("id");
         let impact     = $("#" + impactBlockId + " .selected").attr("id");
         let message    = $("#" + messageBlockId + " textarea").val();
@@ -132,6 +134,7 @@ let $incidentTabPanel = {
             processData: false
         }).done(function () {
             JIRA.Messages.showSuccessMsg("statuspage updated");
+            $pluginCommon.buttonIdle('tab-update-incident-button');
             setTimeout(() => {
                 window.location = $(location).attr('href');
             }, 1000);
@@ -142,6 +145,7 @@ let $incidentTabPanel = {
             AJS.log(message);
             AJS.log("---------------------------------------------------");
             JIRA.Messages.showErrorMsg("could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText)
+            $pluginCommon.buttonIdle('tab-update-incident-button');
         });
     }
    ,enableSaveButton: function() {

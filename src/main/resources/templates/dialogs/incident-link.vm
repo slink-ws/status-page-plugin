@@ -25,12 +25,12 @@
     #include("/js/incident-link-dialog.js")
     AJS.toInit(function() {
         AJS.log("----> init");
-        $pluginCommon.buttonBusy('incident-link-dialog-submit-button');
+        $pluginCommon.buttonBusy('incident-link-dialog-submit-button', true);
         $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident', 'incidents-loading-wheel');
 
         AJS.$('#sp-link-page').change(function(){
             let pageId = $(this).val();
-            $pluginCommon.buttonBusy('incident-link-dialog-submit-button');
+            $pluginCommon.buttonBusy('incident-link-dialog-submit-button', true);
             $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident', 'incidents-loading-wheel');
         })
     });
