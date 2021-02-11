@@ -26,12 +26,12 @@
     AJS.toInit(function() {
         AJS.log("----> init");
         $pluginCommon.buttonBusy('incident-link-dialog-submit-button', true);
-        $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident', 'incidents-loading-wheel');
+        $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident');
 
         AJS.$('#sp-link-page').change(function(){
             let pageId = $(this).val();
             $pluginCommon.buttonBusy('incident-link-dialog-submit-button', true);
-            $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident', 'incidents-loading-wheel');
+            $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident');
         })
     });
 </script>

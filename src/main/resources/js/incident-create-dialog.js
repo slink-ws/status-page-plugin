@@ -184,7 +184,12 @@ let $incidentCreateDialog = {
         this.updateComponentsConfig();
     },
     updateComponentsConfig : function() {
-        $("#components-config").val(JSON.stringify($pluginCommon.getComponentsConfig()));
+        let components = $pluginCommon.getComponentsConfig();
+        let componentsForUpdate = {};
+        $pluginCommon.status_values.forEach(function(item) {
+            componentsForUpdate[item] = components[item].map(a => a.id);
+        })
+        $("#components-config").val(JSON.stringify(componentsForUpdate));
         // console.log($("#components-config").val());
     },
     buttonHTML: function (buttonClass, selected, componentId, statusId, title) {
