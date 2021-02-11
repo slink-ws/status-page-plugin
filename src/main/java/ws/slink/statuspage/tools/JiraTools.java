@@ -218,13 +218,17 @@ public class JiraTools {
  */
     }
 
+    private Gson gson = null;
     public Gson getGsonObject() {
-        ExclusionStrategy strategy = new CustomExclusionStrategy();
-        return new GsonBuilder()
-            .addSerializationExclusionStrategy(strategy)
-            .addDeserializationExclusionStrategy(strategy)
-            .create()
-        ;
+        if (null == gson) {
+            ExclusionStrategy strategy = new CustomExclusionStrategy();
+            gson = new GsonBuilder()
+                .addSerializationExclusionStrategy(strategy)
+                .addDeserializationExclusionStrategy(strategy)
+                .create()
+            ;
+        }
+        return gson;
     }
 
     public String getDateTimeFormat() {

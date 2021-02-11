@@ -73,7 +73,7 @@ public class CreateIncident extends AbstractIssueSelectAction {
     public String doExecute() throws Exception {
         AtomicReference<Map<String, String>> componentsMap = new AtomicReference<>(new HashMap<>());
         if (StringUtils.isNotBlank(components)) {
-            new Gson()
+            JiraTools.instance().getGsonObject()
                 .fromJson(components, Map.class)
                 .entrySet()
                 .stream()

@@ -17,6 +17,7 @@ import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
+import ws.slink.statuspage.tools.Common;
 import ws.slink.statuspage.tools.JiraTools;
 import ws.slink.statuspage.type.IncidentStatus;
 
@@ -68,7 +69,8 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
                     context.put("incident", incident);
                     context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
                     loadedIncident.set(incident);
-                });
+                    context.put("componentsOriginal", JiraTools.instance().getGsonObject().toJson(incident.components()));
+                    });
             });
         }
 
@@ -79,7 +81,6 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
         context.put("componentStatuses", StatuspageService.instance().componentStatusList());
         context.put("incidentImpacts", StatuspageService.instance().incidentImpactList());
         context.put("issueKey", getActionsRequest.issue().getKey());
-
 
         String renderedText = vm.getEncodedBody("templates/panels/", "incident-tab-panel.vm", baseUrl, webworkEncoding, context);
         return Collections.singletonList(new GenericMessageAction(renderedText));

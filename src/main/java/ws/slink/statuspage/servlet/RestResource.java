@@ -323,7 +323,7 @@ public class RestResource {
         if (!statusPage.isPresent())
             return Response.noContent().build();
 
-        return Response.ok(new Gson().toJson(statusPage.get().pages())).build();
+        return Response.ok(JiraTools.instance().getGsonObject().toJson(statusPage.get().pages())).build();
     }
 
     @GET
@@ -352,7 +352,7 @@ public class RestResource {
         if (!statusPage.isPresent())
             return Response.noContent().build();
 
-        return Response.ok(new Gson().toJson(statusPage.get().components(pageId))).build();
+        return Response.ok(JiraTools.instance().getGsonObject().toJson(statusPage.get().components(pageId))).build();
     }
 
     @GET
@@ -382,7 +382,7 @@ public class RestResource {
             return Response.noContent().build();
 
         return Response.ok(
-            new Gson().toJson(
+            JiraTools.instance().getGsonObject().toJson(
                 statusPage
                     .get()
                     .groups(pageId)
@@ -423,7 +423,7 @@ public class RestResource {
         if (!statusPage.isPresent())
             return Response.noContent().build();
 
-        return Response.ok(new Gson().toJson(statusPage.get().groupComponents(pageId, groupId))).build();
+        return Response.ok(JiraTools.instance().getGsonObject().toJson(statusPage.get().groupComponents(pageId, groupId))).build();
     }
 
     @GET
@@ -452,7 +452,7 @@ public class RestResource {
         if (!statusPage.isPresent())
             return Response.noContent().build();
 
-        return Response.ok(new Gson().toJson(
+        return Response.ok(JiraTools.instance().getGsonObject().toJson(
             statusPage
                 .get()
                 .nonGroupComponents(pageId)
@@ -491,7 +491,7 @@ public class RestResource {
             return Response.noContent().build();
 
         if (activeOnly) {
-            return Response.ok(new Gson().toJson(
+            return Response.ok(JiraTools.instance().getGsonObject().toJson(
                 statusPage.get().incidents(pageId)
                     .stream()
                     .filter(
@@ -500,7 +500,7 @@ public class RestResource {
                     ).collect(Collectors.toList())
             )).build();
         } else {
-            return Response.ok(new Gson().toJson(statusPage.get().incidents(pageId))).build();
+            return Response.ok(JiraTools.instance().getGsonObject().toJson(statusPage.get().incidents(pageId))).build();
         }
     }
 
@@ -581,7 +581,7 @@ public class RestResource {
     @Path("/api/impacts")
     @Produces(MediaType.APPLICATION_JSON)
     public Response impacts(@Context HttpServletRequest request) {
-        return Response.ok(new Gson().toJson(
+        return Response.ok(JiraTools.instance().getGsonObject().toJson(
             Arrays.stream(IncidentSeverity.values())
                 .sorted(Comparator.comparing(IncidentSeverity::id))
                 .map(IncidentSeverity::value)
@@ -593,7 +593,7 @@ public class RestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response componentsStatuses(
             @Context HttpServletRequest request) {
-        return Response.ok(new Gson().toJson(
+        return Response.ok(JiraTools.instance().getGsonObject().toJson(
             Arrays.stream(ComponentStatus.values())
                 .sorted(Comparator.comparing(ComponentStatus::id))
                 .filter(c -> StringUtils.isNotBlank(c.value()))
