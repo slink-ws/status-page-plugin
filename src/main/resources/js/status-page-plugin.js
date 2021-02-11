@@ -1,5 +1,12 @@
 let $pluginCommon = {
-     getIssueKey: function() {
+     status_values: [
+         "operational",
+         "degraded_performance",
+         "partial_outage",
+         "major_outage",
+         "under_maintenance"
+     ]
+    ,getIssueKey: function() {
         if (JIRA.IssueNavigator.isNavigator()){
             return JIRA.IssueNavigator.getSelectedIssueKey();
         } else {
@@ -30,22 +37,28 @@ let $pluginCommon = {
         let result = [];
         $(".component-name").not(".removed").each(function() {
             $(this).parent().find("." + state + ".selected").each(function (){
-                result.push($(this).parent().attr("id"));
+                // let c    = {};
+                // c.id     = $(this).parent().attr("id");
+                // c.name   = $(this).parent().find(".component-name").text()
+                // c.status = state;
+                result.push({"id": $(this).parent().attr("id"), "name": $(this).parent().find(".component-name").text(), "status": state});
             });
+        });
+        return result;
+    }
+    ,getRemovedComponents: function() {
+        let result = [];
+        $(".component-name.removed").each(function() {
+            result.push({"id": $(this).parent().attr("id"), "name": $(this).parent().find(".component-name").text(), "status": "na"});
         });
         return result;
     }
     ,getComponentsConfig: function() {
         let result = {};
-        result["remove"]               = [];
-        result["operational"]          = this.getComponents("operational");
-        result["degraded_performance"] = this.getComponents("degraded_performance");
-        result["partial_outage"]       = this.getComponents("partial_outage");
-        result["major_outage"]         = this.getComponents("major_outage");
-        result["under_maintenance"]    = this.getComponents("under_maintenance");
-        $(".component-name.removed").each(function() {
-            result["remove"].push($(this).parent().attr("id"));
-        });
+        $pluginCommon.status_values.forEach(function(item, index) {
+            result[item] = $pluginCommon.getComponents(item);
+        })
+        result["remove"] = $pluginCommon.getRemovedComponents();
         return result;
     }
     ,buttonBusy: function(buttonId, doDisable) {

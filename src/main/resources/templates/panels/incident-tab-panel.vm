@@ -264,6 +264,11 @@
             #if ($incidentClosed)
             #else
                 <button class="aui-button button"
+                        onclick="resetIncident()"
+                        id="tab-reset-incident-button">
+                    $i18n.getText('incident-tab-panel.reset-button-text')
+                </button>
+                <button class="aui-button button"
                        type="submit"
                        onclick="updateIncident()"
                        id="tab-update-incident-button">
@@ -277,7 +282,10 @@
     <input type="hidden" id="incident-id" value="$issueIncident.incidentId()" />
     <input type="hidden" id="project-key" value="$issueIncident.projectKey()" />
     <input type="hidden" id="issue-key" value="$issueKey" />
-
+    <input type="hidden" id="status-original" value="$incident.status().value()" />
+    <input type="hidden" id="impact-original" value="$incident.impact().value()" />
+    <input type="hidden" id="components-original" value='$componentsOriginal' />
+    <input type="hidden" id="components-add-cache" value="" />
 
 </div>
 <script>
@@ -297,23 +305,18 @@
     }
     function updateIncident() {
         // TODO: https://community.atlassian.com/t5/Jira-questions/How-to-add-a-change-history-entry-to-an-Issue-that-has-no/qaq-p/1002049
-        $incidentTabPanel.updateIncident(
-            'incident-status-block',
-            'incident-impact-block',
-            'incident-message-block',
-            'page-id',
-            'incident-id',
-            'project-key',
-            'issue-key'
-        );
+        $incidentTabPanel.updateIncident();
+    }
+    function resetIncident() {
+        $incidentTabPanel.resetIncident();
     }
     function changeIncidentImpact(source) {
-            $incidentTabPanel.changeIncidentImpact(source);
+        $incidentTabPanel.changeIncidentImpact(source);
     }
     function changeIncidentStatus(source) {
         $incidentTabPanel.changeIncidentStatus(source);
     }
     function addAffectedComponent() {
-        $incidentTabPanel.addAffectedComponent('new-component-title', 'new-component-status', 'tab-components-list');
+        $incidentTabPanel.addAffectedComponentMain();
     }
 </script>
