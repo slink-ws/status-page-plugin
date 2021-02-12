@@ -28,6 +28,6 @@ let $incidentLinkDialog = {
 }
 
 AJS.$(function () {
-    AJS.log("incidentLinkDialog loaded");
+    // AJS.log("incidentLinkDialog loaded");
     $("#page-location").val($(location).attr('href'));
 });

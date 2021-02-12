@@ -87,7 +87,9 @@ let $pluginCommon = {
 }
 
 AJS.$(function () {
-    AJS.log("status page plugin loaded");
+    // AJS.log("status page plugin loaded");
+
+    // https://developer.atlassian.com/server/jira/platform/displaying-content-in-a-dialog-in-jira/
 
     JIRA.Dialogs.incidentLinkDialog = new JIRA.FormDialog({
         id: "incident-link-dialog",

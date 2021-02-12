@@ -24,7 +24,7 @@
     #include("/js/statuspage.js")
     #include("/js/incident-link-dialog.js")
     AJS.toInit(function() {
-        AJS.log("----> init");
+        // AJS.log("----> init");
         $pluginCommon.buttonBusy('incident-link-dialog-submit-button', true);
         $incidentLinkDialog.loadPages('sp-link-page', 'sp-link-incident');
 

@@ -70,12 +70,12 @@ function config_update_config() {
     let mgmt_roles = get_select_values_string("selected-mgmt-roles");
     let view_roles = get_select_values_string("selected-view-roles");
 
-    AJS.log("~~~ SAVING CONFIGURATION:");
-    AJS.log("       project   : " + project);
-    AJS.log("       api key   : " + apikey);
-    AJS.log("       m.roles   : " + mgmt_roles);
-    AJS.log("       v.roles   : " + view_roles);
-    AJS.log("~~~~~~~~~~~~~~~~~~~~~~~~~~")
+    // AJS.log("~~~ SAVING CONFIGURATION:");
+    // AJS.log("       project   : " + project);
+    // AJS.log("       api key   : " + apikey);
+    // AJS.log("       m.roles   : " + mgmt_roles);
+    // AJS.log("       v.roles   : " + view_roles);
+    // AJS.log("~~~~~~~~~~~~~~~~~~~~~~~~~~")
     AJS.$.ajax({
         url: AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/config",
         type: "PUT",

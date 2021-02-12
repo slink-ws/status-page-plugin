@@ -148,8 +148,8 @@ let $incidentTabPanel = {
         let issueKey   = $("#" + $incidentTabPanel.config.issueKeyBlockId).val();
 
         let components = $pluginCommon.getComponentsConfig();
-        console.log("----------> components config:");
-        console.log(JSON.stringify(components, null, 2));
+        // console.log("----------> components config:");
+        // console.log(JSON.stringify(components, null, 2));
         // delete components.remove;
 
         let componentsForUpdate = {};
@@ -160,7 +160,7 @@ let $incidentTabPanel = {
         })
 
         components["remove"].forEach(function(item, index) {
-            console.log("caching removed component: " + JSON.stringify(item, null, 2));
+            // console.log("caching removed component: " + JSON.stringify(item, null, 2));
             $incidentTabPanel.addCachedComponent(item);
         });
 
@@ -281,7 +281,7 @@ let $incidentTabPanel = {
             });
             $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val("");
         } catch (error) {
-            console.log("---> error: " + error);
+            AJS.log("---> error: " + error);
         }
     }
    ,addCachedComponent: function(component) {
@@ -291,19 +291,19 @@ let $incidentTabPanel = {
             cache = JSON.parse(str);
         }
         cache[component.id] = component;
-        console.log("----> add cached component: " + JSON.stringify(cache, null, 2));
+        // console.log("----> add cached component: " + JSON.stringify(cache, null, 2));
         $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val(JSON.stringify(cache));
         // console.log($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val());
     }
    ,removeCachedComponents: function(componentIdsList) {
-        console.log("----> remove cached components: " + JSON.stringify(componentIdsList));
+        // console.log("----> remove cached components: " + JSON.stringify(componentIdsList));
         let str = $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val();
         if (str) {
             let cache = JSON.parse(str);
             componentIdsList.forEach(function(item, index) {
                 delete cache[item];
             })
-            console.log(cache)
+            // console.log(cache)
             $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val(JSON.stringify(cache));
         }
     }
