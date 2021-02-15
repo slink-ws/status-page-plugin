@@ -227,40 +227,48 @@
                     <div class="components-add-block-content">
                         #if ($incidentClosed)
                         #else
-                            <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
-                            <div class="input-element">
-                                <label  class="item-label" for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
-                                <span class="select components">
-                                <select id="new-component-title">
-                                    #foreach($nac in $nonAffectedComponents)
-                                        <option value="$nac.id()">$nac.name()</option>
-                                    #end
-                                </select>
-                                <span class="focus"></span>
-                            </span>
-                            </div>
-                            <div class="input-element">
-                                <label class="item-label" for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
-                                <span class="select statuses">
-                                <select id="new-component-status">
-                                    #foreach($status in $componentStatuses)
-                                        <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>
-                                    #end
-                                </select>
-                                <span class="focus"></span>
-                            </span>
-                            </div>
-                            <div class="input-element">
-                                <label for="add-component-button">&nbsp;</label>
-                                <div>
-                                    <div id="add-component-button"
-                                         onclick="addAffectedComponent()"
-                                         title="Add affected component"
-                                         class="component-button under_maintenance aui-icon aui-icon-small aui-iconfont-add">
-                                        ADD
-                                    </div>
+                            <form class="aui">
+                                <h5>$i18n.getText('incident-tab-panel.incident-add-component-title')</h5>
+                                <div class="input-element">
+##                                    <label for="new-component-title">$i18n.getText('incident-tab-panel.incident-components-list-label')</label>
+                                    <p>
+                                        <select
+                                                class="component-select"
+                                                id="new-component-title"
+                                                name="component"
+                                                placeholder="select component">
+                                            #foreach($nac in $nonAffectedComponents)
+                                                <option value="$nac.id()">$nac.name()</option>
+                                            #end
+                                        </select>
+                                    </p>
                                 </div>
-                            </div>
+                                <div class="input-element" aria-hidden="true" hidden="true">
+##                                    <label for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
+                                    <p>
+                                        <select
+                                                class="status-select"
+                                                id="new-component-status"
+                                                name="component"
+                                                placeholder="select status">
+                                            #foreach($status in $componentStatuses)
+                                                <option value="$status.id()" class='"component-button."$status.id()".selected"'>$status.title()</option>
+                                            #end
+                                        </select>
+                                    </p>
+                                </div>
+                                <div class="input-element">
+##                                    <label for="add-component-button">&nbsp;</label>
+                                    <p>
+                                        <div id="add-component-button"
+                                             onclick="addAffectedComponent()"
+                                             title="Add affected component"
+                                             class="add-component-button component-button under_maintenance aui-icon aui-icon-small aui-iconfont-add">
+                                            ADD
+                                        </div>
+                                    </p>
+                                </div>
+                            </form>
                         #end
                     </div>
                 </div>
@@ -352,4 +360,6 @@
     function confirmDialogSubmit() {
         $incidentTabPanel.submitConfirmDialog();
     }
+    AJS.$("#new-component-title").auiSelect2();
+    // AJS.$("#new-component-status").auiSelect2();
 </script>

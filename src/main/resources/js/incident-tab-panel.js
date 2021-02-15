@@ -125,9 +125,15 @@ let $incidentTabPanel = {
         let componentId   = $("#" + $incidentTabPanel.config.newComponentTitleElementId).val();
         if (null != componentId && undefined != componentId && "" != componentId) {
             let componentName = $("#" + $incidentTabPanel.config.newComponentTitleElementId + " option:selected").text();
-            let statusId      = $("#" + $incidentTabPanel.config.newComponentStatusElementId).val();
+            // let statusId      = $("#" + $incidentTabPanel.config.newComponentStatusElementId).val();
             $("#" + $incidentTabPanel.config.newComponentTitleElementId + " option[value='" + componentId + "']").remove();
-            let component = {"id": componentId, "name": componentName, "status": statusId};
+            if ($("#" + $incidentTabPanel.config.newComponentTitleElementId + " option").length == 0) {
+                $("#" + $incidentTabPanel.config.newComponentTitleElementId).auiSelect2("val", "");
+            } else {
+                $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
+            }
+            let component = {"id": componentId, "name": componentName, "status": ""};
+            //$("#" + $incidentTabPanel.config.newComponentTitleElementId).val("")
             $incidentTabPanel.addCachedComponent(component);
             $incidentTabPanel.addAffectedComponent(component);
             $incidentTabPanel.enableSaveButton();
@@ -280,6 +286,8 @@ let $incidentTabPanel = {
 
         this.restoreAffectedComponents();
         this.restoreCachedComponents();
+
+        $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
     }
    ,restoreAffectedComponents: function() {
         let componentsList = JSON.parse($("#" + $incidentTabPanel.config.originalComponentsBlockId).val());
@@ -312,6 +320,8 @@ let $incidentTabPanel = {
                     $(o).text(arr[i].t);
                 });
                 $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val("");
+                $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
+
             } catch (error) {
                 AJS.log("---> error: " + error);
             }

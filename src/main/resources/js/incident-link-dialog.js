@@ -6,6 +6,11 @@ let $incidentLinkDialog = {
                 options_str += '<option value="' + page.id + '">' + page.name + '</option>';
             });
             $('#' + pagesElement)[0].innerHTML = options_str;
+            if ($("#sp-link-page" + " option").length == 0) {
+                $("#sp-link-page").auiSelect2("val", "");
+            } else {
+                $("#sp-link-page").trigger('change');
+            }
             $incidentLinkDialog.loadIncidents($('#' + pagesElement).val(), incidentsElement);
         }).catch(function(error) {
             AJS.log("service call error: ");
@@ -19,6 +24,12 @@ let $incidentLinkDialog = {
                 options_str += '<option value="' + page.id + '">' + page.name + '</option>';
             });
             $('#' + element)[0].innerHTML = options_str;
+            if ($("#sp-link-incident" + " option").length == 0) {
+                $("#sp-link-incident").auiSelect2("val", "");
+            } else {
+                $("#sp-link-incident").trigger('change');
+            }
+
             $pluginCommon.buttonIdle('incident-link-dialog-submit-button');
         }).catch(function(error) {
             AJS.log("service call error: ");

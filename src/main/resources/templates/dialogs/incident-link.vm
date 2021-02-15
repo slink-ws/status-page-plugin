@@ -3,11 +3,11 @@
         <h2 class="dialog-title">$i18n.getText('incident-link-dialog.title')</h2>
         <div class="field-group">
             <label for="sp-link-page">$i18n.getText('incident-link-dialog.page-select.label')&nbsp;</label>
-            <select class="select" name="page" id="sp-link-page" required="true" placeholder="select status page" />
+            <select class="select component-select" name="page" id="sp-link-page" required="true" placeholder="select status page" />
         </div>
         <div class="field-group">
             <label for="sp-link-incident">$i18n.getText('incident-link-dialog.incident-select.label')&nbsp;</label>
-            <select class="select" name="incident" id="sp-link-incident" required="true" placeholder="select incident" />
+            <select class="select component-select" name="incident" id="sp-link-incident" required="true" placeholder="select incident" />
         </div>
         <input type="hidden" name="location" id="page-location" value="" />
         <input type="hidden" name="atl_token" value="${atl_token}" />
@@ -32,6 +32,9 @@
             let pageId = $(this).val();
             $pluginCommon.buttonBusy('incident-link-dialog-submit-button', true);
             $incidentLinkDialog.loadIncidents(pageId, 'sp-link-incident');
-        })
+        });
+
+        AJS.$("#sp-link-page").auiSelect2();
+        AJS.$("#sp-link-incident").auiSelect2();
     });
 </script>

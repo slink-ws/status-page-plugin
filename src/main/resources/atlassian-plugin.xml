@@ -21,6 +21,7 @@
   <web-resource key="status-page-plugin-resources" name="status-page-plugin web resources">
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <dependency>com.atlassian.auiplugin:aui-experimental-iconfont</dependency>
+    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
     <resource type="download" name="status-page-plugin.css" location="/css/status-page-plugin.css"/>
     <resource type="download" name="status-page-plugin.js" location="/js/status-page-plugin.js"/>
     <resource type="download" key="images-resource" name="images/" location="images/">
@@ -60,7 +61,8 @@
   </web-panel>
   <web-resource key="status-page-glance-panel-resources" name="status-page-glance-panel web resources">
     <dependency>com.atlassian.auiplugin:ajs</dependency>
-        <resource type="download" name="status-page-incident-glance-panel.css" location="/css/status-page-incident-glance-panel.css"/>
+    <dependency>com.atlassian.auiplugin:aui-select2</dependency>
+    <resource type="download" name="status-page-incident-glance-panel.css" location="/css/status-page-incident-glance-panel.css"/>
 <!--    <resource type="download" name="status-page-plugin.css" location="/css/status-page-plugin.css"/>-->
 <!--    <resource type="download" name="status-page-plugin.js" location="/js/status-page-plugin.js"/>-->
 <!--    <resource type="download" key="images-resource" name="images/" location="images/">-->
