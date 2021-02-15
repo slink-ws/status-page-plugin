@@ -5,6 +5,7 @@ let $incidentTabPanel = {
         impactBlockId                : "incident-impact-block",
         statusBlockId                : "incident-status-block",
         messageBlockId               : "incident-message-block",
+        commentCheckboxId            : "publish-comment-checkbox",
         affectedComponentsListBlockId: "tab-components-list",
 
         // incident glance view
@@ -172,17 +173,19 @@ let $incidentTabPanel = {
         $incidentTabPanel.removeCachedComponents(componentsToStore.map(c => c.id));
 
         let config = {}
-        config["project"]    = projectKey;
-        config["issue"]      = issueKey;
-        config["page"]       = pageId;
-        config["incident"]   = incidentId;
-        config["status"]     = status;
-        config["impact"]     = impact;
-        config["message"]    = message;
-        config["components"] = componentsForUpdate;
+        config["project"]       = projectKey;
+        config["issue"]         = issueKey;
+        config["page"]          = pageId;
+        config["incident"]      = incidentId;
+        config["status"]        = status;
+        config["impact"]        = impact;
+        config["message"]       = message;
+        config["components"]    = componentsForUpdate;
 
-        // console.log("------> components list");
-        // console.log(JSON.stringify(components, null, 2));
+        config["publishComment"] = $("#" + $incidentTabPanel.config.commentCheckboxId)[0].checked;
+
+        // console.log("------> config");
+        // console.log(JSON.stringify(config, null, 2));
         // console.log("------> components for update");
         // console.log(JSON.stringify(componentsForUpdate, null, 2));
         // console.log("------> components to cache");

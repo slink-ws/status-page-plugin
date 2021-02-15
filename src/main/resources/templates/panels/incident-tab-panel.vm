@@ -123,6 +123,15 @@
                                 </div>
                             </dd>
                         </dl>
+                        <dl>
+                            <dt></dt>
+                            <dd>
+                                <div class="checkbox">
+                                    <input class="checkbox" type="checkbox" name="publish-comment-checkbox" id="publish-comment-checkbox">
+                                    <label for="publish-comment-checkbox">$i18n.getText('incident-tab-panel.publish-comment.title')</label>
+                                </div>
+                            </dd>
+                        </dl>
                     </ul>
                 </div>
             </div>

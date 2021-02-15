@@ -2,6 +2,7 @@ package ws.slink.statuspage.servlet;
 
 import bsh.StringUtil;
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.comments.CommentManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
 import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
@@ -149,6 +150,7 @@ public class RestResource {
         @XmlElement private String status;
         @XmlElement private String impact;
         @XmlElement private String message;
+        @XmlElement private boolean publishComment;
         @XmlElement private Map<String, List<String>> components;
 
         public String getProject() {
@@ -513,6 +515,8 @@ public class RestResource {
     public Response updateIncident(final IncidentUpdateParams incidentUpdateParams, @Context HttpServletRequest request) {
 //        System.out.println("----> SAVING INCIDENT: " + incidentUpdateParams);
 
+        String messageEscaped = null;
+
         AtomicInteger resultCode              = new AtomicInteger(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         AtomicBoolean resultStatus            = new AtomicBoolean(false);
         AtomicReference<String> resultMessage = new AtomicReference<>("");
@@ -540,7 +544,6 @@ public class RestResource {
                     incident.get().impact(IncidentSeverity.of(incidentUpdateParams.getImpact()));
                     incident.get().components(getAffectedComponents(statusPage.get(), incidentUpdateParams));
 
-                    String messageEscaped = null;
                     if (StringUtils.isNotBlank(incidentUpdateParams.getMessage())) {
                         messageEscaped = org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(incidentUpdateParams.getMessage());
                     } else {
@@ -572,6 +575,19 @@ public class RestResource {
 //        System.out.println("-- rest: " + resultCode.get() + " " + resultStatus.get() + " " + resultMessage.get());
 
         if (resultStatus.get()) {
+            if (incidentUpdateParams.publishComment && StringUtils.isNotBlank(messageEscaped)) {
+                try {
+                    CommentManager commentManager = ComponentAccessor.getCommentManager();
+                    commentManager.create(
+                        ComponentAccessor.getIssueManager().getIssueByKeyIgnoreCase(incidentUpdateParams.issue),
+                        ComponentAccessor.getUserManager().getUserByName(request.getRemoteUser()),
+                        messageEscaped,
+                        true
+                    );
+                } catch (Exception e) {
+                    System.err.println("could not publish message comment to Jira: " + e.getClass().getSimpleName() + " : " + e.getMessage());
+                }
+            }
             return Response.ok().build();
         } else {
             return Response.status(resultCode.get()).entity(resultMessage.get()).build();
