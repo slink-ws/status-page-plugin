@@ -117,7 +117,7 @@
                                         #if ($incidentClosed)
                                             <textarea disabled cols="2" rows="8" id="rules"></textarea>
                                         #else
-                                            <textarea cols="2" rows="8" id="rules"></textarea>
+                                            <textarea cols="2" rows="8" id="rules" placeholder="$defaultMessage"></textarea>
                                         #end
                                     </div>
                                 </div>

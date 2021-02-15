@@ -22,6 +22,7 @@ import ws.slink.statuspage.model.Incident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
+import ws.slink.statuspage.tools.Common;
 import ws.slink.statuspage.tools.JiraTools;
 import ws.slink.statuspage.type.ComponentStatus;
 import ws.slink.statuspage.type.IncidentSeverity;
@@ -543,7 +544,7 @@ public class RestResource {
                     if (StringUtils.isNotBlank(incidentUpdateParams.getMessage())) {
                         messageEscaped = org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(incidentUpdateParams.getMessage());
                     } else {
-                        messageEscaped = getDefaultStatusMessage(IncidentStatus.of(incidentUpdateParams.getStatus()));
+                        messageEscaped = Common.getDefaultStatusMessage(IncidentStatus.of(incidentUpdateParams.getStatus()));
                     }
 
                     Optional<Incident> updated = statusPage.get().updateIncident(incident.get(), messageEscaped);
@@ -623,29 +624,6 @@ public class RestResource {
         });
 
         return result;
-    }
-    private String getDefaultStatusMessage(IncidentStatus status) {
-        switch (status) {
-            case INVESTIGATING:
-                return "We are continuing to investigate this issue.";
-            case IDENTIFIED:
-                return "The issue has been identified and a fix is being implemented.";
-            case MONITORING:
-                return "A fix has been implemented and we are monitoring the results.";
-            case RESOLVED:
-                return "This incident has been resolved.";
-            case SCHEDULED:
-                return "We will be undergoing scheduled maintenance during this time.";
-            case IN_PROGRESS:
-                return "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
-            case VERIFYING:
-                return "Verification is currently underway for the maintenance items.";
-            case COMPLETED:
-                return "The scheduled maintenance has been completed.";
-            default:
-                return "";
-
-        }
     }
     private List<Project> getConfiguredProjects(String sourceStr) {
         return Arrays.asList(sourceStr.split(","))

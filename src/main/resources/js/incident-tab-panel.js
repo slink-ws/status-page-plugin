@@ -100,6 +100,11 @@ let $incidentTabPanel = {
         if (!$(".tab-panel div.incident-status-" + source.id).hasClass("selected")) {
             $(".tab-panel div.incident-status").removeClass("selected");
             $(".tab-panel div.incident-status-" + source.id).addClass("selected");
+            // $("#serMemtb").attr("placeholder", "Type a Location").val("").focus().blur();
+            // console.log("---> " + source.id + " : " + $statuspage.defaultMessage(source.id));
+            let messageInput = $("#" + $incidentTabPanel.config.messageBlockId).find("textarea");
+            if (messageInput)
+                messageInput.attr("placeholder", $statuspage.defaultMessage(source.id))
             $incidentTabPanel.enableSaveButton();
         }
     } // changeIncidentImpact

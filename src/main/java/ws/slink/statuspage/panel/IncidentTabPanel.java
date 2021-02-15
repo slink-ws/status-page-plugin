@@ -70,6 +70,7 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
                     context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
                     loadedIncident.set(incident);
                     context.put("componentsOriginal", JiraTools.instance().getGsonObject().toJson(incident.components()));
+                    context.put("defaultMessage", Common.getDefaultStatusMessage(incident.status()));
                     });
             });
         }

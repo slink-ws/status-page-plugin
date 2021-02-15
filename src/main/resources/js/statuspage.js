@@ -59,6 +59,26 @@ let $statuspage = {
         // AJS.log("----------- component statuses: " + JSON.stringify(result))
         return result;
     },
+    defaultMessage: function(status) {
+        if (status == "investigating")
+            return "We are continuing to investigate this issue.";
+        else if (status == "identified")
+            return "The issue has been identified and a fix is being implemented.";
+        else if (status == "monitoring")
+            return "A fix has been implemented and we are monitoring the results.";
+        else if (status == "resolved")
+            return "This incident has been resolved.";
+        else if (status == "scheduled")
+            return "We will be undergoing scheduled maintenance during this time.";
+        else if (status == "in_progress")
+            return "Scheduled maintenance is currently in progress. We will provide updates as necessary.";
+        else if (status == "verifying")
+            return "Verification is currently underway for the maintenance items.";
+        else if (status == "completed")
+            return "The scheduled maintenance has been completed.";
+        else
+            return "";
+    },
 
     // ---------- TOOLS ------------
     baseUrl: function () {
