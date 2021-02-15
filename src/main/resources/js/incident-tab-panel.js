@@ -32,6 +32,18 @@ let $incidentTabPanel = {
         // buttons
         updateButtonId               : "tab-update-incident-button",
     }
+   ,confirmDialog: {}
+   ,submitConfirmDialog: function() {
+        if($incidentTabPanel.confirmDialog) {
+            $incidentTabPanel.confirmDialog.hide();
+        }
+        $incidentTabPanel.doUpdateIncident();
+   }
+   ,cancelConfirmDialog: function() {
+        if($incidentTabPanel.confirmDialog) {
+            $incidentTabPanel.confirmDialog.hide();
+        }
+   }
    ,changeComponentState: function (source, f) {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
@@ -142,6 +154,17 @@ let $incidentTabPanel = {
         $("#" + $incidentTabPanel.config.affectedComponentsListBlockId).append(html);
     }
    ,updateIncident: function() {
+        $incidentTabPanel.confirmDialog = AJS.dialog2("#confirm-dialog");
+        $incidentTabPanel.confirmDialog.show();
+   }
+   ,doUpdateIncident: function() {
+
+        // var demoDialog = AJS.dialog2("#demo-dialog");
+        // demoDialog.on("show", function() {
+        //     console.log("demo-dialog was shown");
+        // });
+
+
         $pluginCommon.buttonBusy($incidentTabPanel.config.updateButtonId, false);
 
         let status     = $("#" + $incidentTabPanel.config.statusBlockId  + " .selected").attr("id");
@@ -272,25 +295,26 @@ let $incidentTabPanel = {
         }
     }
    ,restoreCachedComponents: function() {
-        try {
-            let cachedComponents = JSON.parse($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val());
-            // console.log("---> reset cached components");
-            // console.log(cachedComponents);
-            Object.keys(cachedComponents).forEach(function(key, index) {
-                // console.log(cachedComponents[key]);
-                $("#" + $incidentTabPanel.config.newComponentTitleElementId).append('<option value="' + cachedComponents[key].id + '">' + cachedComponents[key].name + '</option>');
-            })
-            let options = $('#' + $incidentTabPanel.config.newComponentTitleElementId + ' option');
-            let arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
-            arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
-            options.each(function(i, o) {
-                o.value = arr[i].v;
-                $(o).text(arr[i].t);
-            });
-            $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val("");
-        } catch (error) {
-            AJS.log("---> error: " + error);
-        }
+        if ($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val())
+            try {
+                let cachedComponents = JSON.parse($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val());
+                // console.log("---> reset cached components");
+                // console.log(cachedComponents);
+                Object.keys(cachedComponents).forEach(function(key, index) {
+                    // console.log(cachedComponents[key]);
+                    $("#" + $incidentTabPanel.config.newComponentTitleElementId).append('<option value="' + cachedComponents[key].id + '">' + cachedComponents[key].name + '</option>');
+                })
+                let options = $('#' + $incidentTabPanel.config.newComponentTitleElementId + ' option');
+                let arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
+                arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
+                options.each(function(i, o) {
+                    o.value = arr[i].v;
+                    $(o).text(arr[i].t);
+                });
+                $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val("");
+            } catch (error) {
+                AJS.log("---> error: " + error);
+            }
     }
    ,addCachedComponent: function(component) {
         let cache = {};

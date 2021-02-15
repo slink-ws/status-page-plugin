@@ -287,6 +287,24 @@
         </div>
     </div>
 
+    <section id="confirm-dialog" data-aui-modal="false" class="aui-dialog2 aui-dialog2-small aui-dialog2-warning aui-layer" role="dialog" aria-hidden="true">
+        <header class="aui-dialog2-header">
+            <h2 class="aui-dialog2-header-main">$i18n.getText('incident-tab-panel.confirm-dialog.title')</h2>
+            <a class="aui-dialog2-header-close">
+                <span class="aui-icon aui-icon-small aui-iconfont-close-dialog">$i18n.getText('incident-tab-panel.confirm-dialog.close')</span>
+            </a>
+        </header>
+        <div class="aui-dialog2-content">
+            <p>$i18n.getText('incident-tab-panel.confirm-dialog.message')</p>
+        </div>
+        <footer class="aui-dialog2-footer">
+            <div class="aui-dialog2-footer-actions">
+                <button id="confirm-dialog-confirm" class="aui-button aui-button-primary" onclick="confirmDialogSubmit()">$i18n.getText('incident-tab-panel.confirm-dialog.confirm')</button>
+                <button id="confirm-dialog-cancel" class="aui-button aui-button-link" onclick="confirmDialogCancel()">$i18n.getText('incident-tab-panel.confirm-dialog.cancel')</button>
+            </div>
+        </footer>
+    </section>
+
     <input type="hidden" id="page-id" value="$issueIncident.pageId()" />
     <input type="hidden" id="incident-id" value="$issueIncident.incidentId()" />
     <input type="hidden" id="project-key" value="$issueIncident.projectKey()" />
@@ -327,5 +345,11 @@
     }
     function addAffectedComponent() {
         $incidentTabPanel.addAffectedComponentMain();
+    }
+    function confirmDialogCancel() {
+        $incidentTabPanel.cancelConfirmDialog();
+    }
+    function confirmDialogSubmit() {
+        $incidentTabPanel.submitConfirmDialog();
     }
 </script>
