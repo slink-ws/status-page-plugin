@@ -2,6 +2,7 @@ package ws.slink.statuspage.action;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.service.ConfigService;
@@ -25,6 +26,11 @@ public class UnlinkIncident extends AbstractIssueSelectAction {
 
     @Override
     protected void doValidation() {
+        ApplicationUser user = getLoggedInUser();
+        if (null == user)
+            addErrorMessage("user should be logged in to create incident");
+        else if (!JiraTools.instance().isIncidentManager(getProject(), user))
+            addErrorMessage("current user does not have incident management permissions");
     }
 
     @Override

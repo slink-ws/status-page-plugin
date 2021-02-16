@@ -86,5 +86,5 @@ let $statuspage = {
     },
     serviceCall : async function(url_) {
         return await jQuery.get(url_);
-   }
+    }
 }

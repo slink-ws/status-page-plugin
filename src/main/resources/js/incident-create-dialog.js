@@ -5,19 +5,46 @@ let $incidentCreateDialog = {
 
     componentStatuses: [],
     cachedComponents: {},
-    params: {},
+    config: {
+        pagesElement       : 'sp-create-page',
+        impactsElement     : 'sp-create-impact',
+        headerElement      : 'components-header',
+        componentsElement  : 'tab-components-list',
+        createButtonId     : 'incident-create-dialog-submit-button',
+        createFormContentId: 'create-form-content',
+        createFormWarningId: 'create-form-warning'
+    },
+    checkAccess: function () {
+        console.log("----> create dialog check access");
+        $pluginCommon
+            .checkAccess(
+                () => {
+                    console.log("-----> create dialog ok! loading create page!")
+                    $("#" + $incidentCreateDialog.config.createFormWarningId).hide()
+                    $("#" + $incidentCreateDialog.config.createFormContentId).show();
+                    $("#" + $incidentCreateDialog.config.createButtonId).show();
+                    $incidentCreateDialog.loadDialog();
+                },
+                () => {
+                    console.log("-----> create dialog err! show warning!")
+                    $("#" + $incidentCreateDialog.config.createFormContentId).hide();
+                    $("#" + $incidentCreateDialog.config.createButtonId).hide();
+                    $("#" + $incidentCreateDialog.config.createFormWarningId).show()
+                }
+            );
+    },
     loadDialog: function () {
-        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
-        this.loadImpacts();
+        $pluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $incidentCreateDialog.loadImpacts();
     },
     loadImpacts: function() {
-        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
+        $pluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.impacts().then(function(impacts) {
             let options_str = "";
             impacts.forEach( function(item) {
                 options_str += '<option value="' + item + '">' + item + '</option>';
             });
-            $('#' + $incidentCreateDialog.params['impactsElement'])[0].innerHTML = options_str;
+            $('#' + $incidentCreateDialog.config.impactsElement)[0].innerHTML = options_str;
             $incidentCreateDialog.loadHeader();
         }).catch(function(error) {
             AJS.log("[load impacts] service call error: ");
@@ -25,7 +52,7 @@ let $incidentCreateDialog = {
         });
     },
     loadHeader : function() {
-        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
+        $pluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.componentStatuses().then(function(statuses) {
             $incidentCreateDialog.componentStatuses = statuses;
             let header_str = '<div class="component-name-header">&nbsp;</div>';
@@ -43,7 +70,7 @@ let $incidentCreateDialog = {
                     item.title + '</span>';
             });
             header_str += '<div style="float: left; width: 10px;"></div>'
-            $('#' + $incidentCreateDialog.params['headerElement'])[0].innerHTML = header_str;
+            $('#' + $incidentCreateDialog.config.headerElement)[0].innerHTML = header_str;
             $incidentCreateDialog.loadPages();
         }).catch(function(error) {
             AJS.log("[load header] service call error: ");
@@ -51,13 +78,13 @@ let $incidentCreateDialog = {
         });
     },
     loadPages : function() {
-        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
+        $pluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.pages().then(function(pages) {
             let options_str = "";
             pages.forEach( function(page) {
                 options_str += '<option value="' + page.id + '">' + page.name + '</option>';
             });
-            $('#' + $incidentCreateDialog.params['pagesElement'])[0].innerHTML = options_str;
+            $('#' + $incidentCreateDialog.config.pagesElement)[0].innerHTML = options_str;
             $incidentCreateDialog.loadGroups();
         }).catch(function(error) {
             AJS.log("[load pages] service call error: ");
@@ -65,9 +92,9 @@ let $incidentCreateDialog = {
         });
     },
     loadGroups : function() {
-        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
-        $('#' + $incidentCreateDialog.params['componentsElement']).html("");
-        $statuspage.groups($('#' + $incidentCreateDialog.params['pagesElement']).val()).then(function(groups) {
+        $pluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $('#' + $incidentCreateDialog.config.componentsElement).html("");
+        $statuspage.groups($('#' + $incidentCreateDialog.config.pagesElement).val()).then(function(groups) {
             $incidentCreateDialog.loadComponents(groups);
         }).catch(function(error) {
             AJS.log("[load groups] service call error: ");
@@ -75,13 +102,13 @@ let $incidentCreateDialog = {
         });
     },
     loadComponents: function(groups) {
-        $pluginCommon.buttonBusy('incident-create-dialog-submit-button');
-        $statuspage.components($('#' + $incidentCreateDialog.params['pagesElement']).val()).then(function(components) {
+        $pluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statuspage.components($('#' + $incidentCreateDialog.config.pagesElement).val()).then(function(components) {
             let groupedComponents = {};
             groupedComponents["---no-group---"] = {};
             groupedComponents["---no-group---"]["title"] = "root";
             groupedComponents["---no-group---"]["components"] = [];
-            // $statuspage.nonGroupComponents($('#' + $incidentCreateDialog.params['pagesElement']).val()).then(function(ngc) {
+            // $statuspage.nonGroupComponents($('#' + $incidentCreateDialog.config.pagesElement).val()).then(function(ngc) {
             // });
             groups.forEach(function(group) {
                 groupedComponents[group.id] = {}
@@ -129,8 +156,8 @@ let $incidentCreateDialog = {
                     });
                 }
             }
-            $('#' + $incidentCreateDialog.params['componentsElement']).html(components_str);
-            $pluginCommon.buttonIdle('incident-create-dialog-submit-button');
+            $('#' + $incidentCreateDialog.config.componentsElement).html(components_str);
+            $pluginCommon.buttonIdle($incidentCreateDialog.config.createButtonId);
         }).catch(function(error) {
             AJS.log("[load components] service call error: ");
             AJS.log(error);

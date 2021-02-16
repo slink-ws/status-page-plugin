@@ -84,6 +84,22 @@ let $pluginCommon = {
             AJS.log(buttonObject);
         }
     }
+    ,accessQuery: async function() {
+        return await jQuery.get(AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/api/access");
+    }
+    ,checkAccess: function(fOk, fNok) {
+        $pluginCommon.accessQuery().then(function(result) {
+            console.log("----> access check ok: " + JSON.stringify(result));
+            try {
+                fOk();
+            } catch (error) {
+                console.log("----> check ok; fOk error: " + JSON.stringify(error));
+            }
+        }).catch(function(error) {
+            console.log("----> access check error: " + JSON.stringify(error));
+            fNok();
+        });
+    }
 }
 
 AJS.$(function () {

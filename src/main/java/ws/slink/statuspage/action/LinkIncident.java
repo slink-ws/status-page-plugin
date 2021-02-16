@@ -2,6 +2,7 @@ package ws.slink.statuspage.action;
 
 import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.model.IssueIncident;
@@ -37,8 +38,11 @@ public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectA
 
     @Override
     protected void doValidation() {
-//        ApplicationUser user = this.getLoggedInUser();
-//        addErrorMessage("error");
+        ApplicationUser user = getLoggedInUser();
+        if (null == user)
+            addErrorMessage("user should be logged in to create incident");
+        else if (!JiraTools.instance().isIncidentManager(getProject(), user))
+            addErrorMessage("current user does not have incident management permissions");
         if (StringUtils.isBlank(this.page))
             addErrorMessage("status page not selected");
         if (StringUtils.isBlank(this.incident))

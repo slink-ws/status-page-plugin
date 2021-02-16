@@ -115,9 +115,7 @@ let $incidentTabPanel = {
             $(".tab-panel div.incident-status-" + source.id).addClass("selected");
             // $("#serMemtb").attr("placeholder", "Type a Location").val("").focus().blur();
             // console.log("---> " + source.id + " : " + $statuspage.defaultMessage(source.id));
-            let messageInput = $("#" + $incidentTabPanel.config.messageBlockId).find("textarea");
-            if (messageInput)
-                messageInput.attr("placeholder", $statuspage.defaultMessage(source.id))
+            $incidentTabPanel.setMessage($statuspage.defaultMessage(source.id), null);
             $incidentTabPanel.enableSaveButton();
         }
     } // changeIncidentImpact
@@ -247,6 +245,10 @@ let $incidentTabPanel = {
             f1();
             f2();
 
+            // reset message text & checkbox
+            $incidentTabPanel.setMessage($statuspage.defaultMessage(status), "");
+            $("#" + $incidentTabPanel.config.commentCheckboxId).prop('checked', false);
+
             if (status == "resolved") {
                 $("#" + $incidentTabPanel.config.updateButtonId).hide();
                 $("#" + $incidentTabPanel.config.newComponentBlockId).hide();
@@ -288,6 +290,8 @@ let $incidentTabPanel = {
         this.restoreCachedComponents();
 
         $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
+        $incidentTabPanel.setMessage($statuspage.defaultMessage(status), "");
+        $("#" + $incidentTabPanel.config.commentCheckboxId).prop('checked', false);
     }
    ,restoreAffectedComponents: function() {
         let componentsList = JSON.parse($("#" + $incidentTabPanel.config.originalComponentsBlockId).val());
@@ -325,6 +329,15 @@ let $incidentTabPanel = {
             } catch (error) {
                 AJS.log("---> error: " + error);
             }
+    }
+   ,setMessage: function(placeholder, value) {
+        let messageInput = $("#" + $incidentTabPanel.config.messageBlockId).find("textarea");
+        if (messageInput) {
+            if (placeholder)
+                messageInput.attr("placeholder", placeholder);
+            if (null != value)
+                messageInput.val(value)
+        }
     }
    ,addCachedComponent: function(component) {
         let cache = {};

@@ -3,12 +3,20 @@
 ##    <body>
         <h2 class="dialog-title red">$i18n.getText('incident-create-dialog.title')</h2>
         <form class="aui incident-dialog-form" action="CreateIncident.jspa" method="post">
-
             <input type="hidden" name="atl_token" value="${atl_token}" />
             <input type="hidden" name="id" value="$action.id" />
             <input type="hidden" name="components" id="components-config" value="" />
 
-            <div class="content-body wide">
+            <div class="content-body" id="create-form-warning" hidden="true">
+                <div class="aui-message aui-message-error">
+                    <p class="title">
+                        <strong>$i18n.getText('incident-create-dialog.error.title')</strong>
+                    </p>
+                    <p>$i18n.getText('incident-create-dialog.error.message')</p>
+                </div>
+            </div>
+
+            <div class="content-body wide" id="create-form-content" hidden="true">
 
                 #if ($action.hasAnyErrors())
                     <div class="form-message error">
@@ -57,32 +65,30 @@
                     <input type="hidden" name="location" id="page-location" value="" />
                 </div>
             </div>
+
             <div class="buttons-container content-footer">
                 <div class="buttons">
                     ##  https://aui.atlassian.com/aui/7.9/docs/buttons.html
                     <button href="#" class="aui-button aui-button-primary cancel">$i18n.getText('incident-create-dialog.button-cancel')</button>
-                    <button class="aui-button button" id="incident-create-dialog-submit-button" type="submit">$i18n.getText('incident-create-dialog.button-create')</button>
+                    <button hidden="true" id="incident-create-dialog-submit-button" class="aui-button button" id="incident-create-dialog-submit-button" type="submit">$i18n.getText('incident-create-dialog.button-create')</button>
                 </div>
             </div>
+
         </form>
         <script>
-                #include("/js/statuspage.js")
-                #include("/js/incident-create-dialog.js")
+            #include("/js/statuspage.js")
+            #include("/js/incident-create-dialog.js")
             function statusButtonClick(source) {
-                    $incidentCreateDialog.changeComponentState(source);
+                $incidentCreateDialog.changeComponentState(source);
             }
             function headerButtonClick(source) {
-                    $incidentCreateDialog.changeAllComponentsState(source);
+                $incidentCreateDialog.changeAllComponentsState(source);
             }
-            jQuery(function () {
+            AJS.toInit(function() {
                 $('#sp-create-page').change(function(){
-                        $incidentCreateDialog.loadGroups();
+                    $incidentCreateDialog.loadGroups();
                 })
-                    $incidentCreateDialog.params['pagesElement']      = 'sp-create-page';
-                    $incidentCreateDialog.params['impactsElement']    = 'sp-create-impact';
-                    $incidentCreateDialog.params['headerElement']     = 'components-header';
-                    $incidentCreateDialog.params['componentsElement'] = 'tab-components-list';
-                    $incidentCreateDialog.loadDialog();
+                $incidentCreateDialog.checkAccess();
             });
         </script>
 ##    </body>

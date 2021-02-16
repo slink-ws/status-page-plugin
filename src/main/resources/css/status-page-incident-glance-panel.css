@@ -117,6 +117,9 @@
 /*.tab-panel .select + label {*/
 /*    margin-top: 2rem;*/
 /*}*/
+.tab-panel {
+    overflow: hidden;
+}
 .tab-panel .input-element {
     float: left;
     padding-right: 10px;

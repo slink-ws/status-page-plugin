@@ -305,6 +305,24 @@ public class RestResource {
     }
 
     @GET
+    @Path("/api/access")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response checkAccess(
+            @Context HttpServletRequest request) {
+//        ComponentAccessor.getJiraAuthenticationContext().getUser();
+        System.out.println("-----> " + ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser());
+        return Response.ok("{\"status\": \"ok\", \"user\": \"" + ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser() + "\"}").build();
+//        request.getRemoteUser()
+//        return Response.ok(JiraTools.instance().getGsonObject().toJson(
+//                Arrays.stream(ComponentStatus.values())
+//                        .sorted(Comparator.comparing(ComponentStatus::id))
+//                        .filter(c -> StringUtils.isNotBlank(c.value()))
+//                        .map(AffectedComponentStatus::of)
+//                        .collect(Collectors.toList())
+//        )).build();
+    }
+
+    @GET
     @Path("/api/pages")
     @Produces(MediaType.APPLICATION_JSON)
     public Response pages(
@@ -618,6 +636,8 @@ public class RestResource {
                 .collect(Collectors.toList())
         )).build();
     }
+
+
 
     private List<Component> getAffectedComponents(StatusPage statusPage, IncidentUpdateParams incidentUpdateParams) {
 

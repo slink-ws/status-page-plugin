@@ -243,7 +243,7 @@
                                         </select>
                                     </p>
                                 </div>
-                                <div class="input-element" aria-hidden="true" hidden="true">
+                                <div class="input-element" hidden="true">
 ##                                    <label for="new-component-status">$i18n.getText('incident-tab-panel.incident-statuses-list-label')</label>
                                     <p>
                                         <select
@@ -360,6 +360,8 @@
     function confirmDialogSubmit() {
         $incidentTabPanel.submitConfirmDialog();
     }
-    AJS.$("#new-component-title").auiSelect2();
-    // AJS.$("#new-component-status").auiSelect2();
+    AJS.toInit(function() {
+        AJS.$("#new-component-title").auiSelect2();
+        // AJS.$("#new-component-status").auiSelect2();
+    });
 </script>
