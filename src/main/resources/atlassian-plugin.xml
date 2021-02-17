@@ -3,7 +3,7 @@
 <!-- ?web.items&web.sections&web.panels -->
 <!-- https://community.developer.atlassian.com/t/get-url-for-web-resource-specified-in-atlassian-plugin-xml-using-js/26985/2 -->
 <!-- https://developer.atlassian.com/server/jira/platform/adding-content-to-the-jira-view-issue-page/ -->
-<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2"> 
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
   <plugin-info> 
     <description>${project.description}</description>  
     <version>${project.version}</version>  
@@ -79,7 +79,7 @@
   </customfield-type>
   <customfield-searcher name="Incident Custom Field Searcher" i18n-name-key="incident-custom-field-searcher.name" key="incident-custom-field-searcher" class="ws.slink.statuspage.customfield.IncidentCustomFieldSearcher">
     <description key="incident-custom-field-searcher.description">The Incident Custom Field Searcher Plugin</description>
-    <valid-customfield-type package="ws.slink.statuspage.customfield" key="ws.slink.status-page-plugin:incident-custom-field"/>
+    <valid-customfield-type package="ws.slink.status-page-plugin" key="incident-custom-field"/>
 <!--    <resource name="search" type="velocity" location="/templates/customfields/incident-custom-field-searcher/search.vm"/>-->
   </customfield-searcher>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

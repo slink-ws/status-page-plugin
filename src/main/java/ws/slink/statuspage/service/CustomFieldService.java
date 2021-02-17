@@ -23,9 +23,8 @@ import java.util.stream.Collectors;
 // https://community.atlassian.com/t5/Answers-Developer-Questions/How-to-programatically-create-CustomField/qaq-p/506266
 public class CustomFieldService {
 
-    public static final String INCIDENT_CUSTOM_FIELD_KEY = "ws.slink.status-page-plugin:incident-custom-field";
-    public static final String INCIDENT_CUSTOM_FIELD_DESCRIPTION = "Custom field for statuspage incident storage";
-
+    public static final String INCIDENT_CUSTOM_FIELD_DESCRIPTION  = "Custom field for statuspage incident storage";
+    public static final String INCIDENT_CUSTOM_FIELD_KEY          = "ws.slink.status-page-plugin:incident-custom-field";
     public static final String INCIDENT_CUSTOM_FIELD_SEARCHER_KEY = "ws.slink.status-page-plugin:incident-custom-field-searcher";
 
     private static class CustomFieldServiceSingleton {
@@ -86,7 +85,9 @@ public class CustomFieldService {
         // +
         // get custom field type for our custom field
         CustomFieldType type = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType(INCIDENT_CUSTOM_FIELD_KEY);
-        CustomFieldSearcher searcher = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldSearcher(INCIDENT_CUSTOM_FIELD_SEARCHER_KEY); // "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"
+        CustomFieldSearcher searcher = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldSearcher(INCIDENT_CUSTOM_FIELD_SEARCHER_KEY);
+        System.out.println("----> CustomFieldService.create: custom field searcher: " + searcher);
+
         if (null == type)
             return false;
 

@@ -45,11 +45,11 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
 
     private volatile CustomFieldSearcherModuleDescriptor moduleDescriptor;
 
-    public IncidentCustomFieldSearcher(/*@ComponentImport final JqlOperandResolver jqlOperandResolver, @ComponentImport final CustomFieldInputHelper customFieldInputHelper*/) {
+    public IncidentCustomFieldSearcher() {
         System.out.println("----> IncidentCustomFieldSearcher.create enter");
+        this.jqlOperandResolver     = ComponentAccessor.getComponentOfType(JqlOperandResolver.class);
+        this.customFieldInputHelper = ComponentAccessor.getComponentOfType(CustomFieldInputHelper.class);
         this.fieldVisibilityManager = ComponentAccessor.getComponentOfType(FieldVisibilityManager.class);
-        this.jqlOperandResolver     = ComponentAccessor.getComponentOfType(JqlOperandResolver.class); //jqlOperandResolver;
-        this.customFieldInputHelper = ComponentAccessor.getComponentOfType(CustomFieldInputHelper.class); //customFieldInputHelper
         System.out.println("----> IncidentCustomFieldSearcher.create exit");
     }
 
@@ -97,7 +97,6 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
         return searchRenderer;
     }
     public CustomFieldSearcherModuleDescriptor getDescriptor() {
-//        return null;
         if (moduleDescriptor == null) {
             throw new IllegalStateException("Attempt to retrieve moduleDescriptor off uninitialised custom field searcher.");
         }
