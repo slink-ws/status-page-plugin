@@ -190,6 +190,8 @@ public class StatuspageService {
             e.printStackTrace();
         }
         if (cachedTuple.isPresent()) {
+//            if (null != cachedTuple.get().getLast())
+//                System.out.println("------> got cached incident for key [ " + issueIncident + " ]");
             return Optional.ofNullable(cachedTuple.get().getLast());
         }
         return Optional.empty();

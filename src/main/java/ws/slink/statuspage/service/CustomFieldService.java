@@ -86,7 +86,7 @@ public class CustomFieldService {
         // get custom field type for our custom field
         CustomFieldType type = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType(INCIDENT_CUSTOM_FIELD_KEY);
         CustomFieldSearcher searcher = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldSearcher(INCIDENT_CUSTOM_FIELD_SEARCHER_KEY);
-        System.out.println("----> CustomFieldService.create: custom field searcher: " + searcher);
+//        System.out.println("----> CustomFieldService.create: custom field searcher: " + searcher);
 
         if (null == type)
             return false;

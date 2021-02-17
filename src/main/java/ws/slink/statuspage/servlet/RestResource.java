@@ -304,7 +304,7 @@ public class RestResource {
     public Response checkAccess(
             @Context HttpServletRequest request) {
 //        ComponentAccessor.getJiraAuthenticationContext().getUser();
-        System.out.println("-----> " + ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser());
+//        System.out.println("-----> " + ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser());
         return Response.ok("{\"status\": \"ok\", \"user\": \"" + ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser() + "\"}").build();
 //        request.getRemoteUser()
 //        return Response.ok(JiraTools.instance().getGsonObject().toJson(
