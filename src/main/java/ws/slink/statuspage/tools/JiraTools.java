@@ -4,15 +4,21 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.component.pico.ComponentManager;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
+import com.atlassian.jira.event.type.EventDispatchOption;
 import com.atlassian.jira.issue.Issue;
+import com.atlassian.jira.issue.IssueImpl;
 import com.atlassian.jira.issue.ModifiedValue;
+import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
+import com.atlassian.jira.issue.index.IndexException;
+import com.atlassian.jira.issue.index.IssueIndexingService;
 import com.atlassian.jira.issue.util.DefaultIssueChangeHolder;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 import com.atlassian.jira.security.roles.ProjectRole;
 import com.atlassian.jira.security.roles.ProjectRoleManager;
 import com.atlassian.jira.user.ApplicationUser;
+import com.atlassian.jira.util.ImportUtils;
 import com.atlassian.jira.web.action.ProjectActionSupport;
 import com.atlassian.sal.api.user.UserProfile;
 import com.google.gson.ExclusionStrategy;
@@ -179,43 +185,21 @@ public class JiraTools {
     }
 
     public boolean setCustomFieldValue(Issue issue, CustomField customField, Object value, boolean override) {
+
+        // update custom field value
         customField.updateValue(null, issue, new ModifiedValue(issue.getCustomFieldValue(customField), value), new DefaultIssueChangeHolder());
-        return true;
-/*
-        Object cf = issue.getCustomFieldValue(customField);
-        if (null != cf) {
-            if (!override) {
-                System.out.println(" ---> custom field value is not null");
-                return false;
-            } else {
-                customField.updateValue(null, issue, new ModifiedValue(issue.getCustomFieldValue(customField), value), new DefaultIssueChangeHolder());
-                return true;
-            }
-        } else {
-            IssueInputParameters issueInputParameters = new IssueInputParametersImpl();
-            issueInputParameters.addCustomFieldValue(customField.getId(), value);
-            IssueService.UpdateValidationResult updateValidationResult =
-                    ComponentManager.getComponentInstanceOfType(IssueService.class)
-                            .validateUpdate(getLoggedInUser(), issue.getId(), issueInputParameters);
-            if (updateValidationResult.isValid()) {
-                IssueService.IssueResult updateResult =
-                        ComponentManager.getComponentInstanceOfType(IssueService.class)
-                                .update(getLoggedInUser(), updateValidationResult);
-                if (!updateResult.isValid()) {
-                    System.out.println(" ---> unsuccessful update");
-                    return false;
-                } else {
-                    System.out.println(" ---> successful update");
-                    System.out.println("---> new CustomField value: " + issue.getCustomFieldValue(customField));
-                    return true;
-                }
-            } else {
-                System.out.println(" ---> updateValidationResult is invalid");
-                return false;
-            }
+
+        // reindex issue
+        try {
+            boolean wasIndexing = ImportUtils.isIndexIssues();
+            ImportUtils.setIndexIssues(true);
+            ComponentAccessor.getComponent(IssueIndexingService.class).reIndex(issue);
+            ImportUtils.setIndexIssues(wasIndexing);
+        } catch (IndexException e) {
+            e.printStackTrace();
         }
 
- */
+        return true;
     }
 
     private Gson gson = null;

@@ -120,7 +120,11 @@ public class IssueIncident {
     }
 
     public String toJsonString() {
-        return JiraTools.instance().getGsonObject().toJson(this);
+        try {
+            return JiraTools.instance().getGsonObject().toJson(this);
+        } catch (Exception e) {
+            return "{}";
+        }
     }
     public String toString() {
         return projectKey + " : " + pageId + " : " + incidentId;

@@ -25,12 +25,9 @@ import com.atlassian.jira.jql.util.SimpleIndexValueConverter;
 import com.atlassian.jira.jql.validator.ExactTextCustomFieldValidator;
 import com.atlassian.jira.plugin.customfield.CustomFieldSearcherModuleDescriptor;
 import com.atlassian.jira.web.FieldVisibilityManager;
-import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
-
-import static com.atlassian.jira.util.dbc.Assertions.notNull;
 
 public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
 
@@ -46,15 +43,15 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
     private volatile CustomFieldSearcherModuleDescriptor moduleDescriptor;
 
     public IncidentCustomFieldSearcher() {
-        System.out.println("----> IncidentCustomFieldSearcher.create enter");
+//        System.out.println("----> IncidentCustomFieldSearcher.create enter");
         this.jqlOperandResolver     = ComponentAccessor.getComponentOfType(JqlOperandResolver.class);
         this.customFieldInputHelper = ComponentAccessor.getComponentOfType(CustomFieldInputHelper.class);
         this.fieldVisibilityManager = ComponentAccessor.getComponentOfType(FieldVisibilityManager.class);
-        System.out.println("----> IncidentCustomFieldSearcher.create exit");
+//        System.out.println("----> IncidentCustomFieldSearcher.create exit");
     }
 
     public void init(CustomField customField) {
-        System.out.println("----> IncidentCustomFieldSearcher.init: " + customField);
+//        System.out.println("----> IncidentCustomFieldSearcher.init: " + customField);
         final ClauseNames clauseNames = customField.getClauseNames();
         final FieldIndexer indexer = new IncidentCustomFieldIndexer(fieldVisibilityManager, customField);
 
@@ -74,7 +71,7 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
         );
     }
     public void init(CustomFieldSearcherModuleDescriptor customFieldSearcherModuleDescriptor) {
-        System.out.println("----> IncidentCustomFieldSearcher.init: " + customFieldSearcherModuleDescriptor);
+//        System.out.println("----> IncidentCustomFieldSearcher.init: " + customFieldSearcherModuleDescriptor);
         this.moduleDescriptor = customFieldSearcherModuleDescriptor;
     }
 
