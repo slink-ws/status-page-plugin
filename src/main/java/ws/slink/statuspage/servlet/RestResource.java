@@ -1,6 +1,5 @@
 package ws.slink.statuspage.servlet;
 
-import bsh.StringUtil;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.comments.CommentManager;
 import com.atlassian.jira.project.Project;
@@ -10,16 +9,13 @@ import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
-import com.google.gson.Gson;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.StatusPage;
+import ws.slink.statuspage.error.IncidentNotFound;
 import ws.slink.statuspage.error.ServiceCallException;
 import ws.slink.statuspage.error.StatusPageException;
-import ws.slink.statuspage.model.AffectedComponentStatus;
-import ws.slink.statuspage.model.Component;
-import ws.slink.statuspage.model.Group;
-import ws.slink.statuspage.model.Incident;
+import ws.slink.statuspage.error.StatusPageObjectNotFound;
+import ws.slink.statuspage.model.*;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
@@ -531,57 +527,27 @@ public class RestResource {
     public Response updateIncident(final IncidentUpdateParams incidentUpdateParams, @Context HttpServletRequest request) {
 //        System.out.println("----> SAVING INCIDENT: " + incidentUpdateParams);
 
-        String messageEscaped = null;
-
         AtomicInteger resultCode              = new AtomicInteger(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
         AtomicBoolean resultStatus            = new AtomicBoolean(false);
         AtomicReference<String> resultMessage = new AtomicReference<>("");
 
+        String messageEscaped =
+            (StringUtils.isNotBlank(incidentUpdateParams.getMessage()))
+            ? org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(incidentUpdateParams.getMessage())
+            : Common.getDefaultStatusMessage(IncidentStatus.of(incidentUpdateParams.getStatus()));
+
         try {
-            Optional<StatusPage> statusPage = StatuspageService.instance().get(incidentUpdateParams.getProject());
-            if (!statusPage.isPresent()) {
-                resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
-                resultMessage.set("could not find StatusPage object for project " + incidentUpdateParams.project);
-            } else {
-                Optional<Incident> incident = Optional.empty();
-                try {
-                    incident = statusPage.get().getIncident(incidentUpdateParams.page, incidentUpdateParams.incident, true);
-                } catch (ServiceCallException e) {
-//                    System.out.println("---> could not find incident on statuspage: " +
-//                                       incidentUpdateParams.page +
-//                                       " : " +
-//                                       incidentUpdateParams.incident);
-                }
-                if (!incident.isPresent()) {
-                    resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
-                    resultMessage.set("could not find incident " + incidentUpdateParams.getIncident() + " for page " + incidentUpdateParams.getPage());
-                } else {
-                    incident.get().status(IncidentStatus.of(incidentUpdateParams.getStatus()));
-                    incident.get().impact(IncidentSeverity.of(incidentUpdateParams.getImpact()));
-                    incident.get().components(getAffectedComponents(statusPage.get(), incidentUpdateParams));
-
-                    if (StringUtils.isNotBlank(incidentUpdateParams.getMessage())) {
-                        messageEscaped = org.apache.commons.lang3.StringEscapeUtils.escapeHtml4(incidentUpdateParams.getMessage());
-                    } else {
-                        messageEscaped = Common.getDefaultStatusMessage(IncidentStatus.of(incidentUpdateParams.getStatus()));
-                    }
-
-                    Optional<Incident> updated = statusPage.get().updateIncident(incident.get(), messageEscaped);
-                    if (updated.isPresent()
-                            && updated.get().id().equals(incident.get().id())
-                            && updated.get().impact() == incident.get().impact()
-                            && updated.get().status() == incident.get().status()
-                    ) {
-                        resultStatus.set(true);
-                        resultCode.set(Response.Status.OK.getStatusCode());
-                    } else {
-                        resultMessage.set("incident update error");
-                    }
-                }
-            }
+            StatuspageService.instance().updateIncident(incidentUpdateParams, messageEscaped);
+            resultStatus.set(true);
+            resultCode.set(Response.Status.OK.getStatusCode());
+        } catch (IncidentNotFound e) {
+            resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
+            resultMessage.set(e.getMessage());
+        } catch (StatusPageObjectNotFound e) {
+            resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
+            resultMessage.set(e.getMessage());
         } catch (ServiceCallException e) {
             resultMessage.set("StatusPage service error: "+ e.getMessage());
-            resultCode.set(e.getCode());
         } catch (StatusPageException e) {
             resultMessage.set("StatusPage API error: " + e.getMessage());
         } catch (Exception e) {
@@ -624,8 +590,7 @@ public class RestResource {
     @GET
     @Path("/api/component/statuses")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response componentsStatuses(
-            @Context HttpServletRequest request) {
+    public Response componentsStatuses(@Context HttpServletRequest request) {
         return Response.ok(JiraTools.instance().getGsonObject().toJson(
             Arrays.stream(ComponentStatus.values())
                 .sorted(Comparator.comparing(ComponentStatus::id))
@@ -635,30 +600,6 @@ public class RestResource {
         )).build();
     }
 
-
-
-    private List<Component> getAffectedComponents(StatusPage statusPage, IncidentUpdateParams incidentUpdateParams) {
-
-        Map<String, Component> pageComponents =
-            statusPage.components(incidentUpdateParams.getPage(), true)
-                .stream()
-                .collect(Collectors.toMap(Component::id, c -> c));
-
-        List<Component> result = new ArrayList<>();
-
-        incidentUpdateParams.getComponents().keySet().stream().forEach(status -> {
-            ComponentStatus componentStatus = ComponentStatus.of(status);
-            incidentUpdateParams.getComponents().get(status).stream().forEach(componentId -> {
-                Component component = pageComponents.get(componentId);
-                if (null != component) {
-                    component.status(componentStatus);
-                }
-                result.add(component);
-            });
-        });
-
-        return result;
-    }
     private List<Project> getConfiguredProjects(String sourceStr) {
         return Arrays.asList(sourceStr.split(","))
             .stream()
