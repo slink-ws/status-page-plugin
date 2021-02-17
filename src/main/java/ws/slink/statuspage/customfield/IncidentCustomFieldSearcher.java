@@ -25,10 +25,9 @@ import com.atlassian.jira.jql.util.SimpleIndexValueConverter;
 import com.atlassian.jira.jql.validator.ExactTextCustomFieldValidator;
 import com.atlassian.jira.plugin.customfield.CustomFieldSearcherModuleDescriptor;
 import com.atlassian.jira.web.FieldVisibilityManager;
-import com.atlassian.query.operator.Operator;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 
 import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.atlassian.jira.util.dbc.Assertions.notNull;
@@ -36,8 +35,8 @@ import static com.atlassian.jira.util.dbc.Assertions.notNull;
 public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
 
     private final FieldVisibilityManager fieldVisibilityManager;
-    private final JqlOperandResolver jqlOperandResolver;
-    private final CustomFieldInputHelper customFieldInputHelper;
+    private JqlOperandResolver jqlOperandResolver;
+    private CustomFieldInputHelper customFieldInputHelper;
 
     private volatile CustomFieldSearcherInformation searcherInformation;
     private volatile SearchInputTransformer searchInputTransformer;
@@ -46,13 +45,16 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
 
     private volatile CustomFieldSearcherModuleDescriptor moduleDescriptor;
 
-    public IncidentCustomFieldSearcher(final JqlOperandResolver jqlOperandResolver, final CustomFieldInputHelper customFieldInputHelper) {
+    public IncidentCustomFieldSearcher(/*@ComponentImport final JqlOperandResolver jqlOperandResolver, @ComponentImport final CustomFieldInputHelper customFieldInputHelper*/) {
+        System.out.println("----> IncidentCustomFieldSearcher.create enter");
         this.fieldVisibilityManager = ComponentAccessor.getComponentOfType(FieldVisibilityManager.class);
-        this.jqlOperandResolver = jqlOperandResolver;
-        this.customFieldInputHelper = notNull("customFieldInputHelper", customFieldInputHelper);
+        this.jqlOperandResolver     = ComponentAccessor.getComponentOfType(JqlOperandResolver.class); //jqlOperandResolver;
+        this.customFieldInputHelper = ComponentAccessor.getComponentOfType(CustomFieldInputHelper.class); //customFieldInputHelper
+        System.out.println("----> IncidentCustomFieldSearcher.create exit");
     }
 
     public void init(CustomField customField) {
+        System.out.println("----> IncidentCustomFieldSearcher.init: " + customField);
         final ClauseNames clauseNames = customField.getClauseNames();
         final FieldIndexer indexer = new IncidentCustomFieldIndexer(fieldVisibilityManager, customField);
 
@@ -67,11 +69,12 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
         this.customFieldSearcherClauseHandler = new SimpleCustomFieldSearcherClauseHandler(
             new ExactTextCustomFieldValidator(),
             new ActualValueCustomFieldClauseQueryFactory(customField.getId(), jqlOperandResolver, indexValueConverter, false),
-            OperatorClasses.EMPTY_ONLY_OPERATORS,
+            OperatorClasses.EMPTY_OPERATORS,
             JiraDataTypes.TEXT
         );
     }
     public void init(CustomFieldSearcherModuleDescriptor customFieldSearcherModuleDescriptor) {
+        System.out.println("----> IncidentCustomFieldSearcher.init: " + customFieldSearcherModuleDescriptor);
         this.moduleDescriptor = customFieldSearcherModuleDescriptor;
     }
 
@@ -94,6 +97,7 @@ public class IncidentCustomFieldSearcher implements CustomFieldSearcher {
         return searchRenderer;
     }
     public CustomFieldSearcherModuleDescriptor getDescriptor() {
+//        return null;
         if (moduleDescriptor == null) {
             throw new IllegalStateException("Attempt to retrieve moduleDescriptor off uninitialised custom field searcher.");
         }

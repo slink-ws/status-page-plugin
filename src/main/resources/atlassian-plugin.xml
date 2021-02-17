@@ -77,16 +77,12 @@
     <resource name="view" type="velocity" location="/templates/customfields/incident-custom-field/view.vm"/>  
     <resource name="edit" type="velocity" location="/templates/customfields/incident-custom-field/edit.vm"/> 
   </customfield-type>
-<!--  <customfield-searcher name="Incident Custom Field Searcher" i18n-name-key="incident-custom-field-searcher.name" key="incident-custom-field-searcher" class="ws.slink.statuspage.customfield.IncidentCustomFieldSearcher">-->
-<!--    <description key="incident-custom-field-searcher.description">The Incident Custom Field Searcher Plugin</description>-->
-<!--    <valid-customfield-type package="ws.slink.statuspage.customfield" key="incident-custom-field"/>-->
+  <customfield-searcher name="Incident Custom Field Searcher" i18n-name-key="incident-custom-field-searcher.name" key="incident-custom-field-searcher" class="ws.slink.statuspage.customfield.IncidentCustomFieldSearcher">
+    <description key="incident-custom-field-searcher.description">The Incident Custom Field Searcher Plugin</description>
+    <valid-customfield-type package="ws.slink.statuspage.customfield" key="ws.slink.status-page-plugin:incident-custom-field"/>
 <!--    <resource name="search" type="velocity" location="/templates/customfields/incident-custom-field-searcher/search.vm"/>-->
-<!--  </customfield-searcher>-->
-  <!--  <customfield-searcher name="Custom Field Searcher" i18n-name-key="incident-custom-field-searcher.name" key="incident-custom-field-searcher" class="com.atlassian.jira.issue.customfields.searchers.TextSearcher">-->
-  <!--    <description key="incident-custom-field-searcher.description">Incident Custom Field Searcher</description>-->  
-  <!--    <valid-customfield-type package="ws.slink.statuspage.customfield" key="incident-custom-field"/>-->  
-  <!--  </customfield-searcher>-->  
-  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+  </customfield-searcher>
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 
   <!-- ~~~~~~~~~~~~~~~~~~~~~ incident buttons ~~~~~~~~~~~~~~~~~~~~ -->
   <!-- https://developer.atlassian.com/server/jira/platform/issue-view-ui-locations/ -->  
@@ -134,7 +130,8 @@
       <condition class="ws.slink.statuspage.condition.IncidentManagerCondition"/> 
     </conditions> 
   </web-item>  
-  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+
+  <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
   <!--  <web-resource name="General Resources" key="general-resources">-->  
   <!--    <context>atl.general</context>-->  
   <!--    <resource name="incident-custom-field-view.js" type="download" location="/js/incident-custom-field-view.js"></resource>-->  
@@ -219,6 +216,7 @@
     <description>provides REST resources for the admin/config UI</description> 
   </rest>  
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->  
+
 </atlassian-plugin>
 <!--  jira.issue.tools -->
 <!--    <styleClass>aui-list-item-link issueaction-link-issue opsbar-operations</styleClass>-->

@@ -3,15 +3,19 @@ package ws.slink.statuspage.service;
 import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.issue.CustomFieldManager;
 import com.atlassian.jira.issue.context.JiraContextNode;
+import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
 import com.atlassian.jira.issue.customfields.CustomFieldUtils;
+import com.atlassian.jira.issue.customfields.searchers.transformer.CustomFieldInputHelper;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
+import com.atlassian.jira.jql.operand.JqlOperandResolver;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import org.ofbiz.core.entity.GenericEntityException;
+import ws.slink.statuspage.customfield.IncidentCustomFieldSearcher;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,6 +25,8 @@ public class CustomFieldService {
 
     public static final String INCIDENT_CUSTOM_FIELD_KEY = "ws.slink.status-page-plugin:incident-custom-field";
     public static final String INCIDENT_CUSTOM_FIELD_DESCRIPTION = "Custom field for statuspage incident storage";
+
+    public static final String INCIDENT_CUSTOM_FIELD_SEARCHER_KEY = "ws.slink.status-page-plugin:incident-custom-field-searcher";
 
     private static class CustomFieldServiceSingleton {
         private static final CustomFieldService INSTANCE = new CustomFieldService();
@@ -75,11 +81,12 @@ public class CustomFieldService {
 //        System.out.println("-----------------------------");
         return true;
     }
-    public boolean create(String name, String key, String description, List<Project> projects) {
+    public boolean create(String name, List<Project> projects) {
 
         // +
         // get custom field type for our custom field
-        CustomFieldType type = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType(key);
+        CustomFieldType type = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType(INCIDENT_CUSTOM_FIELD_KEY);
+        CustomFieldSearcher searcher = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldSearcher(INCIDENT_CUSTOM_FIELD_SEARCHER_KEY); // "com.atlassian.jira.plugin.system.customfieldtypes:exacttextsearcher"
         if (null == type)
             return false;
 
@@ -103,9 +110,9 @@ public class CustomFieldService {
             // create custom field for given contexts / issueTypes
             ComponentAccessor.getComponent(CustomFieldManager.class).createCustomField(
                 name,
-                description,
+                INCIDENT_CUSTOM_FIELD_DESCRIPTION,
                 type,
-                null,
+                searcher,
                 contexts,
                 new ArrayList<>(issueTypes)
             );

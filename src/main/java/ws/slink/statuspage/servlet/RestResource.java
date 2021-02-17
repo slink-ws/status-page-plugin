@@ -254,8 +254,6 @@ public class RestResource {
                 System.out.println("custom field does not exist; create custom field & save");
                 if (!CustomFieldService.instance().create(
                     config.getCustomFieldId(),
-                    CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY,
-                    CustomFieldService.INCIDENT_CUSTOM_FIELD_DESCRIPTION,
                     getConfiguredProjects(config.getProjects())
                 )) {
                     saveResult.set(false);
