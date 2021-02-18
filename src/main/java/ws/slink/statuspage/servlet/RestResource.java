@@ -547,9 +547,10 @@ public class RestResource {
             resultCode.set(Response.Status.NOT_FOUND.getStatusCode());
             resultMessage.set(e.getMessage());
         } catch (ServiceCallException e) {
-            resultMessage.set("StatusPage service error: "+ e.getMessage());
+            resultMessage.set("could not update incident<br>please, try again in several seconds");
+//            resultMessage.set("StatusPage service error:<br>"+ e.getMessage());
         } catch (StatusPageException e) {
-            resultMessage.set("StatusPage API error: " + e.getMessage());
+            resultMessage.set("StatusPage API error:<br>" + e.getMessage());
         } catch (Exception e) {
             resultMessage.set(e.getMessage());
         }

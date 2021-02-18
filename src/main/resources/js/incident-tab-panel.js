@@ -272,7 +272,7 @@ let $incidentTabPanel = {
             AJS.log("--- message ---------------------------------------");
             AJS.log(message);
             AJS.log("---------------------------------------------------");
-            JIRA.Messages.showErrorMsg("could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText)
+            JIRA.Messages.showErrorMsg(error.responseText/*"could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText*/)
             $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
         });
     }

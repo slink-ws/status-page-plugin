@@ -14,6 +14,7 @@ import ws.slink.statuspage.model.IssueIncident;
 
 import static com.atlassian.jira.util.dbc.Assertions.notNull;
 
+// https://community.atlassian.com/t5/Jira-questions/Custom-field-value-not-updated-in-the-Index/qaq-p/988429
 public class IncidentCustomFieldIndexer extends AbstractCustomFieldIndexer {
 
     private final static String LINKED = "LINKED";

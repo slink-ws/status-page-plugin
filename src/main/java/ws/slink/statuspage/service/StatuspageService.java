@@ -19,6 +19,9 @@ import ws.slink.statuspage.type.ComponentStatus;
 import ws.slink.statuspage.type.IncidentSeverity;
 import ws.slink.statuspage.type.IncidentStatus;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -28,7 +31,54 @@ import java.util.stream.Stream;
 
 public class StatuspageService {
 
-    private static final short CACHE_TTL_SECONDS = 30;
+    private static final short INCIDENT_CACHE_TTL_SECONDS  = 120;
+    private static final short COMPONENT_CACHE_TTL_SECONDS = 300;
+
+    private class ComponentsKey implements Comparable<ComponentsKey> {
+        String projectKey;
+        String pageId;
+        ComponentsKey project(String value) {
+            this.projectKey = value;
+            return this;
+        }
+        ComponentsKey page(String value) {
+            this.pageId = value;
+            return this;
+        }
+        @Override public int hashCode() {
+            return (projectKey + "#" + pageId).hashCode();
+        }
+        @Override public boolean equals(Object other) {
+            if (this == other)
+                return true;
+            if (null == other)
+                return false;
+            if (this.getClass() != other.getClass())
+                return false;
+            ComponentsKey ii = (ComponentsKey)other;
+            if (StringUtils.isBlank(this.projectKey) && !(StringUtils.isBlank(ii.projectKey)))
+                return false;
+            if (!this.projectKey.equals(ii.projectKey))
+                return false;
+            if (StringUtils.isBlank(this.pageId) && !(StringUtils.isBlank(ii.pageId)))
+                return false;
+            if (!this.pageId.equals(ii.pageId))
+                return false;
+            return true;
+        }
+
+        @Override
+        public int compareTo(ComponentsKey o) {
+            return (projectKey.equals(o.projectKey))
+                 ? pageId.compareTo(o.pageId)
+                 : projectKey.compareTo(o.projectKey);
+        }
+
+        @Override
+        public String toString() {
+            return "#" + pageId;
+        }
+    }
 
     private static class StatuspageServiceSingleton {
         private static final StatuspageService INSTANCE = new StatuspageService();
@@ -38,29 +88,38 @@ public class StatuspageService {
     }
 
     private final LoadingCache<IssueIncident, Optional<Tuple<Boolean, Incident>>> incidentCache;
+    private final LoadingCache<ComponentsKey, Optional<List<Component>>> componentCache;
+
     private final Map<String, StatusPage> statusPages = new ConcurrentHashMap<>();
 
     private StatuspageService() {
-
+        incidentCache  = initIncidentCache();
+        componentCache = initComponentCache();
+    }
+    private LoadingCache<IssueIncident, Optional<Tuple<Boolean, Incident>>> initIncidentCache() {
         CacheLoader<IssueIncident, Optional<Tuple<Boolean, Incident>>> loader
-                = new CacheLoader<IssueIncident, Optional<Tuple<Boolean, Incident>>>() {
+            = new CacheLoader<IssueIncident, Optional<Tuple<Boolean, Incident>>>() {
             @Override
             public Optional<Tuple<Boolean, Incident>> load(final IssueIncident key) {
-                System.out.println("---> could not find cached incident for key [ " + key + " ]");
+                System.out.println("--> could not find cached incident for key [ " + key + " ] [ " +
+                        DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
                 Optional<StatusPage> statusPage = StatuspageService.instance().get(key.projectKey());
                 if (statusPage.isPresent()) {
                     try {
                         Optional<Incident> incident = statusPage.get().getIncident(key.pageId(), key.incidentId(), true);
-                        if (incident.isPresent()) {
-                            System.out.println("------> loaded incident from statuspage for key [ " + key + " ]");
+                        if (null != incident && incident.isPresent()) {
+                            System.out.println("--> loaded incident from statuspage for key [ " + key + " ]  [ " +
+                                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
                             return Optional.of(new Tuple<>(true, incident.get()));
                         } else {
-                            System.out.println("------> could not find incident on statuspage for key [  " + key + " ]");
+                            System.out.println("--> could not find incident on statuspage for key [  " + key + " ] " + Thread.currentThread().getName());
                             return Optional.of(new Tuple<>(false, null));
                         }
                     } catch (ServiceCallException e) {
-                        System.out.println("------> error querying statuspage for key [ " + key + " ]");
+                        System.out.println("--> error querying statuspage for key [ " + key + " ] " + Thread.currentThread().getName());
                         return Optional.of(new Tuple<>(false, null));
+                    } catch (Exception e) {
+                        System.out.println("--> unexpected exception querying statuspage for key [ " + key + " ]: " + e.getClass().getSimpleName() + " " + e.getMessage());
                     }
                 }
                 return Optional.empty();
@@ -69,23 +128,67 @@ public class StatuspageService {
 
         RemovalListener<IssueIncident, Optional<Tuple<Boolean, Incident>>> listener = n -> {
             if (null != n.getKey() && n.wasEvicted()) {
-                System.out.println("-----> removed " + n.getKey() + " (" + n.getCause().name() + ")");
+                System.out.println("--> removed " + n.getKey() + " (" + n.getCause().name() + ") [ " +
+                        DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
             }
         };
 
-        incidentCache = CacheBuilder.newBuilder()
-//            .weakKeys()
+        return CacheBuilder.newBuilder()
+          //.weakKeys()
             .maximumSize(100)
-            .expireAfterWrite(CACHE_TTL_SECONDS, TimeUnit.SECONDS)
+            .expireAfterWrite(INCIDENT_CACHE_TTL_SECONDS, TimeUnit.SECONDS)
             .removalListener(listener)
             .build(loader)
         ;
+    }
+    private LoadingCache<ComponentsKey, Optional<List<Component>>> initComponentCache() {
+        CacheLoader<ComponentsKey, Optional<List<Component>>> loader
+            = new CacheLoader<ComponentsKey, Optional<List<Component>>>() {
+            @Override
+            public Optional<List<Component>> load(final ComponentsKey key) {
+                System.out.println("--> could not find cached components for page #" + key + " [ " +
+                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+                Optional<StatusPage> statusPage = StatuspageService.instance().get(key.projectKey);
+                if (statusPage.isPresent()) {
+                    try {
+                        List<Component> components = statusPage.get().components(key.pageId, true);
+                        if (null != components && !components.isEmpty()) {
+                            System.out.println("--> loaded components from statuspage for key [ " + key + " ]  [ " +
+                                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+                            return Optional.of(components);
+                        } else {
+                            System.out.println("--> could not find incident on statuspage for key [  " + key + " ] " + Thread.currentThread().getName());
+                            return Optional.of(Collections.EMPTY_LIST);
+                        }
+                    } catch (ServiceCallException e) {
+                        System.out.println("--> error querying statuspage for key [ " + key + " ] " + Thread.currentThread().getName());
+                        return Optional.of(Collections.EMPTY_LIST);
+                    } catch (Exception e) {
+                        System.out.println("--> unexpected exception querying statuspage for key [ " + key + " ]: " + e.getClass().getSimpleName() + " " + e.getMessage());
+                    }
+                }
+                return Optional.empty();
+            }
+        };
 
-//        System.out.println("---- created statuspage service");
+        RemovalListener<ComponentsKey, Optional<List<Component>>> listener = n -> {
+            if (null != n.getKey() && n.wasEvicted()) {
+                System.out.println("--> removed components " + n.getKey() + " (" + n.getCause().name() + ") [ " +
+                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+            }
+        };
+
+        return CacheBuilder.newBuilder()
+            //.weakKeys()
+            .maximumSize(100)
+            .expireAfterWrite(COMPONENT_CACHE_TTL_SECONDS, TimeUnit.SECONDS)
+            .removalListener(listener)
+            .build(loader)
+        ;
     }
 
     public void invalidateCache(IssueIncident issueIncident) {
-        System.out.println("------> invalidating incident cache for " + issueIncident);
+        System.out.println("--> invalidating incident cache for " + issueIncident);
         incidentCache.invalidate(issueIncident);
     }
 
@@ -106,11 +209,11 @@ public class StatuspageService {
             return;
         statusPages.remove(projectKey);
         statusPages.put(projectKey, new StatusPage.Builder()
-                .apiKey(apiKey)
-                .bridgeErrors(true)
-                .rateLimit(true)
-                .rateLimitDelay(1000)
-                .build())
+            .apiKey(apiKey)
+            .bridgeErrors(true)
+            .rateLimit(true)
+            .rateLimitDelay(1000)
+            .build())
         ;
     }
 
@@ -180,6 +283,14 @@ public class StatuspageService {
         }
         return Optional.empty();
     }
+
+    // - should be synchronized to prevent multiple calls to statuspage service;
+    // - if multiple calls are made for the same incident, all successive calls
+    //   will get data from cache after lock is released;
+    // - if multiple calls are made for different incidents, anyway threads should wait
+    //   for delay interval before making calls to service (to follow rate limiting rules)
+    //   so while one thread is waiting for delay to pass, other threads will block
+//    synchronized
     public Optional<Incident> getIncident(IssueIncident issueIncident) {
         Optional<Tuple<Boolean, Incident>> cachedTuple = Optional.empty();
         try {
@@ -187,16 +298,15 @@ public class StatuspageService {
                 cachedTuple = incidentCache.get(issueIncident);
             }
         } catch (ExecutionException e) {
-            e.printStackTrace();
+            System.out.println("cache access error: " + e.getMessage());
         }
         if (cachedTuple.isPresent()) {
-//            if (null != cachedTuple.get().getLast())
-//                System.out.println("------> got cached incident for key [ " + issueIncident + " ]");
+            System.out.println("  --> got cached record for key [ " + issueIncident + " ] [ " +
+                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
             return Optional.ofNullable(cachedTuple.get().getLast());
         }
         return Optional.empty();
     }
-
     public Optional<Incident> updateIncident(RestResource.IncidentUpdateParams updateParams, String message) {
 
         Optional<StatusPage> statusPage = StatuspageService.instance().get(updateParams.getProject());
@@ -204,7 +314,7 @@ public class StatuspageService {
         if (!statusPage.isPresent())
             throw new StatusPageObjectNotFound("could not find StatusPage object for project " + updateParams.getProject());
 
-        Optional<Incident> incident = StatuspageService.instance().getIncident(updateParams.getProject(), updateParams.getPage(), updateParams.getIncident());
+        Optional<Incident> incident = getIncident(updateParams.getProject(), updateParams.getPage(), updateParams.getIncident());
         if (!incident.isPresent())
             throw new IncidentNotFound("could not find incident " + updateParams.getIncident() + " for page " + updateParams.getPage());
 
@@ -227,6 +337,23 @@ public class StatuspageService {
         );
 
         return updated;
+    }
+
+    public List<Component> getComponents(String projectKey, String pageId) {
+        Optional<List<Component>> cachedComponents = Optional.empty();
+        try {
+            synchronized (this) {
+                cachedComponents = componentCache.get(new ComponentsKey().project(projectKey).page(pageId));
+            }
+        } catch (ExecutionException e) {
+            System.out.println("cache access error: " + e.getMessage());
+        }
+        if (cachedComponents.isPresent()) {
+            System.out.println("  --> got cached components for page #" + pageId + " [ " +
+                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+            return cachedComponents.get();
+        }
+        return Collections.emptyList();
     }
 
     private List<Component> getAffectedComponents(StatusPage statusPage, RestResource.IncidentUpdateParams incidentUpdateParams) {

@@ -6,7 +6,7 @@ import ws.slink.statuspage.tools.JiraTools;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class IssueIncident {
+public class IssueIncident implements Comparable<IssueIncident> {
 
     private String projectKey;
     private String pageId;
@@ -128,5 +128,14 @@ public class IssueIncident {
     }
     public String toString() {
         return projectKey + " : " + pageId + " : " + incidentId;
+    }
+
+    @Override
+    public int compareTo(IssueIncident o) {
+        return (projectKey.equals(o.projectKey))
+             ? (pageId.equals(o.pageId))
+                ? incidentId.compareTo(o.incidentId)
+                : pageId.compareTo(o.pageId)
+             : projectKey.compareTo(o.projectKey);
     }
 }

@@ -223,7 +223,7 @@
                         </div>
                     #end
                 </div>
-                <div id="incident-tab-panel-add-component" class="components-add-block-container">
+                <div hidden="true" id="incident-tab-panel-add-component" class="components-add-block-container">
                     <div class="components-add-block-content">
                         #if ($incidentClosed)
                         #else
@@ -326,6 +326,8 @@
 <script>
     #include("/js/statuspage.js")
     #include("/js/incident-tab-panel.js")
+    // AJS.$("#incident-tab-panel-add-component").show();
+    // AJS.$("#incident-tab-panel-add-component").hide();
     function statusButtonClick(source) {
         $incidentTabPanel.changeComponentState(source);
     }
@@ -362,6 +364,7 @@
     }
     AJS.toInit(function() {
         AJS.$("#new-component-title").auiSelect2();
+        AJS.$("#incident-tab-panel-add-component").show();
         // AJS.$("#new-component-status").auiSelect2();
     });
 </script>

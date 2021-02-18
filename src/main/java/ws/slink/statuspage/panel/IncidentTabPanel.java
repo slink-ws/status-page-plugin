@@ -58,21 +58,26 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
         if (null != cfv) {
             IssueIncident ii = (IssueIncident)cfv;
             context.put("issueIncident", ii);
-            StatuspageService.instance().get(getActionsRequest.issue().getProjectObject().getKey()).ifPresent(statusPage -> {
-                statusPage.getPage(ii.pageId()).ifPresent(page -> {
-                    context.put("page", page);
-                    loadedComponents.set(statusPage.components(page, true));
-                });
+//            StatuspageService.instance().get(getActionsRequest.issue().getProjectObject().getKey()).ifPresent(statusPage -> {
+//                synchronized (StatuspageService.instance()) {
+//                    statusPage.getPage(ii.pageId()).ifPresent(page -> {
+//                        context.put("page", page);
+//                        loadedComponents.set(statusPage.components(page, true));
+//                    });
+//                }
 //                statusPage.getIncident(ii.pageId(), ii.incidentId(), true)
                 StatuspageService.instance().getIncident(getActionsRequest.issue())
                     .ifPresent(incident -> {
-                    context.put("incident", incident);
-                    context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
-                    loadedIncident.set(incident);
-                    context.put("componentsOriginal", JiraTools.instance().getGsonObject().toJson(incident.components()));
-                    context.put("defaultMessage", Common.getDefaultStatusMessage(incident.status()));
+                        context.put("incident", incident);
+                        context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
+                        loadedIncident.set(incident);
+                        context.put("componentsOriginal", JiraTools.instance().getGsonObject().toJson(incident.components()));
+                        context.put("defaultMessage", Common.getDefaultStatusMessage(incident.status()));
+                        context.put("page", incident.page());
+//                        loadedComponents.set(incident.page().components());
+                        loadedComponents.set(StatuspageService.instance().getComponents(getActionsRequest.issue().getProjectObject().getKey(), incident.page().id()));
                     });
-            });
+//            });
         }
 
         if (null != loadedIncident.get() && null != loadedComponents.get()) {
