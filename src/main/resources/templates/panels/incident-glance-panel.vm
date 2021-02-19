@@ -2,11 +2,11 @@
     <ul class="item-details">
         <dl class="incident-glance-list-item">
             <dt>$i18n.getText('incident-glance-panel.page-name'):</dt>
-            <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()">$page.name()</a></span></dd>
+            <dd><span id="incident-glance-page" class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()">$page.name()</a></span></dd>
         </dl>
         <dl class="incident-glance-list-item">
             <dt>$i18n.getText('incident-glance-panel.incident-name'):</dt>
-            <dd><span class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()/incidents/$incident.id()">$incident.name()</a></span></dd>
+            <dd><span id="incident-glance-title" class="incident-glance-common"><a target="_blank" href="https://manage.statuspage.io/pages/$page.id()/incidents/$incident.id()">$incident.name()</a></span></dd>
         </dl>
         <dl class="incident-glance-list-item">
             <dt>$i18n.getText('incident-glance-panel.incident-status'):</dt>

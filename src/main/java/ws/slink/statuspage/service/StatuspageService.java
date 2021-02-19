@@ -15,6 +15,7 @@ import ws.slink.statuspage.error.ServiceCallException;
 import ws.slink.statuspage.error.StatusPageObjectNotFound;
 import ws.slink.statuspage.model.*;
 import ws.slink.statuspage.servlet.RestResource;
+import ws.slink.statuspage.tools.JiraTools;
 import ws.slink.statuspage.type.ComponentStatus;
 import ws.slink.statuspage.type.IncidentSeverity;
 import ws.slink.statuspage.type.IncidentStatus;
@@ -275,13 +276,17 @@ public class StatuspageService {
         ;
     }
     public Optional<Incident> getIncident(Issue issue) {
-        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
-        Object cf = issue.getCustomFieldValue(customField);
-        if (null != cf && cf instanceof IssueIncident) {
-            IssueIncident issueIncident = (IssueIncident) cf;
-            return getIncident(issueIncident);
-        }
-        return Optional.empty();
+        return getIncident(issue, false);
+    }
+    public Optional<Incident> getIncident(Issue issue, boolean reloadCache) {
+        Optional<IssueIncident> issueIncident = JiraTools.instance().issueIncident(issue);
+        if (issueIncident.isPresent())
+            return getIncident(issueIncident.get(), reloadCache);
+        else
+            return Optional.empty();
+    }
+    public Optional<Incident> getIncident(IssueIncident issueIncident) {
+        return getIncident(issueIncident, false);
     }
 
     // - should be synchronized to prevent multiple calls to statuspage service;
@@ -291,8 +296,10 @@ public class StatuspageService {
     //   for delay interval before making calls to service (to follow rate limiting rules)
     //   so while one thread is waiting for delay to pass, other threads will block
 //    synchronized
-    public Optional<Incident> getIncident(IssueIncident issueIncident) {
+    public Optional<Incident> getIncident(IssueIncident issueIncident, boolean reloadCache) {
         Optional<Tuple<Boolean, Incident>> cachedTuple = Optional.empty();
+        if (reloadCache)
+            this.invalidateCache(issueIncident);
         try {
             synchronized (this) {
                 cachedTuple = incidentCache.get(issueIncident);

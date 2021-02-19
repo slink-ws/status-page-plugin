@@ -1,24 +1,15 @@
 let $pluginCommon = {
-     status_values: [
+     config: {
+         restBaseUrl: "/rest/ws-slink-statuspage/1.0/api"
+     }
+    ,status_values: [
          "operational",
          "degraded_performance",
          "partial_outage",
          "major_outage",
          "under_maintenance"
      ]
-    ,getIssueKey: function() {
-        if (JIRA.IssueNavigator.isNavigator()){
-            return JIRA.IssueNavigator.getSelectedIssueKey();
-        } else {
-            return AJS.$.trim(AJS.$("#key-val").text());
-        }
-    }
-    ,getProjectKey: function() {
-        let issueKey = this.getIssueKey();
-        if (issueKey){
-            return issueKey.match("[A-Z]*")[0];
-        }
-    }
+
     ,getComponentStatusButtonClass: function(status) {
         if (status == 'operational')
             return "aui-iconfont-check-circle";
@@ -85,7 +76,7 @@ let $pluginCommon = {
         }
     }
     ,accessQuery: async function() {
-        return await jQuery.get(AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/api/access");
+        return await jQuery.get(AJS.contextPath() + $pluginCommon.config.restBaseUrl + "/access")
     }
     ,checkAccess: function(fOk, fNok) {
         $pluginCommon.accessQuery().then(function(result) {
@@ -100,11 +91,49 @@ let $pluginCommon = {
             fNok();
         });
     }
+
+    ,incidentsQuery: async function(issueKey) {
+        return await jQuery.get(AJS.contextPath() + $pluginCommon.config.restBaseUrl + "/incident/" + issueKey);
+    }
+    ,componentsQuery: async function(issueKey, incident) {
+        return await jQuery.get(AJS.contextPath() + $pluginCommon.config.restBaseUrl + "/components?issueKey=" + issueKey + "&pageId=" + incident.page.id);
+    }
+
+    ,setImpact: function(impact, tabPanelBlockId, glancePanelBlockId) {
+        $(".tab-panel #" + tabPanelBlockId + " div").removeClass("selected");
+        $(".tab-panel .incident-impact-" + impact).addClass("selected");
+        $(".tab-panel .incident-impact-" + impact).addClass("selected");
+
+        $("#" + glancePanelBlockId)[0].classList.forEach(function(c) {
+            $("#" + glancePanelBlockId).removeClass(c)
+        });
+        $("#" + glancePanelBlockId).html(impact);
+        $("#" + glancePanelBlockId).addClass("incident-impact")
+        $("#" + glancePanelBlockId).addClass("incident-impact-" + impact)
+        $("#" + glancePanelBlockId).addClass("selected")
+    }
+    ,setStatus: function(status, tabPanelBlockId, glancePanelBlockId) {
+        $(".tab-panel #" + tabPanelBlockId + " div").removeClass("selected");
+        $(".tab-panel .incident-status-" + status).addClass("selected");
+
+        $("#" + glancePanelBlockId)[0].classList.forEach(function(c) {
+            $("#" + glancePanelBlockId).removeClass(c)
+        });
+        $("#" + glancePanelBlockId).html(status);
+        $("#" + glancePanelBlockId).addClass("incident-status")
+        $("#" + glancePanelBlockId).addClass("incident-status-" + status)
+    }
+    ,setPageName: function(value, tabPanelBlockId, glancePanelBlockId) {
+        $(".tab-panel #" + tabPanelBlockId + " a").html(value);
+        $("#" + glancePanelBlockId + " a").html(value);
+    }
+    ,setIncidentTitle: function(value, tabPanelBlockId, glancePanelBlockId) {
+        $(".tab-panel #" + tabPanelBlockId + " a").html(value);
+        $("#" + glancePanelBlockId + " a").html(value);
+    }
 }
 
 AJS.$(function () {
-    // AJS.log("status page plugin loaded");
-
     // https://developer.atlassian.com/server/jira/platform/displaying-content-in-a-dialog-in-jira/
 
     JIRA.Dialogs.incidentLinkDialog = new JIRA.FormDialog({

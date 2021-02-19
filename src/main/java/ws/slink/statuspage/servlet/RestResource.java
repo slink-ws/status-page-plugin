@@ -1,6 +1,7 @@
 package ws.slink.statuspage.servlet;
 
 import com.atlassian.jira.component.ComponentAccessor;
+import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.comments.CommentManager;
 import com.atlassian.jira.project.Project;
 import com.atlassian.plugin.spring.scanner.annotation.component.Scanned;
@@ -10,12 +11,16 @@ import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import ws.slink.statuspage.StatusPage;
 import ws.slink.statuspage.error.IncidentNotFound;
 import ws.slink.statuspage.error.ServiceCallException;
 import ws.slink.statuspage.error.StatusPageException;
 import ws.slink.statuspage.error.StatusPageObjectNotFound;
-import ws.slink.statuspage.model.*;
+import ws.slink.statuspage.model.AffectedComponentStatus;
+import ws.slink.statuspage.model.Group;
+import ws.slink.statuspage.model.Incident;
+import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
@@ -350,11 +355,11 @@ public class RestResource {
         @Context HttpServletRequest request) {
 
         if (StringUtils.isBlank(pageId))
-            return Response.noContent().build();
+            return Response.status(HttpStatus.SC_NOT_FOUND).build();
 
         Optional<Project> project = JiraTools.instance().getProjectForIssue(issueKey);
         if (!project.isPresent())
-            return Response.noContent().build();
+            return Response.status(HttpStatus.SC_NOT_FOUND).build();
 
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
@@ -365,7 +370,7 @@ public class RestResource {
 
         Optional<StatusPage> statusPage = StatuspageService.instance().get(project.get().getKey());
         if (!statusPage.isPresent())
-            return Response.noContent().build();
+            return Response.status(HttpStatus.SC_NOT_FOUND).build();
 
         return Response.ok(JiraTools.instance().getGsonObject().toJson(statusPage.get().components(pageId))).build();
     }
@@ -517,6 +522,36 @@ public class RestResource {
         } else {
             return Response.ok(JiraTools.instance().getGsonObject().toJson(statusPage.get().incidents(pageId))).build();
         }
+    }
+
+    @GET
+    @Path("/api/incident/{issueKey}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response incident(
+            @PathParam("issueKey") String issueKey,
+            @Context HttpServletRequest request) {
+
+        Optional<Issue> issue = JiraTools.instance().getIssueByKey(issueKey);
+        if (!issue.isPresent())
+            return Response.status(HttpStatus.SC_NOT_FOUND)/*.noContent()*/.build();
+
+        Optional<IssueIncident> issueIncident = JiraTools.instance().issueIncident(issue.get());
+        if (!issueIncident.isPresent())
+            return Response.status(HttpStatus.SC_NOT_FOUND)/*.noContent()*/.build();
+
+        if (!JiraTools.instance().isIncidentViewer(
+                issueIncident.get().projectKey(),
+                ComponentAccessor.getJiraAuthenticationContext().getLoggedInUser()))
+            return Response.status(HttpStatus.SC_FORBIDDEN).build();
+
+        Optional<Incident> incident = StatuspageService.instance().getIncident(issueIncident.get(), true);
+        if (!incident.isPresent())
+            return Response.status(HttpStatus.SC_NOT_FOUND)/*noContent()*/.build();
+
+        return Response
+            .ok(JiraTools.instance().getGsonObject().toJson(incident.get()))
+            .build()
+        ;
     }
 
 

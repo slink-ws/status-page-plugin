@@ -4,11 +4,8 @@ import com.atlassian.jira.component.ComponentAccessor;
 import com.atlassian.jira.component.pico.ComponentManager;
 import com.atlassian.jira.config.properties.APKeys;
 import com.atlassian.jira.config.properties.ApplicationProperties;
-import com.atlassian.jira.event.type.EventDispatchOption;
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.IssueImpl;
 import com.atlassian.jira.issue.ModifiedValue;
-import com.atlassian.jira.issue.MutableIssue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.index.IndexException;
 import com.atlassian.jira.issue.index.IssueIndexingService;
@@ -26,6 +23,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.json.CustomExclusionStrategy;
+import ws.slink.statuspage.model.IssueIncident;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.service.CustomFieldService;
 import ws.slink.statuspage.service.StatuspageService;
@@ -200,6 +198,15 @@ public class JiraTools {
         }
 
         return true;
+    }
+
+    public Optional<IssueIncident> issueIncident(Issue issue) {
+        CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
+        Object cf = issue.getCustomFieldValue(customField);
+        if (null != cf && cf instanceof IssueIncident) {
+            return Optional.of((IssueIncident) cf);
+        }
+        return Optional.empty();
     }
 
     private Gson gson = null;

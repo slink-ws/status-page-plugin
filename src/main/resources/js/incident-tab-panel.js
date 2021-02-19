@@ -2,6 +2,8 @@ let $incidentTabPanel = {
 
     config: {
         // incident view
+        pageNameBlockId              : "incident-page-block",
+        titleBlockId                 : "incident-title-block",
         impactBlockId                : "incident-impact-block",
         statusBlockId                : "incident-status-block",
         messageBlockId               : "incident-message-block",
@@ -9,6 +11,8 @@ let $incidentTabPanel = {
         affectedComponentsListBlockId: "tab-components-list",
 
         // incident glance view
+        glancePageBlockId            : "incident-glance-page",
+        glanceTitleBlockId           : "incident-glance-title",
         glanceImpactBlockId          : "incident-glance-impact",
         glanceStatusBlockId          : "incident-glance-status",
 
@@ -21,17 +25,13 @@ let $incidentTabPanel = {
         pageIdBlockId                : "page-id",
         incidentIdBlockId            : "incident-id",
         projectKeyBlockId            : "project-key",
-        issueKeyBlockId              : "issue-key",
-
-        // cached original values
-        originalStatusBlockId        : "status-original",
-        originalImpactBlockId        : "impact-original",
-        originalComponentsBlockId    : "components-original",
-        cachedComponentsBlockId      : "components-add-cache",
+        // issueKeyBlockId              : "issue-key",
 
         // buttons
         updateButtonId               : "tab-update-incident-button",
+        resetButtonId                : "tab-reset-incident-button",
     }
+
    ,confirmDialog: {}
    ,submitConfirmDialog: function() {
         if($incidentTabPanel.confirmDialog) {
@@ -44,18 +44,14 @@ let $incidentTabPanel = {
             $incidentTabPanel.confirmDialog.hide();
         }
    }
+
    ,changeComponentState: function (source, f) {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
-        // AJS.log("componentId: " + componentId + ", status: " + statusId);
         let update = $incidentTabPanel.enableSaveButton;
-        // AJS.log("f:");
-        // AJS.log(f);
         if (undefined != f && 'undefined' != f)
             update = f;
-        // AJS.log("update:");
-        // AJS.log(update);
         if (!($("#" + componentId + "-remove").hasClass("selected"))) {
             $("#" + componentId).children("span").removeClass("selected");
             $("#" + source.id).addClass("selected");
@@ -66,7 +62,6 @@ let $incidentTabPanel = {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
-        // AJS.log("componentId: " + componentId + ", status: " + statusId);
         let f = $incidentTabPanel.enableSaveButton;
         if (!$("#" + source.id).hasClass("selected")) {
             $("#" + source.id).addClass("selected");
@@ -83,7 +78,6 @@ let $incidentTabPanel = {
         let parentElement = source.parentElement;
         let componentId = parentElement.id;
         let statusId    = source.id.replace(componentId + "-", "");
-        // AJS.log("componentId: " + componentId + ", status: " + statusId);
         let f = $incidentTabPanel.changeComponentState;
         let u = $incidentTabPanel.enableSaveButton;
         $(".component-name").not(".removed").each( function(idx, value) {
@@ -113,8 +107,6 @@ let $incidentTabPanel = {
         if (!$(".tab-panel div.incident-status-" + source.id).hasClass("selected")) {
             $(".tab-panel div.incident-status").removeClass("selected");
             $(".tab-panel div.incident-status-" + source.id).addClass("selected");
-            // $("#serMemtb").attr("placeholder", "Type a Location").val("").focus().blur();
-            // console.log("---> " + source.id + " : " + $statuspage.defaultMessage(source.id));
             $incidentTabPanel.setMessage($statuspage.defaultMessage(source.id), null);
             $incidentTabPanel.enableSaveButton();
         }
@@ -131,14 +123,11 @@ let $incidentTabPanel = {
                 $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
             }
             let component = {"id": componentId, "name": componentName, "status": ""};
-            //$("#" + $incidentTabPanel.config.newComponentTitleElementId).val("")
-            $incidentTabPanel.addCachedComponent(component);
             $incidentTabPanel.addAffectedComponent(component);
             $incidentTabPanel.enableSaveButton();
         }
     }
    ,addAffectedComponent: function(component) {
-        // console.log("adding affected component: " + JSON.stringify(component, null, 2));
         let f = $pluginCommon.getComponentStatusButtonClass;
         let html  = '<div class="component" id="' + component.id + '">\n';
         html += '<div class="component-name">' + component.name + '</div>\n';
@@ -152,23 +141,14 @@ let $incidentTabPanel = {
         html += '<span id="' + component.id + '-remove" title="Remove Component" onClick="removeButtonClick(this)" ';
         html += 'class="component-button remove aui-icon aui-icon-small aui-iconfont-trash">\nREMOVE\n</span>\n';
         html += '</div>';
-        // AJS.log(html);
-        // AJS.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        // AJS.log($("#" + container).html());
         $("#" + $incidentTabPanel.config.affectedComponentsListBlockId).append(html);
     }
+
    ,updateIncident: function() {
         $incidentTabPanel.confirmDialog = AJS.dialog2("#confirm-dialog");
         $incidentTabPanel.confirmDialog.show();
    }
    ,doUpdateIncident: function() {
-
-        // var demoDialog = AJS.dialog2("#demo-dialog");
-        // demoDialog.on("show", function() {
-        //     console.log("demo-dialog was shown");
-        // });
-
-
         $pluginCommon.buttonBusy($incidentTabPanel.config.updateButtonId, false);
 
         let status     = $("#" + $incidentTabPanel.config.statusBlockId  + " .selected").attr("id");
@@ -178,27 +158,13 @@ let $incidentTabPanel = {
         let pageId     = $("#" + $incidentTabPanel.config.pageIdBlockId).val();
         let incidentId = $("#" + $incidentTabPanel.config.incidentIdBlockId).val();
         let projectKey = $("#" + $incidentTabPanel.config.projectKeyBlockId).val();
-        let issueKey   = $("#" + $incidentTabPanel.config.issueKeyBlockId).val();
+        let issueKey   = JIRA.Issue.getIssueKey() // $("#" + $incidentTabPanel.config.issueKeyBlockId).val();
 
         let components = $pluginCommon.getComponentsConfig();
-        // console.log("----------> components config:");
-        // console.log(JSON.stringify(components, null, 2));
-        // delete components.remove;
-
         let componentsForUpdate = {};
-        let componentsToStore = [];
         $pluginCommon.status_values.forEach(function(item, index) {
             componentsForUpdate[item] = components[item].map(a => a.id);
-            componentsToStore.push.apply(componentsToStore, components[item]);
         })
-
-        components["remove"].forEach(function(item, index) {
-            // console.log("caching removed component: " + JSON.stringify(item, null, 2));
-            $incidentTabPanel.addCachedComponent(item);
-        });
-
-        $incidentTabPanel.removeCachedComponents(componentsToStore.map(c => c.id));
-
         let config = {}
         config["project"]       = projectKey;
         config["issue"]         = issueKey;
@@ -211,15 +177,6 @@ let $incidentTabPanel = {
 
         config["publishComment"] = $("#" + $incidentTabPanel.config.commentCheckboxId)[0].checked;
 
-        // console.log("------> config");
-        // console.log(JSON.stringify(config, null, 2));
-        // console.log("------> components for update");
-        // console.log(JSON.stringify(componentsForUpdate, null, 2));
-        // console.log("------> components to cache");
-        // console.log(JSON.stringify(componentsToStore, null, 2));
-
-        let f1 = $incidentTabPanel.restoreAffectedComponents;
-        let f2 = $incidentTabPanel.restoreCachedComponents;
         AJS.$.ajax({
             url: AJS.contextPath() + "/rest/ws-slink-statuspage/1.0/api/incident",
             type: "PUT",
@@ -229,26 +186,6 @@ let $incidentTabPanel = {
         }).done(function () {
             JIRA.Messages.showSuccessMsg("statuspage updated");
             $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
-            let object = $('#' + $incidentTabPanel.config.glanceImpactBlockId);
-            object[0].className = "selected incident-impact incident-impact-" + impact;
-            object[0].innerText = impact;
-
-            object = $('#' + $incidentTabPanel.config.glanceStatusBlockId);
-            object[0].className = "incident-glance-common incident-status-" + status;
-            object[0].innerText = status;
-
-            $("#" + $incidentTabPanel.config.originalStatusBlockId).val(status);
-            $("#" + $incidentTabPanel.config.originalImpactBlockId).val(impact);
-            $("#" + $incidentTabPanel.config.originalComponentsBlockId).val(JSON.stringify(componentsToStore));
-            // console.log("---> saved components list ('original'):");
-            // console.log($("#" + $incidentTabPanel.config.originalComponentsBlockId).val());
-            f1();
-            f2();
-
-            // reset message text & checkbox
-            $incidentTabPanel.setMessage($statuspage.defaultMessage(status), "");
-            $("#" + $incidentTabPanel.config.commentCheckboxId).prop('checked', false);
-
             if (status == "resolved") {
                 $("#" + $incidentTabPanel.config.updateButtonId).hide();
                 $("#" + $incidentTabPanel.config.newComponentBlockId).hide();
@@ -263,9 +200,7 @@ let $incidentTabPanel = {
                         $(this).hide()
                 })
             }
-            // setTimeout(() => {
-            //     window.location = $(location).attr('href');
-            // }, 1000);
+            $incidentTabPanel.resetIncident();
         }).error(function (error, message) {
             AJS.log("--- error -----------------------------------------");
             AJS.log(error);
@@ -276,59 +211,73 @@ let $incidentTabPanel = {
             $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
         });
     }
+   ,reloadIncident: function() {
+        $pluginCommon.buttonBusy($incidentTabPanel.config.updateButtonId, true);
+        $pluginCommon.buttonBusy($incidentTabPanel.config.resetButtonId, true);
+        $pluginCommon.incidentsQuery(JIRA.Issue.getIssueKey())
+        .then(function(incident) {
+            $pluginCommon.setImpact(incident.impact, $incidentTabPanel.config.impactBlockId, $incidentTabPanel.config.glanceImpactBlockId);
+            $pluginCommon.setStatus(incident.status, $incidentTabPanel.config.statusBlockId, $incidentTabPanel.config.glanceStatusBlockId);
+            $pluginCommon.setPageName(incident.page.name, $incidentTabPanel.config.pageNameBlockId, $incidentTabPanel.config.glancePageBlockId);
+            $pluginCommon.setIncidentTitle(incident.name, $incidentTabPanel.config.titleBlockId, $incidentTabPanel.config.glanceTitleBlockId);
+            $pluginCommon.componentsQuery(JIRA.Issue.getIssueKey(), incident)
+                .then(function(components) {
+                    let affectedComponentsIds = incident.components.map((component) => component.id);
+                    let nonAffectedComponents = components
+                        .filter((component) => !affectedComponentsIds.includes(component.id))
+                        .filter((component) => !component.group)
+                    ;
+                    AJS.log(JSON.stringify(nonAffectedComponents, null, 2))
+                    AJS.log("---------");
+                    AJS.log(JSON.stringify(incident.components, null, 2))
+                    $incidentTabPanel.restoreAffectedComponents(incident.components);
+                    $incidentTabPanel.restoreNonAffectedComponents(nonAffectedComponents);
+                    $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+                    $pluginCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
+                    JIRA.Messages.showSuccessMsg("incident reloaded");
+                })
+                .catch(function (error) {
+                    JIRA.Messages.showErrorMsg("could not reload components");
+                    AJS.log(JSON.stringify(error, null, 2));
+                    $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+                    $pluginCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
+                });
+        })
+        .catch(function(error) {
+            JIRA.Messages.showErrorMsg("could not reload incident");
+            AJS.log(JSON.stringify(error, null, 2));
+            $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+            $pluginCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
+        })
+        ;
+    }
    ,resetIncident: function() {
-        let status     = $("#" + $incidentTabPanel.config.originalStatusBlockId).val();
-        let impact     = $("#" + $incidentTabPanel.config.originalImpactBlockId).val();
-
-        $(".tab-panel #" + $incidentTabPanel.config.statusBlockId + " div").removeClass("selected");
-        $(".tab-panel .incident-status-" + status).addClass("selected");
-
-        $(".tab-panel #" + $incidentTabPanel.config.impactBlockId + " div").removeClass("selected");
-        $(".tab-panel .incident-impact-" + impact).addClass("selected");
-
-        this.restoreAffectedComponents();
-        this.restoreCachedComponents();
-
-        $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
+        this.reloadIncident();
         $incidentTabPanel.setMessage($statuspage.defaultMessage(status), "");
         $("#" + $incidentTabPanel.config.commentCheckboxId).prop('checked', false);
     }
-   ,restoreAffectedComponents: function() {
-        let componentsList = JSON.parse($("#" + $incidentTabPanel.config.originalComponentsBlockId).val());
-        componentsList.sort(function(a, b) {
+   ,restoreAffectedComponents: function(components) {
+        components.sort(function(a, b) {
             return a.name > b.name ? 1 : a.name < b.name ? -1 : 0;
         })
-        // console.log("---> restored components list ('original'):");
-        // console.log($("#" + $incidentTabPanel.config.originalComponentsBlockId).val());
         $(".tab-panel #" + $incidentTabPanel.config.affectedComponentsListBlockId).html("");
-        for (let i in componentsList) {
+        for (let i in components) {
             // console.log("--> restoring component: " + JSON.stringify(componentsList[i], null, 2));
-            $incidentTabPanel.addAffectedComponent(componentsList[i]);
+            $incidentTabPanel.addAffectedComponent(components[i]);
         }
     }
-   ,restoreCachedComponents: function() {
-        if ($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val())
-            try {
-                let cachedComponents = JSON.parse($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val());
-                // console.log("---> reset cached components");
-                // console.log(cachedComponents);
-                Object.keys(cachedComponents).forEach(function(key, index) {
-                    // console.log(cachedComponents[key]);
-                    $("#" + $incidentTabPanel.config.newComponentTitleElementId).append('<option value="' + cachedComponents[key].id + '">' + cachedComponents[key].name + '</option>');
-                })
-                let options = $('#' + $incidentTabPanel.config.newComponentTitleElementId + ' option');
-                let arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
-                arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
-                options.each(function(i, o) {
-                    o.value = arr[i].v;
-                    $(o).text(arr[i].t);
-                });
-                $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val("");
-                $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
-
-            } catch (error) {
-                AJS.log("---> error: " + error);
-            }
+   ,restoreNonAffectedComponents: function(components) {
+        for (let i in components) {
+            $("#" + $incidentTabPanel.config.newComponentTitleElementId).append('<option value="' + components[i].id + '">' + components[i].name + '</option>');
+        }
+        let options = $('#' + $incidentTabPanel.config.newComponentTitleElementId + ' option');
+        let arr = options.map(function(_, o) { return { t: $(o).text(), v: o.value }; }).get();
+        arr.sort(function(o1, o2) { return o1.t > o2.t ? 1 : o1.t < o2.t ? -1 : 0; });
+        options.each(function(i, o) {
+            o.value = arr[i].v;
+            $(o).text(arr[i].t);
+        });
+        $("#" + $incidentTabPanel.config.newComponentTitleElementId).trigger('change');
     }
    ,setMessage: function(placeholder, value) {
         let messageInput = $("#" + $incidentTabPanel.config.messageBlockId).find("textarea");
@@ -339,29 +288,6 @@ let $incidentTabPanel = {
                 messageInput.val(value)
         }
     }
-   ,addCachedComponent: function(component) {
-        let cache = {};
-        let str = $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val();
-        if (str) {
-            cache = JSON.parse(str);
-        }
-        cache[component.id] = component;
-        // console.log("----> add cached component: " + JSON.stringify(cache, null, 2));
-        $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val(JSON.stringify(cache));
-        // console.log($("#" + $incidentTabPanel.config.cachedComponentsBlockId).val());
-    }
-   ,removeCachedComponents: function(componentIdsList) {
-        // console.log("----> remove cached components: " + JSON.stringify(componentIdsList));
-        let str = $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val();
-        if (str) {
-            let cache = JSON.parse(str);
-            componentIdsList.forEach(function(item, index) {
-                delete cache[item];
-            })
-            // console.log(cache)
-            $("#" + $incidentTabPanel.config.cachedComponentsBlockId).val(JSON.stringify(cache));
-        }
-    }
    ,enableSaveButton: function() {
         try {
             if (!$("#" + $incidentTabPanel.config.updateButtonId).hasClass("aui-button-primary"))
@@ -370,10 +296,4 @@ let $incidentTabPanel = {
             AJS.log("error: " + e)
         }
     }
-   ,test: function() {
-        AJS.log("incident tab panel test");
-    }
 } // $incidentTabPanel
-// jQuery(function () {
-//     AJS.log("incident-tab-panel loaded");
-// });
