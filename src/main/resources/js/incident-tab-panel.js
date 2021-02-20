@@ -202,11 +202,9 @@ let $incidentTabPanel = {
             }
             $incidentTabPanel.resetIncident();
         }).error(function (error, message) {
-            AJS.log("--- error -----------------------------------------");
+            AJS.log("[update incident] error");
             AJS.log(error);
-            AJS.log("--- message ---------------------------------------");
             AJS.log(message);
-            AJS.log("---------------------------------------------------");
             JIRA.Messages.showErrorMsg(error.responseText/*"could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText*/)
             $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
         });
@@ -227,9 +225,9 @@ let $incidentTabPanel = {
                         .filter((component) => !affectedComponentsIds.includes(component.id))
                         .filter((component) => !component.group)
                     ;
-                    AJS.log(JSON.stringify(nonAffectedComponents, null, 2))
-                    AJS.log("---------");
-                    AJS.log(JSON.stringify(incident.components, null, 2))
+                    // AJS.log(JSON.stringify(nonAffectedComponents, null, 2))
+                    // AJS.log("---------");
+                    // AJS.log(JSON.stringify(incident.components, null, 2))
                     $incidentTabPanel.restoreAffectedComponents(incident.components);
                     $incidentTabPanel.restoreNonAffectedComponents(nonAffectedComponents);
                     $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);

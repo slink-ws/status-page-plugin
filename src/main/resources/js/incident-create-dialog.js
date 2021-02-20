@@ -15,18 +15,18 @@ let $incidentCreateDialog = {
         createFormWarningId: 'create-form-warning'
     },
     checkAccess: function () {
-        console.log("----> create dialog check access");
+        // console.log("----> create dialog check access");
         $pluginCommon
             .checkAccess(
                 () => {
-                    console.log("-----> create dialog ok! loading create page!")
+                    // console.log("-----> create dialog ok! loading create page!")
                     $("#" + $incidentCreateDialog.config.createFormWarningId).hide()
                     $("#" + $incidentCreateDialog.config.createFormContentId).show();
                     $("#" + $incidentCreateDialog.config.createButtonId).show();
                     $incidentCreateDialog.loadDialog();
                 },
                 () => {
-                    console.log("-----> create dialog err! show warning!")
+                    // console.log("-----> create dialog err! show warning!")
                     $("#" + $incidentCreateDialog.config.createFormContentId).hide();
                     $("#" + $incidentCreateDialog.config.createButtonId).hide();
                     $("#" + $incidentCreateDialog.config.createFormWarningId).show()

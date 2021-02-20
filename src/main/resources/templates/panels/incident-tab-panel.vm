@@ -320,6 +320,7 @@
 </div>
 <script>
     #include("/js/statuspage.js")
+    #include("/js/status-page-plugin.js")
     #include("/js/incident-tab-panel.js")
     // AJS.$("#incident-tab-panel-add-component").show();
     // AJS.$("#incident-tab-panel-add-component").hide();

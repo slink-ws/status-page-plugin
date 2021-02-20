@@ -36,7 +36,7 @@ let $incidentLinkDialog = {
             }
             $incidentLinkDialog.loadIncidents($('#' + $incidentLinkDialog.config.pagesElementId).val());
         }).catch(function(error) {
-            AJS.log("service call error: ");
+            AJS.log("[load pages] service call error: ");
             AJS.log(error);
         });
     },
@@ -55,7 +55,7 @@ let $incidentLinkDialog = {
 
             $pluginCommon.buttonIdle($incidentLinkDialog.config.linkButtonId);
         }).catch(function(error) {
-            AJS.log("service call error: ");
+            AJS.log("[load incidents] service call error: ");
             AJS.log(error);
         });
     }

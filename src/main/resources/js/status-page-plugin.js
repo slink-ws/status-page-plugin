@@ -80,14 +80,14 @@ let $pluginCommon = {
     }
     ,checkAccess: function(fOk, fNok) {
         $pluginCommon.accessQuery().then(function(result) {
-            console.log("----> access check ok: " + JSON.stringify(result));
+            // console.log("----> access check ok: " + JSON.stringify(result));
             try {
                 fOk();
             } catch (error) {
-                console.log("----> check ok; fOk error: " + JSON.stringify(error));
+                AJS.log("----> check ok; fOk error: " + JSON.stringify(error));
             }
         }).catch(function(error) {
-            console.log("----> access check error: " + JSON.stringify(error));
+            // console.log("----> access check error: " + JSON.stringify(error));
             fNok();
         });
     }
