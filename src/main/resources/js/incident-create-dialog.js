@@ -108,8 +108,6 @@ let $incidentCreateDialog = {
             groupedComponents["---no-group---"] = {};
             groupedComponents["---no-group---"]["title"] = "root";
             groupedComponents["---no-group---"]["components"] = [];
-            // $statuspage.nonGroupComponents($('#' + $incidentCreateDialog.config.pagesElement).val()).then(function(ngc) {
-            // });
             groups.forEach(function(group) {
                 groupedComponents[group.id] = {}
                 groupedComponents[group.id]["title"] = group.name;
@@ -173,7 +171,6 @@ let $incidentCreateDialog = {
         // console.log("status id: " + statusId);
         if (source.id.includes('reset')) {
             if ($("#" + sourceId).hasClass("selected")) {
-                // $("#" + sourceId).removeClass("selected");
                 $("#" + parentId).children("span").removeClass("selected");
                 $(".component .component-button").removeClass("selected");
             } else {

@@ -5,11 +5,11 @@
 <!-- https://developer.atlassian.com/server/jira/platform/adding-content-to-the-jira-view-issue-page/ -->
 <atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" plugins-version="2">
   <plugin-info> 
-    <description>${project.description}</description>  
+    <description>${project.description}</description>
     <version>${project.version}</version>  
     <vendor name="${project.organization.name}" url="${project.organization.url}"/>  
-    <param name="plugin-icon">images/pluginIcon.png</param>  
-    <param name="plugin-logo">images/pluginLogo.png</param>  
+    <param name="plugin-icon">images/statuspage-blue-line-64.png</param>
+    <param name="plugin-logo">images/statuspage-blue-line-72.png</param>
     <param name="configure.url">/plugins/servlet/ws-slink-statuspage/admin</param> 
   </plugin-info>  
 
@@ -192,7 +192,7 @@
   <servlet key="config-servlet" class="ws.slink.statuspage.servlet.ConfigServlet"> 
     <resource type="i18n" name="i18n" location="status-page-plugin"/>  
     <url-pattern> 
-      <!--  /customer-priority/config--> /project-config/*/ws-slink-statuspage
+      /project-config/*/ws-slink-statuspage
     </url-pattern> 
   </servlet>
   <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->

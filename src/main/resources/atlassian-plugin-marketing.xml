@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<atlassian-plugin-marketing>
+    <!--Describe names and versions of compatible products -->
+    <compatibility>
+        <product name="jira" min="8.3.1" max="8.15.0" />
+    </compatibility>
+    <!-- Describe your app logo and banner. The banner is only displayed in the UPM. -->
+    <logo image="images/statuspage-blue-72.jpg"/>
+    <banner image="images/plugin-banner.jpg"/>
+    <!-- Describe highlight and cropped highlight image assets, in order. -->
+    <highlights>
+        <highlight image="images/screenshots/screenshot-01-main-view.png" cropped="images/screenshots/screenshot-01-cropped.png"/>
+        <highlight image="images/screenshots/screenshot-02-admin.png" cropped="images/screenshots/screenshot-02-admin-cropped.png"/>
+        <highlight image="images/screenshots/screenshot-03-configure.png" cropped="images/screenshots/screenshot-03-configure-cropped.png"/>
+        <highlight image="images/screenshots/screenshot-04-assign.png" cropped="images/screenshots/screenshot-04-assign-cropped.png"/>
+        <highlight image="images/screenshots/screenshot-05-create.png" cropped="images/screenshots/screenshot-05-create-cropped.png"/>
+    </highlights>
+    <!-- Describe additional screenshots you'd like listed on your app listing. -->
+    <screenshots />
+</atlassian-plugin-marketing>

@@ -1,10 +1,5 @@
-/*form.aui {*/
-/*    max-width: 1000px;*/
-/*    min-width: 900px;*/
-/*}*/
 .create-form-part {
     float: left;
-    /*background-color: orange;*/
     width: 50%;
 }
 .create-form-part.left {
@@ -14,119 +9,8 @@
     width: 55%;
 }
 .create-form-left {
-    /*background-color: pink;*/
     padding: 2px;
 }
 .create-form-right {
-    /*background-color: yellow;*/
     padding: 2px;
 }
-
-/*!*.incident-dialog-form {*!*/
-/*!*    background-color: pink;*!*/
-/*!*}*!*/
-/*!**!*/
-/*!*.incident-dialog-form .content-body {*!*/
-/*!*    background-color: yellow;*!*/
-/*!*}*!*/
-/*.content-body,*/
-/*.content-body::before,*/
-/*.content-body::after {*/
-/*    box-sizing: border-box;*/
-/*}*/
-/*.content-body {*/
-/*    --select-border: #777;*/
-/*    --select-focus: rgb(4, 57, 192);*/
-/*    --select-arrow: var(--select-border);*/
-/*}*/
-/*.content-body select {*/
-/*    -webkit-appearance:none;*/
-/*    appearance: none;*/
-/*    background-color: transparent;*/
-/*    border: none;*/
-/*    padding: 0 1em 0 0;*/
-/*    margin: 0;*/
-/*    width: 100%;*/
-/*    font-family: inherit;*/
-/*    font-size: inherit;*/
-/*    cursor: inherit;*/
-/*    line-height: inherit;*/
-/*    z-index: 1;*/
-/*    outline: none;*/
-/*}*/
-/*.content-body select::-ms-expand {*/
-/*    display: none;*/
-/*}*/
-/*.content-body select, .content-body .custom-select::after {*/
-/*    grid-area: select;*/
-/*}*/
-/*.content-body .custom-select:not(.custom-select--multiple)::after {*/
-/*    content: "";*/
-/*    justify-self: end;*/
-/*    width: 0.8em;*/
-/*    height: 0.5em;*/
-/*    background-color: var(--select-arrow);*/
-/*    clip-path: polygon(100% 0%, 0 0%, 50% 100%);*/
-/*    !*    min-width: 25ch;*!*/
-/*    !*    max-width: 25ch;*!*/
-/*}*/
-/*.content-body .custom-select {*/
-/*    display: grid;*/
-/*    grid-template-areas: "select";*/
-/*    align-items: center;*/
-/*    position: relative;*/
-
-/*    border: 1px solid var(--select-border);*/
-/*    border-radius: 0.25em;*/
-/*    padding: 0.25em 0.5em;*/
-
-/*    font-size: 0.9em;*/
-/*    cursor: pointer;*/
-/*    line-height: 1.2;*/
-
-/*    background-color: #fff;*/
-/*    background-image: linear-gradient(to top, #f9f9f9, #fff 33%);*/
-/*}*/
-/*.content-body select:focus + .focus {*/
-/*    position: absolute;*/
-/*    top: -1px;*/
-/*    left: -1px;*/
-/*    right: -1px;*/
-/*    bottom: -1px;*/
-/*    border: 1px solid var(--select-focus);*/
-/*    border-radius: inherit;*/
-/*}*/
-/*.content-body select[multiple] {*/
-/*    padding-right: 0;*/
-
-/*    !**/
-/*     * Safari will not reveal an option*/
-/*     * unless the select height has room to*/
-/*     * show all of it*/
-/*     * Firefox and Chrome allow showing*/
-/*     * a partial option*/
-/*     *!*/
-/*    height: 6rem;*/
-/*}*/
-/*.content-body select[multiple] option {*/
-/*    white-space: normal;*/
-/*// Only affects Chrome*/
-/*outline-color: var(--select-focus);*/
-/*}*/
-/*.content-body .custom-select--disabled {*/
-/*    cursor: not-allowed;*/
-/*    background-color: #eee;*/
-/*    background-image: linear-gradient(to top, #ddd, #eee 33%);*/
-/*}*/
-/*.content-body label {*/
-/*    font-size: 1em;*/
-/*    !*color: grey;*!*/
-/*    !*font-weight: 500;*!*/
-/*}*/
-/*.content-body .custom-select + label {*/
-/*    margin-top: 2rem;*/
-/*}*/
-/*.content-body .input-element {*/
-/*    float: left;*/
-/*    padding-right: 10px;*/
-/*}*/

@@ -1,6 +1,5 @@
 package ws.slink.statuspage.model;
 
-import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.type.IncidentStatus;
 
 public class IssueIncidentStatus {

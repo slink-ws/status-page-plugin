@@ -48,7 +48,6 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
 
         Map<String, Object> context = vp.getDefaultVelocityParams();
         context.put("i18n", descriptor.getI18nBean());
-        context.put("testVariable", "test variable value"); //["Value can be a string or an array or a collection"]);
 
         CustomField customField = CustomFieldService.instance().get(ConfigService.instance().getAdminCustomFieldName());
         Object cfv = getActionsRequest.issue().getCustomFieldValue(customField);
@@ -58,26 +57,16 @@ public class IncidentTabPanel extends AbstractIssueTabPanel3 {
         if (null != cfv) {
             IssueIncident ii = (IssueIncident)cfv;
             context.put("issueIncident", ii);
-//            StatuspageService.instance().get(getActionsRequest.issue().getProjectObject().getKey()).ifPresent(statusPage -> {
-//                synchronized (StatuspageService.instance()) {
-//                    statusPage.getPage(ii.pageId()).ifPresent(page -> {
-//                        context.put("page", page);
-//                        loadedComponents.set(statusPage.components(page, true));
-//                    });
-//                }
-//                statusPage.getIncident(ii.pageId(), ii.incidentId(), true)
-                StatuspageService.instance().getIncident(getActionsRequest.issue())
-                    .ifPresent(incident -> {
-                        context.put("incident", incident);
-                        context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
-                        loadedIncident.set(incident);
-                        context.put("componentsOriginal", JiraTools.instance().getGsonObject().toJson(incident.components()));
-                        context.put("defaultMessage", Common.getDefaultStatusMessage(incident.status()));
-                        context.put("page", incident.page());
-//                        loadedComponents.set(incident.page().components());
-                        loadedComponents.set(StatuspageService.instance().getComponents(getActionsRequest.issue().getProjectObject().getKey(), incident.page().id()));
-                    });
-//            });
+            StatuspageService.instance().getIncident(getActionsRequest.issue())
+                .ifPresent(incident -> {
+                    context.put("incident", incident);
+                    context.put("incidentClosed", incident.status() == IncidentStatus.COMPLETED || incident.status() == IncidentStatus.RESOLVED);
+                    loadedIncident.set(incident);
+                    context.put("componentsOriginal", JiraTools.instance().getGsonObject().toJson(incident.components()));
+                    context.put("defaultMessage", Common.getDefaultStatusMessage(incident.status()));
+                    context.put("page", incident.page());
+                    loadedComponents.set(StatuspageService.instance().getComponents(getActionsRequest.issue().getProjectObject().getKey(), incident.page().id()));
+                });
         }
 
         if (null != loadedIncident.get() && null != loadedComponents.get()) {

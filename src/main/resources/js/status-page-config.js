@@ -64,7 +64,6 @@ function config_remove_all_view_roles() {
 
 function config_update_config() {
 
-    // let projects = get_select_values_string("selected-projects");
     let apikey     = AJS.$('input[name=apikey]').val();
     let project    = AJS.$('input[name=project]').val();
     let mgmt_roles = get_select_values_string("selected-mgmt-roles");

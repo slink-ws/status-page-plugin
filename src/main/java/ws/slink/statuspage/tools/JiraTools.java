@@ -76,7 +76,9 @@ public class JiraTools {
         );
     }
     public boolean isIncidentViewer(Project project, ApplicationUser applicationUser) {
-        return ConfigService.instance().getConfigViewRoles(project.getKey()).stream().map(Long::valueOf).anyMatch(r ->
+        return
+            isIncidentManager(project, applicationUser) ||
+            ConfigService.instance().getConfigViewRoles(project.getKey()).stream().map(Long::valueOf).anyMatch(r ->
             userHasRoleInProject(
                 project,
                 applicationUser,

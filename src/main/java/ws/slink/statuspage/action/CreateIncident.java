@@ -4,7 +4,6 @@ import com.atlassian.jira.issue.Issue;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.web.action.issue.AbstractIssueSelectAction;
-import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import ws.slink.statuspage.model.Component;
 import ws.slink.statuspage.model.IssueIncident;
@@ -17,7 +16,10 @@ import ws.slink.statuspage.type.IncidentSeverity;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 

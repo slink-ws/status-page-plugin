@@ -1,7 +1,6 @@
 package ws.slink.statuspage.service;
 
 import com.atlassian.jira.issue.Issue;
-import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.plugin.webresource.impl.support.Tuple;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -20,9 +19,6 @@ import ws.slink.statuspage.type.ComponentStatus;
 import ws.slink.statuspage.type.IncidentSeverity;
 import ws.slink.statuspage.type.IncidentStatus;
 
-import java.time.Instant;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -102,25 +98,25 @@ public class StatuspageService {
             = new CacheLoader<IssueIncident, Optional<Tuple<Boolean, Incident>>>() {
             @Override
             public Optional<Tuple<Boolean, Incident>> load(final IssueIncident key) {
-                System.out.println("--> could not find cached incident for key [ " + key + " ] [ " +
-                        DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//                System.out.println("--> could not find cached incident for key [ " + key + " ] [ " +
+//                        DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
                 Optional<StatusPage> statusPage = StatuspageService.instance().get(key.projectKey());
                 if (statusPage.isPresent()) {
                     try {
                         Optional<Incident> incident = statusPage.get().getIncident(key.pageId(), key.incidentId(), true);
                         if (null != incident && incident.isPresent()) {
-                            System.out.println("--> loaded incident from statuspage for key [ " + key + " ]  [ " +
-                                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//                            System.out.println("--> loaded incident from statuspage for key [ " + key + " ]  [ " +
+//                                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
                             return Optional.of(new Tuple<>(true, incident.get()));
                         } else {
-                            System.out.println("--> could not find incident on statuspage for key [  " + key + " ] " + Thread.currentThread().getName());
+//                            System.out.println("--> could not find incident on statuspage for key [  " + key + " ] " + Thread.currentThread().getName());
                             return Optional.of(new Tuple<>(false, null));
                         }
                     } catch (ServiceCallException e) {
-                        System.out.println("--> error querying statuspage for key [ " + key + " ] " + Thread.currentThread().getName());
+//                        System.out.println("--> error querying statuspage for key [ " + key + " ] " + Thread.currentThread().getName());
                         return Optional.of(new Tuple<>(false, null));
                     } catch (Exception e) {
-                        System.out.println("--> unexpected exception querying statuspage for key [ " + key + " ]: " + e.getClass().getSimpleName() + " " + e.getMessage());
+//                        System.out.println("--> unexpected exception querying statuspage for key [ " + key + " ]: " + e.getClass().getSimpleName() + " " + e.getMessage());
                     }
                 }
                 return Optional.empty();
@@ -129,13 +125,12 @@ public class StatuspageService {
 
         RemovalListener<IssueIncident, Optional<Tuple<Boolean, Incident>>> listener = n -> {
             if (null != n.getKey() && n.wasEvicted()) {
-                System.out.println("--> removed " + n.getKey() + " (" + n.getCause().name() + ") [ " +
-                        DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//                System.out.println("--> removed " + n.getKey() + " (" + n.getCause().name() + ") [ " +
+//                        DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
             }
         };
 
         return CacheBuilder.newBuilder()
-          //.weakKeys()
             .maximumSize(100)
             .expireAfterWrite(INCIDENT_CACHE_TTL_SECONDS, TimeUnit.SECONDS)
             .removalListener(listener)
@@ -147,25 +142,25 @@ public class StatuspageService {
             = new CacheLoader<ComponentsKey, Optional<List<Component>>>() {
             @Override
             public Optional<List<Component>> load(final ComponentsKey key) {
-                System.out.println("--> could not find cached components for page #" + key + " [ " +
-                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//                System.out.println("--> could not find cached components for page #" + key + " [ " +
+//                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
                 Optional<StatusPage> statusPage = StatuspageService.instance().get(key.projectKey);
                 if (statusPage.isPresent()) {
                     try {
                         List<Component> components = statusPage.get().components(key.pageId, true);
                         if (null != components && !components.isEmpty()) {
-                            System.out.println("--> loaded components from statuspage for key [ " + key + " ]  [ " +
-                                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//                            System.out.println("--> loaded components from statuspage for key [ " + key + " ]  [ " +
+//                                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
                             return Optional.of(components);
                         } else {
-                            System.out.println("--> could not find incident on statuspage for key [  " + key + " ] " + Thread.currentThread().getName());
+//                            System.out.println("--> could not find incident on statuspage for key [  " + key + " ] " + Thread.currentThread().getName());
                             return Optional.of(Collections.EMPTY_LIST);
                         }
                     } catch (ServiceCallException e) {
-                        System.out.println("--> error querying statuspage for key [ " + key + " ] " + Thread.currentThread().getName());
+//                        System.out.println("--> error querying statuspage for key [ " + key + " ] " + Thread.currentThread().getName());
                         return Optional.of(Collections.EMPTY_LIST);
                     } catch (Exception e) {
-                        System.out.println("--> unexpected exception querying statuspage for key [ " + key + " ]: " + e.getClass().getSimpleName() + " " + e.getMessage());
+//                        System.out.println("--> unexpected exception querying statuspage for key [ " + key + " ]: " + e.getClass().getSimpleName() + " " + e.getMessage());
                     }
                 }
                 return Optional.empty();
@@ -174,8 +169,8 @@ public class StatuspageService {
 
         RemovalListener<ComponentsKey, Optional<List<Component>>> listener = n -> {
             if (null != n.getKey() && n.wasEvicted()) {
-                System.out.println("--> removed components " + n.getKey() + " (" + n.getCause().name() + ") [ " +
-                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//                System.out.println("--> removed components " + n.getKey() + " (" + n.getCause().name() + ") [ " +
+//                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
             }
         };
 
@@ -189,7 +184,7 @@ public class StatuspageService {
     }
 
     public void invalidateCache(IssueIncident issueIncident) {
-        System.out.println("--> invalidating incident cache for " + issueIncident);
+//        System.out.println("--> invalidating incident cache for " + issueIncident);
         incidentCache.invalidate(issueIncident);
     }
 
@@ -205,7 +200,7 @@ public class StatuspageService {
             if (apiKeyStr.length() > 10)
                 apiKeyStr = apiKeyStr.substring(0,10) + "...";
         }
-        System.out.println("--- init statusPage for " + projectKey + " with ApiKey " + apiKeyStr);
+//        System.out.println("--- init statusPage for " + projectKey + " with ApiKey " + apiKeyStr);
         if (StringUtils.isBlank(apiKey))
             return;
         statusPages.remove(projectKey);
@@ -305,11 +300,11 @@ public class StatuspageService {
                 cachedTuple = incidentCache.get(issueIncident);
             }
         } catch (ExecutionException e) {
-            System.out.println("cache access error: " + e.getMessage());
+//            System.out.println("cache access error: " + e.getMessage());
         }
         if (cachedTuple.isPresent()) {
-            System.out.println("  --> got cached record for key [ " + issueIncident + " ] [ " +
-                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//            System.out.println("  --> got cached record for key [ " + issueIncident + " ] [ " +
+//                DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
             return Optional.ofNullable(cachedTuple.get().getLast());
         }
         return Optional.empty();
@@ -353,11 +348,11 @@ public class StatuspageService {
                 cachedComponents = componentCache.get(new ComponentsKey().project(projectKey).page(pageId));
             }
         } catch (ExecutionException e) {
-            System.out.println("cache access error: " + e.getMessage());
+//            System.out.println("cache access error: " + e.getMessage());
         }
         if (cachedComponents.isPresent()) {
-            System.out.println("  --> got cached components for page #" + pageId + " [ " +
-                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
+//            System.out.println("  --> got cached components for page #" + pageId + " [ " +
+//                    DateTimeFormatter.ofPattern("HH:mm:ss.SSS").format(Instant.now().atZone(ZoneId.of("UTC"))) + " ] " + Thread.currentThread().getName());
             return cachedComponents.get();
         }
         return Collections.emptyList();

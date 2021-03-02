@@ -28,12 +28,12 @@ public class ConfigServlet extends HttpServlet {
 
     @ComponentImport private final UserManager userManager;
     @ComponentImport private final TemplateRenderer renderer;
-    @ComponentImport private final LoginUriProvider loginUriProvider;
+//    @ComponentImport private final LoginUriProvider loginUriProvider;
 
     @Inject
-    public ConfigServlet(UserManager userManager, LoginUriProvider loginUriProvider, TemplateRenderer renderer) {
+    public ConfigServlet(UserManager userManager, /*LoginUriProvider loginUriProvider,*/ TemplateRenderer renderer) {
         this.userManager = userManager;
-        this.loginUriProvider = loginUriProvider;
+//        this.loginUriProvider = loginUriProvider;
         this.renderer = renderer;
     }
 

@@ -6,18 +6,18 @@ import com.atlassian.jira.issue.context.JiraContextNode;
 import com.atlassian.jira.issue.customfields.CustomFieldSearcher;
 import com.atlassian.jira.issue.customfields.CustomFieldType;
 import com.atlassian.jira.issue.customfields.CustomFieldUtils;
-import com.atlassian.jira.issue.customfields.searchers.transformer.CustomFieldInputHelper;
 import com.atlassian.jira.issue.fields.CustomField;
 import com.atlassian.jira.issue.fields.config.manager.FieldConfigSchemeManager;
 import com.atlassian.jira.issue.fields.config.manager.IssueTypeSchemeManager;
 import com.atlassian.jira.issue.issuetype.IssueType;
-import com.atlassian.jira.jql.operand.JqlOperandResolver;
 import com.atlassian.jira.project.Project;
 import com.atlassian.jira.project.ProjectManager;
 import org.ofbiz.core.entity.GenericEntityException;
-import ws.slink.statuspage.customfield.IncidentCustomFieldSearcher;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 // https://community.atlassian.com/t5/Answers-Developer-Questions/How-to-programatically-create-CustomField/qaq-p/506266
@@ -49,7 +49,7 @@ public class CustomFieldService {
             return null;
     }
     public boolean exists(String name) {
-        return get(name) != null;//ComponentAccessor.getComponent(CustomFieldManager.class).exists(name);
+        return get(name) != null;
     }
     public boolean correct(String name, String typeKey) {
         CustomField field = get(name);
@@ -82,7 +82,6 @@ public class CustomFieldService {
     }
     public boolean create(String name, List<Project> projects) {
 
-        // +
         // get custom field type for our custom field
         CustomFieldType type = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldType(INCIDENT_CUSTOM_FIELD_KEY);
         CustomFieldSearcher searcher = ComponentAccessor.getComponent(CustomFieldManager.class).getCustomFieldSearcher(INCIDENT_CUSTOM_FIELD_SEARCHER_KEY);
@@ -91,15 +90,12 @@ public class CustomFieldService {
         if (null == type)
             return false;
 
-        // +
         // get JiraContextNodes for configured projects
         List<JiraContextNode> contexts = getContextsForProjects(projects);
         if (null == contexts || contexts.isEmpty())
             return false;
 
-        // +
         // get IssueTypes for configured projects
-        // Collection<IssueType> issueTypes = ComponentAccessor.getComponent(IssueTypeSchemeManager.class).getIssueTypesForDefaultScheme();
         Set<IssueType> issueTypes = projects
             .stream()
             .map(ComponentAccessor.getComponent(IssueTypeSchemeManager.class)::getIssueTypesForProject)
@@ -131,38 +127,3 @@ public class CustomFieldService {
         return CustomFieldUtils.buildJiraIssueContexts(false, projectIds, ComponentAccessor.getComponent(ProjectManager.class));
     }
 }
-
-//        System.out.println("type key : " + type.getKey());
-//        System.out.println("type name: " + type.getName());
-//        System.out.println("type desc: " + type.getDescription());
-//        ComponentAccessor.getComponent(ProjectManager.class).getProjects()
-//            .stream()
-//            .map(ComponentAccessor.getComponent(IssueTypeSchemeManager.class)::getIssueTypesForProject)
-//            .flatMap(it -> it.stream())
-//            .forEach(issueTypes::add)
-//        ;
-//        FieldConfigScheme newConfigScheme = new FieldConfigScheme.Builder()
-//            .setName(fieldId)
-//            .setDescription(fieldDescription)
-//            .setFieldId(fieldKey)
-//            .toFieldConfigScheme()
-//        ;
-//        type.getCon
-//        ComponentAccessor.getComponent(FieldConfigSchemeManager.class).getDefaultIssueTypeScheme()
-//        FieldConfigScheme scheme = ComponentAccessor.getComponent(FieldConfigSchemeManager.class).get
-//            .createFieldConfigScheme(newConfigScheme, contexts, issueTypes, field);
-//        FieldConfigScheme newConfigScheme = new FieldConfigScheme.Builder()
-//            .setName(fieldId)
-//            .setDescription(fieldDescription)
-//            .setFieldId(fieldKey)
-//            .toFieldConfigScheme()
-//        ;
-//        public CustomField createCustomField(
-//                String fieldName,
-//                String description,
-//                CustomFieldType fieldType,
-//                CustomFieldSearcher customFieldSearcher,
-//                List&lt;JiraContextNode&gt; contexts,
-//                List&lt;IssueType&gt; issueTypes) throws GenericEntityException;
-
-

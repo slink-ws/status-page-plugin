@@ -15,7 +15,7 @@ import java.time.ZoneId;
 
 // https://developer.atlassian.com/server/jira/platform/creating-an-ajax-dialog/
 // https://community.atlassian.com/t5/Answers-Developer-Questions/How-to-programatically-create-CustomField/qaq-p/506266
-public class LinkIncident extends /*JiraWebActionSupport/**/AbstractIssueSelectAction/**/ {
+public class LinkIncident extends AbstractIssueSelectAction {
 
     private String     page;
     private String incident;

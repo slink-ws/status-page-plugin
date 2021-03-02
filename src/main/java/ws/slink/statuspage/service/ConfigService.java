@@ -60,7 +60,7 @@ public class ConfigService {
     }
     public void setAdminCustomFieldName(String value) {
         String key = CONFIG_PREFIX + "." + CONFIG_ADMIN_CUSTOM_FIELD_NAME;
-        System.out.println("--- SET " + key + " : " + value);
+//        System.out.println("--- SET " + key + " : " + value);
         pluginSettings.put(key, value);
     }
 
@@ -82,7 +82,7 @@ public class ConfigService {
     }
     public void setConfigApiKey(String projectKey, String value) {
         String key = CONFIG_PREFIX + "." + CONFIG_API_KEY + "." + projectKey;
-        System.out.println("--- SET " + key + " : " + value);
+//        System.out.println("--- SET " + key + " : " + value);
         pluginSettings.put(key, value);
     }
 
@@ -107,80 +107,4 @@ public class ConfigService {
         else
             return value;
     }
-
-/*
-    // --- administration
-    public String getRoles() {
-        return (String) pluginSettings.get(CONFIG_PREFIX + ".roles");
-    }
-    public String getProjects() {
-        return (String) pluginSettings.get(CONFIG_PREFIX + ".projects");
-    }
-    public List<String> rolesList() {
-        return getListParam("roles");
-    }
-    public List<String> projectsList() {
-        return getListParam("projects");
-    }
-
-    // --- configuration
-    public String getList(String projectKey, int id) {
-        return getConfigValue(projectKey, ".list" + id);
-    }
-    public void setList(String projectKey, int id, String value) {
-        setConfigValue(projectKey, ".list" + id, setString(value, "", ""));
-    }
-    public String getStyle(String projectKey, int id) {
-        return getConfigValue(projectKey, ".style" + id);
-    }
-    public void setStyle(String projectKey, int id, String value) {
-        setConfigValue(projectKey, ".style" + id, value);
-    }
-    public String getText(String projectKey, int id) {
-        return getConfigValue(projectKey, ".text" + id);
-    }
-    public void setText(String projectKey, int id, String value) {
-        setConfigValue(projectKey, ".text" + id, setString(value, "", ""));
-    }
-    public String getViewers(String projectKey) {
-        return getConfigValue(projectKey, ".viewers");
-    }
-    public void setViewers(String projectKey, String value) {
-        setConfigValue(projectKey, ".viewers", setString(value, "", ""));
-    }
-    public String getColor(String projectKey, int id) {
-        return getConfigValue(projectKey, ".color" + id);
-    }
-    public void setColor(String projectKey, int id, String value) {
-        if (value.startsWith("#"))
-            setConfigValue(projectKey, ".color" + id, value);
-        else
-            setConfigValue(projectKey, ".color" + id, "#" + value.trim());
-    }
-
-    // --- tools
-    private String setString(String value, String defaultValue, String newLineReplacement) {
-        if (null == value || value.isEmpty())
-            return defaultValue;
-        else
-            return value
-                .replaceAll(" +", " ")
-                .replaceAll(";" , " ")
-                .replaceAll("," , " ")
-                .replaceAll("\n", newLineReplacement);
-    }
-    private String getConfigValue(String projectKey, String key) {
-        String result = (StringUtils.isBlank(projectKey))
-                      ? (String) pluginSettings.get(CONFIG_PREFIX + key)
-                      : (String) pluginSettings.get(CONFIG_PREFIX + "." + projectKey + key);
-        return StringUtils.isBlank(result) ? "" : result;
-    }
-    private void setConfigValue(String projectKey, String key, String value) {
-        String cfgKey = (StringUtils.isBlank(projectKey))
-                      ? CONFIG_PREFIX + "key"
-                      : CONFIG_PREFIX + "." + projectKey + key;
-        pluginSettings.put(cfgKey, value);
-    }
-*/
-
 }

@@ -115,7 +115,6 @@ let $incidentTabPanel = {
         let componentId   = $("#" + $incidentTabPanel.config.newComponentTitleElementId).val();
         if (null != componentId && undefined != componentId && "" != componentId) {
             let componentName = $("#" + $incidentTabPanel.config.newComponentTitleElementId + " option:selected").text();
-            // let statusId      = $("#" + $incidentTabPanel.config.newComponentStatusElementId).val();
             $("#" + $incidentTabPanel.config.newComponentTitleElementId + " option[value='" + componentId + "']").remove();
             if ($("#" + $incidentTabPanel.config.newComponentTitleElementId + " option").length == 0) {
                 $("#" + $incidentTabPanel.config.newComponentTitleElementId).auiSelect2("val", "");
@@ -205,7 +204,7 @@ let $incidentTabPanel = {
             AJS.log("[update incident] error");
             AJS.log(error);
             AJS.log(message);
-            JIRA.Messages.showErrorMsg(error.responseText/*"could not update statuspage: <br><br> " + error.status + "<br>" + error.responseText*/)
+            JIRA.Messages.showErrorMsg(error.responseText)
             $pluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
         });
     }

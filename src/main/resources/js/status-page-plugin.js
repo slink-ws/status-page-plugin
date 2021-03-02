@@ -28,10 +28,6 @@ let $pluginCommon = {
         let result = [];
         $(".component-name").not(".removed").each(function() {
             $(this).parent().find("." + state + ".selected").each(function (){
-                // let c    = {};
-                // c.id     = $(this).parent().attr("id");
-                // c.name   = $(this).parent().find(".component-name").text()
-                // c.status = state;
                 result.push({"id": $(this).parent().attr("id"), "name": $(this).parent().find(".component-name").text(), "status": state});
             });
         });

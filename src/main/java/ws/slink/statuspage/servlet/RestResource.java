@@ -232,12 +232,12 @@ public class RestResource {
         AtomicBoolean saveResult = new AtomicBoolean(true);
         AtomicReference<String> message    = new AtomicReference<>("");
 
-        transactionTemplate.execute(/*(TransactionCallback)*/ () -> {
+        transactionTemplate.execute(() -> {
 //            config.log("~~~ received configuration: ");
 
             if (CustomFieldService.instance().exists(config.getCustomFieldId())) {
                 if (CustomFieldService.instance().correct(config.getCustomFieldId(), CustomFieldService.INCIDENT_CUSTOM_FIELD_KEY)) {
-                    System.out.println("custom field exists; update custom field & save");
+//                    System.out.println("custom field exists; update custom field & save");
                     if (!CustomFieldService.instance().update(
                         config.getCustomFieldId(),
                         getConfiguredProjects(config.getProjects())
@@ -252,7 +252,7 @@ public class RestResource {
                         CustomFieldService.instance().get(config.getCustomFieldId()).getCustomFieldType().getKey());
                 }
             } else {
-                System.out.println("custom field does not exist; create custom field & save");
+//                System.out.println("custom field does not exist; create custom field & save");
                 if (!CustomFieldService.instance().create(
                     config.getCustomFieldId(),
                     getConfiguredProjects(config.getProjects())
@@ -335,7 +335,7 @@ public class RestResource {
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            System.out.println("--- UNAUTHORIZED");
+//            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -364,7 +364,7 @@ public class RestResource {
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            System.out.println("--- UNAUTHORIZED");
+//            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -393,7 +393,7 @@ public class RestResource {
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            System.out.println("--- UNAUTHORIZED");
+//            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -435,7 +435,7 @@ public class RestResource {
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            System.out.println("--- UNAUTHORIZED");
+//            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -464,7 +464,7 @@ public class RestResource {
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            System.out.println("--- UNAUTHORIZED");
+//            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -502,7 +502,7 @@ public class RestResource {
         if (!JiraTools.instance().isIncidentManager(
                 project.get().getKey(),
                 ComponentAccessor.getUserManager().getUserByName(userManager.getRemoteUser().getUsername()))) {
-            System.out.println("--- UNAUTHORIZED");
+//            System.out.println("--- UNAUTHORIZED");
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
 
@@ -533,11 +533,11 @@ public class RestResource {
 
         Optional<Issue> issue = JiraTools.instance().getIssueByKey(issueKey);
         if (!issue.isPresent())
-            return Response.status(HttpStatus.SC_NOT_FOUND)/*.noContent()*/.build();
+            return Response.status(HttpStatus.SC_NOT_FOUND).build();
 
         Optional<IssueIncident> issueIncident = JiraTools.instance().issueIncident(issue.get());
         if (!issueIncident.isPresent())
-            return Response.status(HttpStatus.SC_NOT_FOUND)/*.noContent()*/.build();
+            return Response.status(HttpStatus.SC_NOT_FOUND).build();
 
         if (!JiraTools.instance().isIncidentViewer(
                 issueIncident.get().projectKey(),
@@ -546,7 +546,7 @@ public class RestResource {
 
         Optional<Incident> incident = StatuspageService.instance().getIncident(issueIncident.get(), true);
         if (!incident.isPresent())
-            return Response.status(HttpStatus.SC_NOT_FOUND)/*noContent()*/.build();
+            return Response.status(HttpStatus.SC_NOT_FOUND).build();
 
         return Response
             .ok(JiraTools.instance().getGsonObject().toJson(incident.get()))

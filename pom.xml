@@ -4,13 +4,21 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>ws.slink</groupId>
     <artifactId>status-page-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <organization>
         <name>slink</name>
         <url>http://www.github.com/ws-slink/</url>
     </organization>
-    <name>status-page-plugin</name>
-    <description>This is the ws.slink:status-page-plugin plugin for Atlassian JIRA.</description>
+    <name>Incident Manager for Atlassian Statuspage</name>
+    <description>
+        This plugin allows management of Atlassian Statuspage incidents directly from Jira.
+        With this plugin you can
+         link existing incident to Jira issue,
+         create new incident and assign it to Jira issue,
+         add affected components to existing incident,
+         change affected components states,
+         manage incident lifecycle.
+    </description>
     <packaging>atlassian-plugin</packaging>
 
     <dependencyManagement>
