@@ -14,88 +14,54 @@
     <h1>$i18n.getText("sp.config.label")</h1>
     <form id="config" class="aui">
         <input type="hidden" id="project" name="project" value="$projectKey" />
-        <label for="apikey">$i18n.getText("sp.config.label.apikey")</label>
-        <input type="text" id="apikey" name="apikey" value="$apiKey" size="40" />
 
-        <h3 class="h3-css">$i18n.getText('sp.config.plugin.management.roles.label')</h3>
-        <div style="width: 100%; overflow: hidden;">
-
-            <div style="width: 250px; float: left">
-                <div class="label-css">
-                    <label>$i18n.getText('sp.admin.available-roles')</label>
-                </div>
-                <select id="available-mgmt-roles" class="select select-css" size="10" multiple>
-                    #foreach($role in $availableMgmtRoles)
-                        <option value="$role.getId()">$role.getName()</option>
-                    #end
-                </select>
-            </div>
-
-            <div style="width: 70px; float: left; text-align: center; align-content: center;">
-                <div style="margin-top: 70px;">
-                    <input style="width: 45px;" type="button" onclick="config_add_mgmt_roles()" value=">" />
-                    <input style="width: 45px;" type="button" onclick="config_add_all_mgmt_roles()" value=">>" />
-                    <input style="width: 45px;" type="button" onclick="config_remove_mgmt_roles()" value="<" />
-                    <input style="width: 45px;" type="button" onclick="config_remove_all_mgmt_roles()" value="<<" />
-                </div>
-            </div>
-
-            <div style="width: 250px; float: left;">
-                <div class="label-css">
-                    <label>$i18n.getText('sp.admin.selected-roles')</label>
-                </div>
-                <select id="selected-mgmt-roles" class="select select-css" size="10" multiple>
-                    #foreach($role in $selectedMgmtRoles)
-                        <option value="$role.getId()">$role.getName()</option>
-                    #end
-                </select>
-            </div>
+        <div class="field-group">
+            <label for="apikey">$i18n.getText("sp.config.label.apikey")</label>
+            <input class="text medium-long-field" type="text" id="apikey" name="apikey" value="$apiKey" />
         </div>
 
-
-        <h3 class="h3-css">$i18n.getText('sp.config.plugin.view.roles.label')</h3>
-        <div style="width: 100%; overflow: hidden;">
-
-            <div style="width: 250px; float: left">
-                <div class="label-css">
-                    <label>$i18n.getText('sp.admin.available-roles')</label>
-                </div>
-                <select id="available-view-roles" class="select select-css" size="10" multiple>
-                    #foreach($role in $availableViewRoles)
+        <div class="field-group">
+            <label for="managers">$i18n.getText("sp.config.plugin.manager.roles.label")</label>
+            <select id="managers"
+                    class="select select-css long-field"
+                    name="managers[]"
+                    multiple="multiple">
+                #foreach($role in $managers)
+                    #if ($role.getSelected())
+                        <option selected value="$role.getId()">$role.getName()</option>
+                    #else
                         <option value="$role.getId()">$role.getName()</option>
                     #end
-                </select>
-            </div>
-
-            <div style="width: 70px; float: left; text-align: center; align-content: center;">
-                <div style="margin-top: 70px;">
-                    <input style="width: 45px;" type="button" onclick="config_add_view_roles()" value=">" />
-                    <input style="width: 45px;" type="button" onclick="config_add_all_view_roles()" value=">>" />
-                    <input style="width: 45px;" type="button" onclick="config_remove_view_roles()" value="<" />
-                    <input style="width: 45px;" type="button" onclick="config_remove_all_view_roles()" value="<<" />
-                </div>
-            </div>
-
-            <div style="width: 250px; float: left;">
-                <div class="label-css">
-                    <label>$i18n.getText('sp.admin.selected-roles')</label>
-                </div>
-                <select id="selected-view-roles" class="select select-css" size="10" multiple>
-                    #foreach($role in $selectedViewRoles)
-                        <option value="$role.getId()">$role.getName()</option>
-                    #end
-                </select>
-            </div>
+                #end
+            </select>
         </div>
 
-        <div style="width: 100%; overflow: hidden; padding-top: 1em;">
-            <div style="width: 250px; float: left">&nbsp;</div>
-            <div style="width: 70px; float: left; text-align: center; align-content: center;">
-                <input onclick="config_update_config();" class="aui-button button" type="button" value="$i18n.getText('sp.admin.save.label')" />
-            </div>
-            <div style="width: 250px; float: left;">&nbsp;</div>
+        <div class="field-group">
+            <label for="viewers">$i18n.getText("sp.config.plugin.viewer.roles.label")</label>
+            <select id="viewers"
+                    class="select select-css long-field"
+                    name="viewers[]"
+                    multiple="multiple">
+                #foreach($role in $viewers)
+                    #if ($role.getSelected())
+                        <option selected value="$role.getId()">$role.getName()</option>
+                    #else
+                        <option value="$role.getId()">$role.getName()</option>
+                    #end
+                #end
+            </select>
+        </div>
+
+        <div class="field-group">
+            <input onclick="config_update_config();" class="aui-button button" type="button" value="$i18n.getText('sp.admin.save.label')" />
         </div>
 
     </form>
+
+    <script>
+        AJS.$("#managers").auiSelect2();
+        AJS.$("#viewers").auiSelect2();
+    </script>
+
 </body>
 </html>

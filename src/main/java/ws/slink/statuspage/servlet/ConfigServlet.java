@@ -9,6 +9,7 @@ import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
 import com.atlassian.sal.api.auth.LoginUriProvider;
 import com.atlassian.sal.api.user.UserManager;
 import com.atlassian.templaterenderer.TemplateRenderer;
+import ws.slink.statuspage.model.ConfigRole;
 import ws.slink.statuspage.service.ConfigService;
 import ws.slink.statuspage.tools.JiraTools;
 
@@ -51,18 +52,19 @@ public class ConfigServlet extends HttpServlet {
             Collection<String> selectedMgmtRolesParam  = ConfigService.instance().getConfigMgmtRoles(project.getKey());
             Collection<String> selectedViewRolesParam  = ConfigService.instance().getConfigViewRoles(project.getKey());
 
-            ProjectRoleManager projectRoleManager      = ComponentManager.getInstance().getComponentInstanceOfType(ProjectRoleManager.class);
-            Collection<ProjectRole> allProjectRoles    = projectRoleManager.getProjectRoles();
-            Collection<ProjectRole> selectedMgmtRoles  = allProjectRoles.stream().filter(p ->  selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
-            Collection<ProjectRole> availableMgmtRoles = allProjectRoles.stream().filter(p -> !selectedMgmtRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
-            Collection<ProjectRole> selectedViewRoles  = allProjectRoles.stream().filter(p ->  selectedViewRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
-            Collection<ProjectRole> availableViewRoles = allProjectRoles.stream().filter(p -> !selectedViewRolesParam.contains(p.getId().toString())).collect(Collectors.toList());
+            ProjectRoleManager projectRoleManager = ComponentManager.getInstance().getComponentInstanceOfType(ProjectRoleManager.class);
+            Collection<ConfigRole>      mgmtRoles = projectRoleManager.getProjectRoles()
+                .stream()
+                .map(role -> new ConfigRole(role, selectedMgmtRolesParam.contains(String.valueOf(role.getId()))))
+                .collect(Collectors.toList());
+            Collection<ConfigRole>      viewRoles = projectRoleManager.getProjectRoles()
+                .stream()
+                .map(role -> new ConfigRole(role, selectedViewRolesParam.contains(String.valueOf(role.getId()))))
+                .collect(Collectors.toList());
 
-            contextParams.put("availableMgmtRoles", availableMgmtRoles);
-            contextParams.put("selectedMgmtRoles" , selectedMgmtRoles);
-            contextParams.put("availableViewRoles", availableViewRoles);
-            contextParams.put("selectedViewRoles" , selectedViewRoles);
-            contextParams.put("apiKey", ConfigService.instance().getConfigApiKey(project.getKey()));
+            contextParams.put("managers", mgmtRoles);
+            contextParams.put("viewers" , viewRoles);
+            contextParams.put("apiKey"  , ConfigService.instance().getConfigApiKey(project.getKey()));
 
             if (!JiraTools.instance().isPluginManager(userManager.getRemoteUser())) {
                 response.setContentType("text/html;charset=utf-8");

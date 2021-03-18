@@ -1,18 +1,4 @@
-.select-css {
-    background-color: red;
-    min-height: 100px;
-    height: 100px;
-}
-.column {
-    width: 300px;
-    float: left;
-    background-color: yellow;
-}
-.label-css {
-    font-size: 1.1em;
-    padding-bottom: 0.5em;
-}
-
-.h3-css {
-    padding-bottom: 0.5em;
+.field-group {
+    padding-top: 1.5em;
+    padding-bottom: 0em;
 }
