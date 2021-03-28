@@ -1,4 +1,4 @@
-let $pluginCommon = {
+let $statusPageCommon = {
      config: {
          restBaseUrl: "/rest/ws-slink-statuspage/1.0/api"
      }
@@ -42,10 +42,10 @@ let $pluginCommon = {
     }
     ,getComponentsConfig: function() {
         let result = {};
-        $pluginCommon.status_values.forEach(function(item, index) {
-            result[item] = $pluginCommon.getComponents(item);
+        $statusPageCommon.status_values.forEach(function(item, index) {
+            result[item] = $statusPageCommon.getComponents(item);
         })
-        result["remove"] = $pluginCommon.getRemovedComponents();
+        result["remove"] = $statusPageCommon.getRemovedComponents();
         return result;
     }
     ,buttonBusy: function(buttonId, doDisable) {
@@ -72,10 +72,10 @@ let $pluginCommon = {
         }
     }
     ,accessQuery: async function() {
-        return await jQuery.get(AJS.contextPath() + $pluginCommon.config.restBaseUrl + "/access")
+        return await jQuery.get(AJS.contextPath() + $statusPageCommon.config.restBaseUrl + "/access")
     }
     ,checkAccess: function(fOk, fNok) {
-        $pluginCommon.accessQuery().then(function(result) {
+        $statusPageCommon.accessQuery().then(function(result) {
             // console.log("----> access check ok: " + JSON.stringify(result));
             try {
                 fOk();
@@ -89,10 +89,10 @@ let $pluginCommon = {
     }
 
     ,incidentsQuery: async function(issueKey) {
-        return await jQuery.get(AJS.contextPath() + $pluginCommon.config.restBaseUrl + "/incident/" + issueKey);
+        return await jQuery.get(AJS.contextPath() + $statusPageCommon.config.restBaseUrl + "/incident/" + issueKey);
     }
     ,componentsQuery: async function(issueKey, incident) {
-        return await jQuery.get(AJS.contextPath() + $pluginCommon.config.restBaseUrl + "/components?issueKey=" + issueKey + "&pageId=" + incident.page.id);
+        return await jQuery.get(AJS.contextPath() + $statusPageCommon.config.restBaseUrl + "/components?issueKey=" + issueKey + "&pageId=" + incident.page.id);
     }
 
     ,setImpact: function(impact, tabPanelBlockId, glancePanelBlockId) {
@@ -127,10 +127,23 @@ let $pluginCommon = {
         $(".tab-panel #" + tabPanelBlockId + " a").html(value);
         $("#" + glancePanelBlockId + " a").html(value);
     }
+
+    ,getSelectValuesString: function (element) {
+        let result = "";
+        let arr = AJS.$("#" + element + " option:selected");
+        for (let i = 0; i < arr.length; i++) {
+            result += arr[i].value;
+            if (i < arr.length - 1)
+                result += ",";
+        }
+        return result;
+    }
 }
 
 AJS.$(function () {
     // https://developer.atlassian.com/server/jira/platform/displaying-content-in-a-dialog-in-jira/
+
+    // AJS.log("[STATUSPAGE PLUGIN JS LOADED]");
 
     JIRA.Dialogs.incidentLinkDialog = new JIRA.FormDialog({
         id: "incident-link-dialog",

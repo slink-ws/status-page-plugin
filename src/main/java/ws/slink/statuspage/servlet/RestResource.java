@@ -12,6 +12,8 @@ import com.atlassian.sal.api.user.UserKey;
 import com.atlassian.sal.api.user.UserManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ws.slink.statuspage.StatusPage;
 import ws.slink.statuspage.error.IncidentNotFound;
 import ws.slink.statuspage.error.ServiceCallException;
@@ -49,6 +51,8 @@ import java.util.stream.Collectors;
 @Scanned
 @Path("/")
 public class RestResource {
+
+    private static final Logger log = LoggerFactory.getLogger(RestResource.class);
 
     @ComponentImport private final UserManager userManager;
     @ComponentImport private final TransactionTemplate transactionTemplate;
@@ -224,6 +228,9 @@ public class RestResource {
     @Path("/admin")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response putAdminParams(final AdminParams config, @Context HttpServletRequest request) {
+
+        log.trace("--- [STATUSPAGE] [CONFIG] save admin params: {}", config);
+
         UserKey userKey = userManager.getRemoteUser().getUserKey();
         if (userKey == null || !userManager.isSystemAdmin(userKey)) {
             return Response.status(Response.Status.UNAUTHORIZED).build();

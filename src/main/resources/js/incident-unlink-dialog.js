@@ -5,7 +5,7 @@ let $incidentUnlinkDialog = {
         unlinkFormWarningId: "unlink-form-warning"
     },
     checkAccess: function () {
-        $pluginCommon
+        $statusPageCommon
             .checkAccess(
                 () => {
                     $("#" + $incidentUnlinkDialog.config.unlinkFormWarningId).hide()
@@ -20,3 +20,8 @@ let $incidentUnlinkDialog = {
             );
     }
 }
+
+AJS.$(function () {
+    // AJS.log("incidentUnlinkDialog loaded");
+    $("#page-location").val($(location).attr('href'));
+});

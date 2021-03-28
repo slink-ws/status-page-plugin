@@ -1,6 +1,3 @@
-AJS.$(function () {
-    // AJS.log("statuspage loaded");
-});
 let $statuspage = {
 
     // ----------- API -------------
@@ -88,3 +85,7 @@ let $statuspage = {
         return await jQuery.get(url_);
     }
 }
+
+AJS.$(function () {
+    // AJS.log("[STATUSPAGE JS LOADED]");
+});

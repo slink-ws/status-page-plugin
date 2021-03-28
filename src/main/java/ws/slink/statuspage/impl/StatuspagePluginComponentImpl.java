@@ -15,15 +15,17 @@ import javax.inject.Named;
 @Named ("statuspagePluginComponent")
 public class StatuspagePluginComponentImpl implements StatuspagePluginComponent {
 
-        @ComponentImport private final ApplicationProperties applicationProperties;
-        @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
+
+
+    @ComponentImport private final ApplicationProperties applicationProperties;
+    @ComponentImport private final PluginSettingsFactory pluginSettingsFactory;
 
     @Inject
     public StatuspagePluginComponentImpl(final ApplicationProperties applicationProperties, final PluginSettingsFactory pluginSettingsFactory) {
 //        System.out.println("---- created component");
         this.applicationProperties = applicationProperties;
         this.pluginSettingsFactory = pluginSettingsFactory;
-        ConfigService.instance().setPluginSettings(pluginSettingsFactory.createGlobalSettings());
+        ConfigService.instance().init(pluginSettingsFactory);
         StatuspageService.instance().clear();
         ConfigService.instance().getAdminProjects().stream().forEach(p ->
             StatuspageService.instance().init(p, ConfigService.instance().getConfigApiKey(p))
