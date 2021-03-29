@@ -5,7 +5,7 @@ let $incidentUnlinkDialog = {
         unlinkFormWarningId: "unlink-form-warning"
     },
     checkAccess: function () {
-        $pluginCommon
+        $statusPagePluginCommon
             .checkAccess(
                 () => {
                     $("#" + $incidentUnlinkDialog.config.unlinkFormWarningId).hide()
@@ -20,3 +20,7 @@ let $incidentUnlinkDialog = {
             );
     }
 }
+
+AJS.$(function () {
+    // AJS.log("[STATUSPAGE UnlinkDialog JS LOADED]");
+});

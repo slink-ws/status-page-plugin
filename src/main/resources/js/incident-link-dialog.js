@@ -7,7 +7,7 @@ let $incidentLinkDialog = {
         linkFormWarningId: "link-form-warning"
     },
     checkAccess: function () {
-        $pluginCommon
+        $statusPagePluginCommon
             .checkAccess(
                 () => {
                     $("#" + $incidentLinkDialog.config.linkFormWarningId).hide()
@@ -53,7 +53,7 @@ let $incidentLinkDialog = {
                 $("#sp-link-incident").trigger('change');
             }
 
-            $pluginCommon.buttonIdle($incidentLinkDialog.config.linkButtonId);
+            $statusPagePluginCommon.buttonIdle($incidentLinkDialog.config.linkButtonId);
         }).catch(function(error) {
             AJS.log("[load incidents] service call error: ");
             AJS.log(error);
@@ -62,6 +62,6 @@ let $incidentLinkDialog = {
 }
 
 AJS.$(function () {
-    // AJS.log("incidentLinkDialog loaded");
+    // AJS.log("[STATUSPAGE LinkDialog JS LOADED]");
     $("#page-location").val($(location).attr('href'));
 });

@@ -174,8 +174,9 @@
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <dependency>com.atlassian.auiplugin:aui-select2</dependency>
     <resource type="download" name="status-page-admin.css" location="/css/status-page-admin.css"/>
-    <resource type="download" name="status-page-admin.js" location="/js/status-page-admin.js"/>  
-    <context>atl.admin</context> 
+    <resource type="download" name="status-page-admin.js" location="/js/status-page-admin.js"/>
+    <resource type="download" name="status-page-plugin.js" location="/js/status-page-plugin.js"/>
+    <context>ws.slink.statuspage.admin</context>
   </web-resource>  
   <servlet key="admin-servlet" class="ws.slink.statuspage.servlet.AdminServlet"> 
     <resource type="i18n" name="i18n" location="status-page-plugin"/>  
@@ -188,8 +189,9 @@
     <dependency>com.atlassian.auiplugin:ajs</dependency>
     <dependency>com.atlassian.auiplugin:aui-select2</dependency>
     <resource type="download" name="status-page-config.js" location="/js/status-page-config.js"/>
-    <resource type="download" name="status-page-config.css" location="/css/status-page-config.css"/>  
-    <context>status-page-plugin</context> 
+    <resource type="download" name="status-page-config.css" location="/css/status-page-config.css"/>
+    <resource type="download" name="status-page-plugin.js" location="/js/status-page-plugin.js"/>
+    <context>ws.slink.statuspage.config</context>
   </web-resource>  
   <servlet key="config-servlet" class="ws.slink.statuspage.servlet.ConfigServlet"> 
     <resource type="i18n" name="i18n" location="status-page-plugin"/>  
