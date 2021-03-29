@@ -7,8 +7,9 @@
     <meta name="projectId"            content="$projectId"/>
     <meta name="admin.active.tab"     content="sp-item-cfg"/>
     <meta name="admin.active.section" content="atl.jira.proj.config"/>
-    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
-    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-config")
+##    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+##    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-config")
+    $webResourceManager.requireResourcesForContext("ws.slink.statuspage.config")
 </head>
 <body>
     <h1>$i18n.getText("sp.config.label")</h1>
@@ -61,6 +62,9 @@
     <script>
         AJS.$("#managers").auiSelect2();
         AJS.$("#viewers").auiSelect2();
+        function config_update_config() {
+            $statusPageConfig.updateConfig();
+        }
     </script>
 
 </body>

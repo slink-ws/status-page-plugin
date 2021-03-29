@@ -4,8 +4,9 @@
     <title>$i18n.getText("sp.admin.label")</title>
     <meta name="decorator" content="atl.admin" />
 ##    $webResourceManager.requireResource("com.atlassian.auiplugin:aui-select2")
-    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
-    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-admin-resources")
+##    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+##    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-admin-resources")
+    $webResourceManager.requireResourcesForContext("ws.slink.statuspage.admin")
 </head>
 <body>
     <h1>$i18n.getText("sp.admin.label")</h1>
@@ -53,6 +54,9 @@
     <script>
         AJS.$("#projects").auiSelect2();
         AJS.$("#roles").auiSelect2();
+        function admin_update_config() {
+            $statusPageAdmin.updateConfig();
+        }
     </script>
 
 </body>

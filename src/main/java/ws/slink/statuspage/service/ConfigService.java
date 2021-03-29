@@ -8,8 +8,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigService {
+
+    private static final Logger log = LoggerFactory.getLogger(ConfigService.class);
 
     private static class PluginConfigServiceSingleton {
         private static final ConfigService INSTANCE = new ConfigService();
@@ -19,6 +23,7 @@ public class ConfigService {
     }
 
     public static final String CONFIG_PREFIX                  = "ws.slink.status-page-plugin";
+
     public static final String CONFIG_ADMIN_PROJECTS          = "admin.projects";
     public static final String CONFIG_ADMIN_ROLES             = "admin.roles";
     public static final String CONFIG_ADMIN_CUSTOM_FIELD_NAME = "admin.custom_field_name";
@@ -42,15 +47,17 @@ public class ConfigService {
     public Collection<String> getAdminProjects() { // returns list of projectKey
         return getListParam(CONFIG_ADMIN_PROJECTS);
     }
+    public void setAdminProjects(String projects) {
+        setParam(CONFIG_ADMIN_PROJECTS, projects);
+    }
+
     public Collection<String> getAdminRoles() { // returns list of roleId
         return getListParam(CONFIG_ADMIN_ROLES);
     }
-    public void setAdminProjects(String projects) {
-        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_ADMIN_PROJECTS, projects);
-    }
     public void setAdminRoles(String roles) {
-        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_ADMIN_ROLES, roles);
+        setParam(CONFIG_ADMIN_ROLES, roles);
     }
+
     public String getAdminCustomFieldName() {
         String result = getParam(CONFIG_ADMIN_CUSTOM_FIELD_NAME);
         if (StringUtils.isBlank(result))
@@ -59,52 +66,78 @@ public class ConfigService {
             return result;
     }
     public void setAdminCustomFieldName(String value) {
-        String key = CONFIG_PREFIX + "." + CONFIG_ADMIN_CUSTOM_FIELD_NAME;
-//        System.out.println("--- SET " + key + " : " + value);
-        pluginSettings.put(key, value);
+        setParam(CONFIG_ADMIN_CUSTOM_FIELD_NAME, value);
     }
 
     public Collection<String> getConfigMgmtRoles(String projectKey) {
-        return getListParam(CONFIG_MGMT_ROLES + "." + projectKey);
+        return getListParam(CONFIG_MGMT_ROLES, projectKey);
     }
     public void setConfigMgmtRoles(String projectKey, String roles) {
-        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_MGMT_ROLES + "." + projectKey, roles);
+        setParam(CONFIG_MGMT_ROLES, projectKey, roles);
     }
+
     public Collection<String> getConfigViewRoles(String projectKey) {
-        return getListParam(CONFIG_VIEW_ROLES + "." + projectKey);
+        return getListParam(CONFIG_VIEW_ROLES, projectKey);
     }
     public void setConfigViewRoles(String projectKey, String roles) {
-        pluginSettings.put(CONFIG_PREFIX + "." + CONFIG_VIEW_ROLES + "." + projectKey, roles);
+        setParam(CONFIG_VIEW_ROLES, projectKey, roles);
     }
+
     public String getConfigApiKey(String projectKey) {
-        String value = getParam(CONFIG_API_KEY + "." + projectKey);
-        return value;
+        return getParam(CONFIG_API_KEY, projectKey);
     }
     public void setConfigApiKey(String projectKey, String value) {
-        String key = CONFIG_PREFIX + "." + CONFIG_API_KEY + "." + projectKey;
-//        System.out.println("--- SET " + key + " : " + value);
+        setParam(CONFIG_API_KEY, projectKey, value);
+    }
+
+    private void setParam(String paramKey, String value) {
+        setParam(paramKey, null, value);
+    }
+    private void setParam(String paramKey, String projectKey, Object value) {
+        String key = CONFIG_PREFIX + "." + paramKey;
+        if (StringUtils.isNotBlank(projectKey)) {
+            key += "." + projectKey;
+        }
+        log.trace("--- [STATUSPAGE] [CONFIG] SET KEY {} : {}", key, value);
         pluginSettings.put(key, value);
     }
 
-    private List<String> getListParam(String param) {
-        try {
-            Object value = pluginSettings.get(CONFIG_PREFIX + "." + param);
-            if (null == value || StringUtils.isBlank(value.toString())) {
-                return Collections.EMPTY_LIST;
-            } else {
-                return Arrays.stream(value.toString().split(",")).map(s -> s.trim()).collect(Collectors.toList());
-            }
-        } catch (Exception e) {
-            return Collections.EMPTY_LIST;
-        }
+    private String getParam(String paramKey) {
+        return getParam(paramKey, null);
     }
-    private String getParam(String param) {
-        String key = CONFIG_PREFIX + "." + param;
+    private String getParam(String paramKey, String projectKey) {
+        String key = CONFIG_PREFIX + "." + paramKey;
+        if (StringUtils.isNotBlank(projectKey)) {
+            key += "." + projectKey;
+        }
         String value = (String) pluginSettings.get(key);
-//        System.out.println("--- GET " + key + " : " + value);
+        log.trace("--- [STATUSPAGE] [CONFIG] GET KEY {}.{} : empty", CONFIG_PREFIX, key);
         if (StringUtils.isBlank(value))
             return "";
         else
             return value;
+    }
+
+    private List<String> getListParam(String paramKey) {
+        return getListParam(paramKey, null);
+    }
+
+    private List<String> getListParam(String paramKey, String projectKey) {
+        try {
+            String value = getParam(paramKey, projectKey);
+            if (StringUtils.isBlank(value)) {
+                log.trace("--- [STATUSPAGE] [CONFIG] GET LIST {} : null", paramKey);
+                return Collections.EMPTY_LIST;
+            } else {
+                List<String> result = Arrays.stream(value.split(","))
+                    .map(s -> s.trim())
+                    .collect(Collectors.toList());
+                log.trace("--- [STATUSPAGE] [CONFIG] GET LIST {} : {}", paramKey, result);
+                return result;
+            }
+        } catch (Exception e) {
+            log.trace("--- [STATUSPAGE] [CONFIG] GET LIST {} : empty", paramKey);
+            return Collections.EMPTY_LIST;
+        }
     }
 }
