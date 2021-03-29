@@ -7,8 +7,8 @@
     <meta name="projectId"            content="$projectId"/>
     <meta name="admin.active.tab"     content="sp-item-cfg"/>
     <meta name="admin.active.section" content="atl.jira.proj.config"/>
-    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
-    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-config")
+##    $webResourceManager.requireResource("com.atlassian.auiplugin:ajs")
+##    $webResourceManager.requireResource("ws.slink.status-page-plugin:status-page-plugin-config")
     $webResourceManager.requireResourcesForContext("ws.slink.statuspage.config")
 </head>
 <body>

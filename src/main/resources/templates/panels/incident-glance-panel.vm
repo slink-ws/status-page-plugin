@@ -1,4 +1,5 @@
-$webResourceManager.requireResourcesForContext("ws.slink.statuspage.panel")
+##$webResourceManager.requireResourcesForContext("ws.slink.statuspage.panel")
+##$webResourceManager.requireResource("ws.slink.status-page-plugin:statuspage-panel-resources")
 <div class="mod-content">
     <ul class="item-details">
         <dl class="incident-glance-list-item">

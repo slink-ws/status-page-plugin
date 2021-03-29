@@ -2,8 +2,8 @@ let $statusPageConfig = {
     updateConfig: function() {
         let apikey = AJS.$('input[name=apikey]').val();
         let project = AJS.$('input[name=project]').val();
-        let mgmt_roles = $statusPageCommon.getSelectValuesString("managers");
-        let view_roles = $statusPageCommon.getSelectValuesString("viewers");
+        let mgmt_roles = $statusPagePluginCommon.getSelectValuesString("managers");
+        let view_roles = $statusPagePluginCommon.getSelectValuesString("viewers");
 
         // AJS.log("~~~ SAVING CONFIGURATION:");
         // AJS.log("       project   : " + project);
@@ -24,6 +24,7 @@ let $statusPageConfig = {
         });
     }
 }
+
 AJS.$(function () {
     // console.log("[STATUSPAGE CONFIG JS LOADED]");
 });

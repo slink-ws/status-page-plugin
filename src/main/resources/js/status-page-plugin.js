@@ -1,4 +1,4 @@
-let $statusPageCommon = {
+let $statusPagePluginCommon = {
      config: {
          restBaseUrl: "/rest/ws-slink-statuspage/1.0/api"
      }
@@ -42,10 +42,10 @@ let $statusPageCommon = {
     }
     ,getComponentsConfig: function() {
         let result = {};
-        $statusPageCommon.status_values.forEach(function(item, index) {
-            result[item] = $statusPageCommon.getComponents(item);
+        $statusPagePluginCommon.status_values.forEach(function(item, index) {
+            result[item] = $statusPagePluginCommon.getComponents(item);
         })
-        result["remove"] = $statusPageCommon.getRemovedComponents();
+        result["remove"] = $statusPagePluginCommon.getRemovedComponents();
         return result;
     }
     ,buttonBusy: function(buttonId, doDisable) {
@@ -72,10 +72,10 @@ let $statusPageCommon = {
         }
     }
     ,accessQuery: async function() {
-        return await jQuery.get(AJS.contextPath() + $statusPageCommon.config.restBaseUrl + "/access")
+        return await jQuery.get(AJS.contextPath() + $statusPagePluginCommon.config.restBaseUrl + "/access")
     }
     ,checkAccess: function(fOk, fNok) {
-        $statusPageCommon.accessQuery().then(function(result) {
+        $statusPagePluginCommon.accessQuery().then(function(result) {
             // console.log("----> access check ok: " + JSON.stringify(result));
             try {
                 fOk();
@@ -89,10 +89,10 @@ let $statusPageCommon = {
     }
 
     ,incidentsQuery: async function(issueKey) {
-        return await jQuery.get(AJS.contextPath() + $statusPageCommon.config.restBaseUrl + "/incident/" + issueKey);
+        return await jQuery.get(AJS.contextPath() + $statusPagePluginCommon.config.restBaseUrl + "/incident/" + issueKey);
     }
     ,componentsQuery: async function(issueKey, incident) {
-        return await jQuery.get(AJS.contextPath() + $statusPageCommon.config.restBaseUrl + "/components?issueKey=" + issueKey + "&pageId=" + incident.page.id);
+        return await jQuery.get(AJS.contextPath() + $statusPagePluginCommon.config.restBaseUrl + "/components?issueKey=" + issueKey + "&pageId=" + incident.page.id);
     }
 
     ,setImpact: function(impact, tabPanelBlockId, glancePanelBlockId) {
@@ -127,7 +127,6 @@ let $statusPageCommon = {
         $(".tab-panel #" + tabPanelBlockId + " a").html(value);
         $("#" + glancePanelBlockId + " a").html(value);
     }
-
     ,getSelectValuesString: function (element) {
         let result = "";
         let arr = AJS.$("#" + element + " option:selected");

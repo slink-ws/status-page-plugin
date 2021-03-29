@@ -1,7 +1,7 @@
 let $statusPageAdmin = {
     updateConfig: function (){
-        let projects = $statusPageCommon.getSelectValuesString("projects");
-        let roles = $statusPageCommon.getSelectValuesString("roles");
+        let projects = $statusPagePluginCommon.getSelectValuesString("projects");
+        let roles = $statusPagePluginCommon.getSelectValuesString("roles");
         let field_name = AJS.$("#custom-field-name")[0].value;
 
         // AJS.log("~~~ SAVING CONFIGURATION:");
@@ -28,6 +28,7 @@ let $statusPageAdmin = {
         });
     }
 }
+
 AJS.$(function () {
     // console.log("[STATUSPAGE ADMIN JS LOADED]");
 });

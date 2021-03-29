@@ -13,7 +13,7 @@ let $incidentCreateDialog = {
     },
     checkAccess: function () {
         // console.log("----> create dialog check access");
-        $statusPageCommon
+        $statusPagePluginCommon
             .checkAccess(
                 () => {
                     // console.log("-----> create dialog ok! loading create page!")
@@ -31,11 +31,11 @@ let $incidentCreateDialog = {
             );
     },
     loadDialog: function () {
-        $statusPageCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $incidentCreateDialog.loadImpacts();
     },
     loadImpacts: function() {
-        $statusPageCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.impacts().then(function(impacts) {
             let options_str = "";
             impacts.forEach( function(item) {
@@ -49,7 +49,7 @@ let $incidentCreateDialog = {
         });
     },
     loadHeader : function() {
-        $statusPageCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.componentStatuses().then(function(statuses) {
             $incidentCreateDialog.componentStatuses = statuses;
             let header_str = '<div class="component-name-header">&nbsp;</div>';
@@ -63,7 +63,7 @@ let $incidentCreateDialog = {
                 header_str  += '<span id="components-header-' + item.id + '"' +
                     ' onclick="headerButtonClick(this)" ' +
                     ' title="Set all components to \'' + item.title + '\' state" ' +
-                    ' class="component-button component-header ' + item.id + ' header aui-icon aui-icon-small ' + $statusPageCommon.getComponentStatusButtonClass(item.id) + '">' +
+                    ' class="component-button component-header ' + item.id + ' header aui-icon aui-icon-small ' + $statusPagePluginCommon.getComponentStatusButtonClass(item.id) + '">' +
                     item.title + '</span>';
             });
             header_str += '<div style="float: left; width: 10px;"></div>'
@@ -75,7 +75,7 @@ let $incidentCreateDialog = {
         });
     },
     loadPages : function() {
-        $statusPageCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.pages().then(function(pages) {
             let options_str = "";
             pages.forEach( function(page) {
@@ -89,7 +89,7 @@ let $incidentCreateDialog = {
         });
     },
     loadGroups : function() {
-        $statusPageCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $('#' + $incidentCreateDialog.config.componentsElement).html("");
         $statuspage.groups($('#' + $incidentCreateDialog.config.pagesElement).val()).then(function(groups) {
             $incidentCreateDialog.loadComponents(groups);
@@ -99,7 +99,7 @@ let $incidentCreateDialog = {
         });
     },
     loadComponents: function(groups) {
-        $statusPageCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentCreateDialog.config.createButtonId, true);
         $statuspage.components($('#' + $incidentCreateDialog.config.pagesElement).val()).then(function(components) {
             let groupedComponents = {};
             groupedComponents["---no-group---"] = {};
@@ -139,7 +139,7 @@ let $incidentCreateDialog = {
                         $incidentCreateDialog.cachedComponents[component.id] = component;
                         $incidentCreateDialog.componentStatuses.forEach(function(status) {
                             components_str += $incidentCreateDialog.buttonHTML(
-                                $statusPageCommon.getComponentStatusButtonClass(status.id),
+                                $statusPagePluginCommon.getComponentStatusButtonClass(status.id),
                                 false,
                                 component.id,
                                 status.id,
@@ -152,7 +152,7 @@ let $incidentCreateDialog = {
                 }
             }
             $('#' + $incidentCreateDialog.config.componentsElement).html(components_str);
-            $statusPageCommon.buttonIdle($incidentCreateDialog.config.createButtonId);
+            $statusPagePluginCommon.buttonIdle($incidentCreateDialog.config.createButtonId);
         }).catch(function(error) {
             AJS.log("[load components] service call error: ");
             AJS.log(error);
@@ -209,9 +209,9 @@ let $incidentCreateDialog = {
         this.updateComponentsConfig();
     },
     updateComponentsConfig : function() {
-        let components = $statusPageCommon.getComponentsConfig();
+        let components = $statusPagePluginCommon.getComponentsConfig();
         let componentsForUpdate = {};
-        $statusPageCommon.status_values.forEach(function(item) {
+        $statusPagePluginCommon.status_values.forEach(function(item) {
             componentsForUpdate[item] = components[item].map(a => a.id);
         })
         $("#components-config").val(JSON.stringify(componentsForUpdate));
@@ -230,6 +230,6 @@ let $incidentCreateDialog = {
 }
 
 AJS.$(function () {
-    // AJS.log("incidentCreateDialog loaded");
+    // AJS.log("[STATUSPAGE CreateDialog JS LOADED]");
     $("#page-location").val($(location).attr('href'));
 });

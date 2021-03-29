@@ -1,6 +1,9 @@
-##<!doctype html>
-##<html>
-##    <body>
+<!doctype html>
+<html lang="en">
+    <head>
+##        $webResourceManager.requireResourcesForContext("ws.slink.statuspage.popup.create")
+    </head>
+    <body>
         <h2 class="dialog-title red">$i18n.getText('incident-create-dialog.title')</h2>
         <form class="aui incident-dialog-form" action="CreateIncident.jspa" method="post">
             <input type="hidden" name="atl_token" value="${atl_token}" />
@@ -91,6 +94,6 @@
                 $incidentCreateDialog.checkAccess();
             });
         </script>
-##    </body>
-##</html>
+    </body>
+</html>
 

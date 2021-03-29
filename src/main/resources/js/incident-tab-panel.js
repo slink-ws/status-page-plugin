@@ -127,7 +127,7 @@ let $incidentTabPanel = {
         }
     }
    ,addAffectedComponent: function(component) {
-        let f = $statusPageCommon.getComponentStatusButtonClass;
+        let f = $statusPagePluginCommon.getComponentStatusButtonClass;
         let html  = '<div class="component" id="' + component.id + '">\n';
         html += '<div class="component-name">' + component.name + '</div>\n';
         $("#" + $incidentTabPanel.config.newComponentStatusElementId + " > option").each(function() {
@@ -148,7 +148,7 @@ let $incidentTabPanel = {
         $incidentTabPanel.confirmDialog.show();
    }
    ,doUpdateIncident: function() {
-        $statusPageCommon.buttonBusy($incidentTabPanel.config.updateButtonId, false);
+        $statusPagePluginCommon.buttonBusy($incidentTabPanel.config.updateButtonId, false);
 
         let status     = $("#" + $incidentTabPanel.config.statusBlockId  + " .selected").attr("id");
         let impact     = $("#" + $incidentTabPanel.config.impactBlockId  + " .selected").attr("id");
@@ -159,9 +159,9 @@ let $incidentTabPanel = {
         let projectKey = $("#" + $incidentTabPanel.config.projectKeyBlockId).val();
         let issueKey   = JIRA.Issue.getIssueKey() // $("#" + $incidentTabPanel.config.issueKeyBlockId).val();
 
-        let components = $statusPageCommon.getComponentsConfig();
+        let components = $statusPagePluginCommon.getComponentsConfig();
         let componentsForUpdate = {};
-        $statusPageCommon.status_values.forEach(function(item, index) {
+        $statusPagePluginCommon.status_values.forEach(function(item, index) {
             componentsForUpdate[item] = components[item].map(a => a.id);
         })
         let config = {}
@@ -184,7 +184,7 @@ let $incidentTabPanel = {
             processData: false
         }).done(function () {
             JIRA.Messages.showSuccessMsg("statuspage updated");
-            $statusPageCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+            $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
             if (status == "resolved") {
                 $("#" + $incidentTabPanel.config.updateButtonId).hide();
                 $("#" + $incidentTabPanel.config.newComponentBlockId).hide();
@@ -205,19 +205,19 @@ let $incidentTabPanel = {
             AJS.log(error);
             AJS.log(message);
             JIRA.Messages.showErrorMsg(error.responseText)
-            $statusPageCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+            $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
         });
     }
    ,reloadIncident: function() {
-        $statusPageCommon.buttonBusy($incidentTabPanel.config.updateButtonId, true);
-        $statusPageCommon.buttonBusy($incidentTabPanel.config.resetButtonId, true);
-        $statusPageCommon.incidentsQuery(JIRA.Issue.getIssueKey())
+        $statusPagePluginCommon.buttonBusy($incidentTabPanel.config.updateButtonId, true);
+        $statusPagePluginCommon.buttonBusy($incidentTabPanel.config.resetButtonId, true);
+        $statusPagePluginCommon.incidentsQuery(JIRA.Issue.getIssueKey())
         .then(function(incident) {
-            $statusPageCommon.setImpact(incident.impact, $incidentTabPanel.config.impactBlockId, $incidentTabPanel.config.glanceImpactBlockId);
-            $statusPageCommon.setStatus(incident.status, $incidentTabPanel.config.statusBlockId, $incidentTabPanel.config.glanceStatusBlockId);
-            $statusPageCommon.setPageName(incident.page.name, $incidentTabPanel.config.pageNameBlockId, $incidentTabPanel.config.glancePageBlockId);
-            $statusPageCommon.setIncidentTitle(incident.name, $incidentTabPanel.config.titleBlockId, $incidentTabPanel.config.glanceTitleBlockId);
-            $statusPageCommon.componentsQuery(JIRA.Issue.getIssueKey(), incident)
+            $statusPagePluginCommon.setImpact(incident.impact, $incidentTabPanel.config.impactBlockId, $incidentTabPanel.config.glanceImpactBlockId);
+            $statusPagePluginCommon.setStatus(incident.status, $incidentTabPanel.config.statusBlockId, $incidentTabPanel.config.glanceStatusBlockId);
+            $statusPagePluginCommon.setPageName(incident.page.name, $incidentTabPanel.config.pageNameBlockId, $incidentTabPanel.config.glancePageBlockId);
+            $statusPagePluginCommon.setIncidentTitle(incident.name, $incidentTabPanel.config.titleBlockId, $incidentTabPanel.config.glanceTitleBlockId);
+            $statusPagePluginCommon.componentsQuery(JIRA.Issue.getIssueKey(), incident)
                 .then(function(components) {
                     let affectedComponentsIds = incident.components.map((component) => component.id);
                     let nonAffectedComponents = components
@@ -229,22 +229,22 @@ let $incidentTabPanel = {
                     // AJS.log(JSON.stringify(incident.components, null, 2))
                     $incidentTabPanel.restoreAffectedComponents(incident.components);
                     $incidentTabPanel.restoreNonAffectedComponents(nonAffectedComponents);
-                    $statusPageCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
-                    $statusPageCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
+                    $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+                    $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
                     JIRA.Messages.showSuccessMsg("incident reloaded");
                 })
                 .catch(function (error) {
                     JIRA.Messages.showErrorMsg("could not reload components");
                     AJS.log(JSON.stringify(error, null, 2));
-                    $statusPageCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
-                    $statusPageCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
+                    $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+                    $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
                 });
         })
         .catch(function(error) {
             JIRA.Messages.showErrorMsg("could not reload incident");
             AJS.log(JSON.stringify(error, null, 2));
-            $statusPageCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
-            $statusPageCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
+            $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.updateButtonId);
+            $statusPagePluginCommon.buttonIdle($incidentTabPanel.config.resetButtonId);
         })
         ;
     }
